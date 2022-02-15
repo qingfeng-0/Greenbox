@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='“工欲善其事，必先利其器”，作为后端搬砖工，我们敲代码之前需要给我们的电脑配上所需的软件环境，这样我们写的代码才能跑起来，原地起飞！
+下载集成环境工具 可以选择xampp或phpenv（二选一就行）
+xampp xampp = Apache &#43; MySQL(MariaDB) &#43; PHP &#43; Perl，是一个集成环境软件，装了一个就可以轻松获得服务器，数据库和php语言的环境，轻松快捷而且免费，唯一的缺点可能是因为是外网所以速度稍慢或者可能需要科学上网
+官网下载：https://www.apachefriends.org/zh_cn/index.html
+选择自己的平台，然后点击下载，完成后运行exe
+按普通安装步骤来就好，下面这个界面也默认选择就好，有些环境之后会用到
+ 
+安装路径建议安装在D盘，然后等待安装完成就可以了，打开软件看到主面板
+ 
+点击Apache和start按钮，等待图标变绿后再点击admin按钮或者浏览器地址栏输入localhost进行访问
+如果可以看到服务器主页面说明成功
+然后点击MySQL的start和admin，或者地址栏输入localhost/phpmyadmin/
+出现一个登录界面，账号填写root，密码为空不用填，直接点击登录，出现下面画面说明成功
+ 
+phpEnv 如果xampp实在太慢或者根本无法下载，也可以用phpEnv
+官网下载：https://www.phpenv.cn/
+根据你电脑是64位或者32位进行选择对应版本下载，如果不知道自己电脑是几位的可以点击教程查看
+同样建议放在D盘，其它的默认就行，运行后出现下面界面
+ 
+点击启动服务上面的图标，再点击打开主页的图标，看到phpEnv的主页面就说明成功了
+页面拉到最下面如下
+ 
+数据库端口填3306
+用户名填root
+密码也填root（注意：这里和xampp不一样）
+点击连接按钮后再把页面拉到最下面显示连接成功就行啦
+点击顶部菜单栏的开始，再点击phpMyAdmin，然后按上面xampp的对应内容操作就行
+安装IDE IDE(Integrated Development Environment)，集成开发环境，为开发者提供了基本的代码编辑器的同时还提供了许多适用工具，功能强大，是码农开发的利器。
+php语言我们使用的比较多的是JetBrains公司出的PhpStorm
+官网下载：https://www.jetbrains.com/phpstorm/
+软件体积较大，如果你不想装它的话可以自己下载VSCode然后下载相应插件（自己查）
+由于软件是收费的，但是我们是学生，可以用学校给的邮箱进行学生认证就可以在毕业前都免费使用
+学生认证地址：https://www.jetbrains.com/community/education/#students
+学校邮箱获取方法 进入学校官网，进入智慧广外，	在个人事务中可以看到自己的邮箱地址，一般是学号@gdufs.edu.cn
+ 
+下载破解版也可以，但可能比较花时间
+按步骤完成后打开phpstorm，进行下面的配置流程
+1. 新建一个项目  
+2. 选择创建路径 建议把目录建在集成环境指定的网络根目录下，目录路径如下（以安装在D盘为例）：
+xampp：D:\xampp\htdocs
+phpEnv：D:\phpEnv\www\localhost'><title>php后台开发基础环境搭建教程</title>
+
+<link rel='canonical' href='https://ccqstark.github.io/p/php_env/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='php后台开发基础环境搭建教程'>
+<meta property='og:description' content='“工欲善其事，必先利其器”，作为后端搬砖工，我们敲代码之前需要给我们的电脑配上所需的软件环境，这样我们写的代码才能跑起来，原地起飞！
+下载集成环境工具 可以选择xampp或phpenv（二选一就行）
+xampp xampp = Apache &#43; MySQL(MariaDB) &#43; PHP &#43; Perl，是一个集成环境软件，装了一个就可以轻松获得服务器，数据库和php语言的环境，轻松快捷而且免费，唯一的缺点可能是因为是外网所以速度稍慢或者可能需要科学上网
+官网下载：https://www.apachefriends.org/zh_cn/index.html
+选择自己的平台，然后点击下载，完成后运行exe
+按普通安装步骤来就好，下面这个界面也默认选择就好，有些环境之后会用到
+ 
+安装路径建议安装在D盘，然后等待安装完成就可以了，打开软件看到主面板
+ 
+点击Apache和start按钮，等待图标变绿后再点击admin按钮或者浏览器地址栏输入localhost进行访问
+如果可以看到服务器主页面说明成功
+然后点击MySQL的start和admin，或者地址栏输入localhost/phpmyadmin/
+出现一个登录界面，账号填写root，密码为空不用填，直接点击登录，出现下面画面说明成功
+ 
+phpEnv 如果xampp实在太慢或者根本无法下载，也可以用phpEnv
+官网下载：https://www.phpenv.cn/
+根据你电脑是64位或者32位进行选择对应版本下载，如果不知道自己电脑是几位的可以点击教程查看
+同样建议放在D盘，其它的默认就行，运行后出现下面界面
+ 
+点击启动服务上面的图标，再点击打开主页的图标，看到phpEnv的主页面就说明成功了
+页面拉到最下面如下
+ 
+数据库端口填3306
+用户名填root
+密码也填root（注意：这里和xampp不一样）
+点击连接按钮后再把页面拉到最下面显示连接成功就行啦
+点击顶部菜单栏的开始，再点击phpMyAdmin，然后按上面xampp的对应内容操作就行
+安装IDE IDE(Integrated Development Environment)，集成开发环境，为开发者提供了基本的代码编辑器的同时还提供了许多适用工具，功能强大，是码农开发的利器。
+php语言我们使用的比较多的是JetBrains公司出的PhpStorm
+官网下载：https://www.jetbrains.com/phpstorm/
+软件体积较大，如果你不想装它的话可以自己下载VSCode然后下载相应插件（自己查）
+由于软件是收费的，但是我们是学生，可以用学校给的邮箱进行学生认证就可以在毕业前都免费使用
+学生认证地址：https://www.jetbrains.com/community/education/#students
+学校邮箱获取方法 进入学校官网，进入智慧广外，	在个人事务中可以看到自己的邮箱地址，一般是学号@gdufs.edu.cn
+ 
+下载破解版也可以，但可能比较花时间
+按步骤完成后打开phpstorm，进行下面的配置流程
+1. 新建一个项目  
+2. 选择创建路径 建议把目录建在集成环境指定的网络根目录下，目录路径如下（以安装在D盘为例）：
+xampp：D:\xampp\htdocs
+phpEnv：D:\phpEnv\www\localhost'>
+<meta property='og:url' content='https://ccqstark.github.io/p/php_env/'>
+<meta property='og:site_name' content='ccq&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='php' /><meta property='article:published_time' content='2020-10-10T11:39:00&#43;08:00'/><meta property='article:modified_time' content='2020-10-10T11:39:00&#43;08:00'/><meta property='og:image' content='https://ccqstark.github.io/p/php_env/php.png' />
+<meta name="twitter:site" content="@ccqstark">
+    <meta name="twitter:creator" content="@ccqstark"><meta name="twitter:title" content="php后台开发基础环境搭建教程">
+<meta name="twitter:description" content="“工欲善其事，必先利其器”，作为后端搬砖工，我们敲代码之前需要给我们的电脑配上所需的软件环境，这样我们写的代码才能跑起来，原地起飞！
+下载集成环境工具 可以选择xampp或phpenv（二选一就行）
+xampp xampp = Apache &#43; MySQL(MariaDB) &#43; PHP &#43; Perl，是一个集成环境软件，装了一个就可以轻松获得服务器，数据库和php语言的环境，轻松快捷而且免费，唯一的缺点可能是因为是外网所以速度稍慢或者可能需要科学上网
+官网下载：https://www.apachefriends.org/zh_cn/index.html
+选择自己的平台，然后点击下载，完成后运行exe
+按普通安装步骤来就好，下面这个界面也默认选择就好，有些环境之后会用到
+ 
+安装路径建议安装在D盘，然后等待安装完成就可以了，打开软件看到主面板
+ 
+点击Apache和start按钮，等待图标变绿后再点击admin按钮或者浏览器地址栏输入localhost进行访问
+如果可以看到服务器主页面说明成功
+然后点击MySQL的start和admin，或者地址栏输入localhost/phpmyadmin/
+出现一个登录界面，账号填写root，密码为空不用填，直接点击登录，出现下面画面说明成功
+ 
+phpEnv 如果xampp实在太慢或者根本无法下载，也可以用phpEnv
+官网下载：https://www.phpenv.cn/
+根据你电脑是64位或者32位进行选择对应版本下载，如果不知道自己电脑是几位的可以点击教程查看
+同样建议放在D盘，其它的默认就行，运行后出现下面界面
+ 
+点击启动服务上面的图标，再点击打开主页的图标，看到phpEnv的主页面就说明成功了
+页面拉到最下面如下
+ 
+数据库端口填3306
+用户名填root
+密码也填root（注意：这里和xampp不一样）
+点击连接按钮后再把页面拉到最下面显示连接成功就行啦
+点击顶部菜单栏的开始，再点击phpMyAdmin，然后按上面xampp的对应内容操作就行
+安装IDE IDE(Integrated Development Environment)，集成开发环境，为开发者提供了基本的代码编辑器的同时还提供了许多适用工具，功能强大，是码农开发的利器。
+php语言我们使用的比较多的是JetBrains公司出的PhpStorm
+官网下载：https://www.jetbrains.com/phpstorm/
+软件体积较大，如果你不想装它的话可以自己下载VSCode然后下载相应插件（自己查）
+由于软件是收费的，但是我们是学生，可以用学校给的邮箱进行学生认证就可以在毕业前都免费使用
+学生认证地址：https://www.jetbrains.com/community/education/#students
+学校邮箱获取方法 进入学校官网，进入智慧广外，	在个人事务中可以看到自己的邮箱地址，一般是学号@gdufs.edu.cn
+ 
+下载破解版也可以，但可能比较花时间
+按步骤完成后打开phpstorm，进行下面的配置流程
+1. 新建一个项目  
+2. 选择创建路径 建议把目录建在集成环境指定的网络根目录下，目录路径如下（以安装在D盘为例）：
+xampp：D:\xampp\htdocs
+phpEnv：D:\phpEnv\www\localhost"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://ccqstark.github.io/p/php_env/php.png' />
+    <link rel="shortcut icon" href="/icon.ico" />
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PXLPFFZ3XD"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-PXLPFFZ3XD', { 'anonymize_ip': false });
+}
+</script>
+<a href="https://github.com/ccqstark" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#64CEAA; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>Back</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/php_env/">
+                <img src="/p/php_env/php_hu30aa9710d612d752c63ae5cdcfcf5665_61468_800x0_resize_box_3.png"
+                        srcset="/p/php_env/php_hu30aa9710d612d752c63ae5cdcfcf5665_61468_800x0_resize_box_3.png 800w, /p/php_env/php_hu30aa9710d612d752c63ae5cdcfcf5665_61468_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="421" 
+                        loading="lazy"
+                        alt="Featured image of post php后台开发基础环境搭建教程" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" >
+                环境搭建
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/php_env/">php后台开发基础环境搭建教程</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Oct 10, 2020</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    1 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <p>“工欲善其事，必先利其器”，作为后端搬砖工，我们敲代码之前需要给我们的电脑配上所需的软件环境，这样我们写的代码才能跑起来，原地起飞！</p>
+<h2 id="下载集成环境工具">下载集成环境工具</h2>
+<p>可以选择xampp或phpenv（二选一就行）</p>
+<h3 id="xampp">xampp</h3>
+<p>xampp = Apache + MySQL(MariaDB) + PHP + Perl，是一个集成环境软件，装了一个就可以轻松获得服务器，数据库和php语言的环境，轻松快捷而且免费，唯一的缺点可能是因为是外网所以速度稍慢或者可能需要科学上网</p>
+<p>官网下载：<a class="link" href="https://www.apachefriends.org/zh_cn/index.html"  target="_blank" rel="noopener"
+    >https://www.apachefriends.org/zh_cn/index.html</a></p>
+<p>选择自己的平台，然后点击下载，完成后运行exe</p>
+<p>按普通安装步骤来就好，下面这个界面也默认选择就好，有些环境之后会用到</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 119; 
+			flex-basis: 286px"
+	>
+	<a href="/p/php_env/install.png" data-size="516x432">
+		<img src="/p/php_env/install.png"
+			width="516"
+			height="432"
+			srcset="/p/php_env/install_hue31cc14ecc65f74b5f882dbd70f42ad6_56886_480x0_resize_box_3.png 480w, /p/php_env/install_hue31cc14ecc65f74b5f882dbd70f42ad6_56886_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<p>安装路径建议安装在D盘，然后等待安装完成就可以了，打开软件看到主面板</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 141; 
+			flex-basis: 340px"
+	>
+	<a href="/p/php_env/control_panel.png" data-size="724x511">
+		<img src="/p/php_env/control_panel.png"
+			width="724"
+			height="511"
+			srcset="/p/php_env/control_panel_hu7aba9f8b091ef25a84dd8d679f587861_109275_480x0_resize_box_3.png 480w, /p/php_env/control_panel_hu7aba9f8b091ef25a84dd8d679f587861_109275_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<p>点击<code>Apache</code>和<code>start</code>按钮，等待图标变绿后再点击<code>admin</code>按钮或者浏览器地址栏输入<code>localhost</code>进行访问</p>
+<p>如果可以看到服务器主页面说明成功</p>
+<p>然后点击<code>MySQL</code>的<code>start</code>和<code>admin</code>，或者地址栏输入<code>localhost/phpmyadmin/</code></p>
+<p>出现一个登录界面，账号填写<code>root</code>，密码为空不用填，直接点击登录，出现下面画面说明成功</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 209; 
+			flex-basis: 503px"
+	>
+	<a href="/p/php_env/phpmyadmin.png" data-size="1536x732">
+		<img src="/p/php_env/phpmyadmin.png"
+			width="1536"
+			height="732"
+			srcset="/p/php_env/phpmyadmin_hueeb5a04033df17881c568a42cb09d2ef_176671_480x0_resize_box_3.png 480w, /p/php_env/phpmyadmin_hueeb5a04033df17881c568a42cb09d2ef_176671_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<h3 id="phpenv">phpEnv</h3>
+<p>如果xampp实在太慢或者根本无法下载，也可以用phpEnv</p>
+<p>官网下载：<a class="link" href="https://www.phpenv.cn/"  target="_blank" rel="noopener"
+    >https://www.phpenv.cn/</a></p>
+<p>根据你电脑是64位或者32位进行选择对应版本下载，如果不知道自己电脑是几位的可以<a class="link" href="https://jingyan.baidu.com/article/7f41ecec2f851a593d095c9b.html"  target="_blank" rel="noopener"
+    >点击教程</a>查看</p>
+<p>同样建议放在D盘，其它的默认就行，运行后出现下面界面</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 141; 
+			flex-basis: 338px"
+	>
+	<a href="/p/php_env/phpenv.png" data-size="550x390">
+		<img src="/p/php_env/phpenv.png"
+			width="550"
+			height="390"
+			srcset="/p/php_env/phpenv_hu09deb755ced7358f7caf3c363107b008_30158_480x0_resize_box_3.png 480w, /p/php_env/phpenv_hu09deb755ced7358f7caf3c363107b008_30158_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<p>点击<code>启动服务</code>上面的图标，再点击<code>打开主页</code>的图标，看到phpEnv的主页面就说明成功了</p>
+<p>页面拉到最下面如下</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 377; 
+			flex-basis: 905px"
+	>
+	<a href="/p/php_env/phpenv_mysql.png" data-size="1090x289">
+		<img src="/p/php_env/phpenv_mysql.png"
+			width="1090"
+			height="289"
+			srcset="/p/php_env/phpenv_mysql_hu14ad14b930f9e9181f37a70a701c27d4_55080_480x0_resize_box_3.png 480w, /p/php_env/phpenv_mysql_hu14ad14b930f9e9181f37a70a701c27d4_55080_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<p>数据库端口填<code>3306</code></p>
+<p>用户名填<code>root</code></p>
+<p>密码也填<code>root</code>（注意：这里和xampp不一样）</p>
+<p>点击连接按钮后再把页面拉到最下面显示<code>连接成功</code>就行啦</p>
+<p>点击顶部菜单栏的<code>开始</code>，再点击<code>phpMyAdmin</code>，然后按上面xampp的对应内容操作就行</p>
+<h2 id="安装ide">安装IDE</h2>
+<p>IDE(Integrated Development Environment)，集成开发环境，为开发者提供了基本的代码编辑器的同时还提供了许多适用工具，功能强大，是码农开发的利器。</p>
+<p>php语言我们使用的比较多的是<code>JetBrains</code>公司出的<code>PhpStorm</code></p>
+<p>官网下载：<a class="link" href="https://www.jetbrains.com/phpstorm/"  target="_blank" rel="noopener"
+    >https://www.jetbrains.com/phpstorm/</a></p>
+<p>软件体积较大，如果你不想装它的话可以自己下载<code>VSCode</code>然后下载相应插件（自己查）</p>
+<p>由于软件是收费的，但是我们是学生，可以用学校给的邮箱进行学生认证就可以在毕业前都免费使用</p>
+<p>学生认证地址：<a class="link" href="https://www.jetbrains.com/community/education/#students"  target="_blank" rel="noopener"
+    >https://www.jetbrains.com/community/education/#students</a></p>
+<h4 id="学校邮箱获取方法">学校邮箱获取方法</h4>
+<p>进入学校官网，进入智慧广外，	在<code>个人事务</code>中可以看到自己的邮箱地址，一般是<code>学号@gdufs.edu.cn</code></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 121; 
+			flex-basis: 291px"
+	>
+	<a href="/p/php_env/email.png" data-size="311x256">
+		<img src="/p/php_env/email.png"
+			width="311"
+			height="256"
+			srcset="/p/php_env/email_hu41879ea9664d19c8125be56eb0869360_7392_480x0_resize_box_3.png 480w, /p/php_env/email_hu41879ea9664d19c8125be56eb0869360_7392_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<p>下载破解版也可以，但可能比较花时间</p>
+<p>按步骤完成后打开phpstorm，进行下面的配置流程</p>
+<h3 id="1-新建一个项目">1. 新建一个项目</h3>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 52; 
+			flex-basis: 125px"
+	>
+	<a href="/p/php_env/new_project.png" data-size="350x671">
+		<img src="/p/php_env/new_project.png"
+			width="350"
+			height="671"
+			srcset="/p/php_env/new_project_hu43ab886b7565ef1ac2e56920c39e7c96_24975_480x0_resize_box_3.png 480w, /p/php_env/new_project_hu43ab886b7565ef1ac2e56920c39e7c96_24975_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<h3 id="2-选择创建路径">2. 选择创建路径</h3>
+<p>建议把目录建在集成环境指定的<strong>网络根目录</strong>下，目录路径如下（以安装在D盘为例）：</p>
+<p><strong>xampp</strong>：<code>D:\xampp\htdocs</code></p>
+<p><strong>phpEnv</strong>：<code>D:\phpEnv\www\localhost</code></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 169; 
+			flex-basis: 406px"
+	>
+	<a href="/p/php_env/path.png" data-size="793x468">
+		<img src="/p/php_env/path.png"
+			width="793"
+			height="468"
+			srcset="/p/php_env/path_hu25cc411214a7879004a6c6cc7850ea82_23213_480x0_resize_box_3.png 480w, /p/php_env/path_hu25cc411214a7879004a6c6cc7850ea82_23213_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<p>路径最后自定义一个项目名，比如我这里叫<code>test</code>，然后点击<code>creat</code></p>
+<h3 id="3-修改运行目录">3. 修改运行目录</h3>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 57; 
+			flex-basis: 138px"
+	>
+	<a href="/p/php_env/settings.png" data-size="339x586">
+		<img src="/p/php_env/settings.png"
+			width="339"
+			height="586"
+			srcset="/p/php_env/settings_hu34a57ba004a09d7083fd017907d7c8c4_18826_480x0_resize_box_3.png 480w, /p/php_env/settings_hu34a57ba004a09d7083fd017907d7c8c4_18826_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<p>如图打开设置</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 139; 
+			flex-basis: 334px"
+	>
+	<a href="/p/php_env/deployment.png" data-size="998x715">
+		<img src="/p/php_env/deployment.png"
+			width="998"
+			height="715"
+			srcset="/p/php_env/deployment_hub07e4845204002a469a177b46ae686d1_31669_480x0_resize_box_3.png 480w, /p/php_env/deployment_hub07e4845204002a469a177b46ae686d1_31669_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<p>选择<code>Deployment</code>，点击顶部<code>+</code>号，选择<code>Local or mounted folder</code></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 139; 
+			flex-basis: 334px"
+	>
+	<a href="/p/php_env/url.png" data-size="998x715">
+		<img src="/p/php_env/url.png"
+			width="998"
+			height="715"
+			srcset="/p/php_env/url_huab950ead77d67777e5aed2475a6d2e1f_32218_480x0_resize_box_3.png 480w, /p/php_env/url_huab950ead77d67777e5aed2475a6d2e1f_32218_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<p><code>Folder</code>就填写自己安装的集成环境软件的<strong>网络根目录</strong></p>
+<p><code>Web server URL</code>记得要在最后补上<strong>斜杆和当前项目名</strong></p>
+<p>点击右下角的<code>Apply</code>和<code>OK</code></p>
+<h3 id="4-hello-world">4. Hello World!</h3>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 129; 
+			flex-basis: 311px"
+	>
+	<a href="/p/php_env/new_file.png" data-size="913x704">
+		<img src="/p/php_env/new_file.png"
+			width="913"
+			height="704"
+			srcset="/p/php_env/new_file_hu2f525efb151ab03d64f55c2d2a812ae7_45131_480x0_resize_box_3.png 480w, /p/php_env/new_file_hu2f525efb151ab03d64f55c2d2a812ae7_45131_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<p>对项目文件夹右键新建一个php文件，自定义命名，然后开始写下第一行php代码吧：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-php" data-lang="php"><span class="o">&lt;?</span><span class="nx">php</span>
+    <span class="k">echo</span> <span class="s2">&#34;hello world!&#34;</span><span class="p">;</span>
+</code></pre></div><p>鼠标移到右上角选择一个浏览器运行，或者右键并选择<code>run</code>，或者快捷键<code>Ctrl+Shift+F10</code></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 291; 
+			flex-basis: 700px"
+	>
+	<a href="/p/php_env/brower.png" data-size="388x133">
+		<img src="/p/php_env/brower.png"
+			width="388"
+			height="133"
+			srcset="/p/php_env/brower_hu46f655240c42d24b7222a03fd64bdc5c_4918_480x0_resize_box_3.png 480w, /p/php_env/brower_hu46f655240c42d24b7222a03fd64bdc5c_4918_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<p>如果出现了提醒你选择php解释器的情况</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 946; 
+			flex-basis: 2271px"
+	>
+	<a href="/p/php_env/language_level.png" data-size="757x80">
+		<img src="/p/php_env/language_level.png"
+			width="757"
+			height="80"
+			srcset="/p/php_env/language_level_hu6cfe5241e8b2a4ab92bf7e05d467bc9b_3848_480x0_resize_box_3.png 480w, /p/php_env/language_level_hu6cfe5241e8b2a4ab92bf7e05d467bc9b_3848_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<p>就选择一个已有的版本就行，在<code>settings</code> <strong>-&gt;</strong> <code>Languages&amp;Frameworks</code>  <strong>-&gt;</strong> <code>PHP</code>也可以设置</p>
+<p>点击运行后出现</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 288; 
+			flex-basis: 692px"
+	>
+	<a href="/p/php_env/hello_world.png" data-size="358x124">
+		<img src="/p/php_env/hello_world.png"
+			width="358"
+			height="124"
+			srcset="/p/php_env/hello_world_hu0efec59b83c1fcf5080df2cfb0bff2d1_4155_480x0_resize_box_3.png 480w, /p/php_env/hello_world_hu0efec59b83c1fcf5080df2cfb0bff2d1_4155_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<p>或者是</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 219; 
+			flex-basis: 526px"
+	>
+	<a href="/p/php_env/hello_world2.png" data-size="748x341">
+		<img src="/p/php_env/hello_world2.png"
+			width="748"
+			height="341"
+			srcset="/p/php_env/hello_world2_hufe459786a09a401819265a40b14788a9_9729_480x0_resize_box_3.png 480w, /p/php_env/hello_world2_hufe459786a09a401819265a40b14788a9_9729_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<p>大功告成！现在可以愉快地敲代码了！</p>
+<p>当然，这是为了方便本地开发而安装的集成环境，有兴趣的小朋友可以自己尝试分别安装每个环境或者在Linux上进行编译安装</p>
+<p>PHPer现在可以带着世界上最好的语言开冲了！</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 160; 
+			flex-basis: 384px"
+	>
+	<a href="/p/php_env/phper.jpg" data-size="640x400">
+		<img src="/p/php_env/phper.jpg"
+			width="640"
+			height="400"
+			srcset="/p/php_env/phper_hu98a7534b1df32e1ac5c10182a8537bd9_22265_480x0_resize_q75_box.jpg 480w, /p/php_env/phper_hu98a7534b1df32e1ac5c10182a8537bd9_22265_1024x0_resize_q75_box.jpg 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/php/">php</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.css"integrity="sha384-RZU/ijkSsFbcmivfdRBQDtwuwVqK7GMOw6IMvKyeWL2K5UAlyp6WonmB8m7Jd0Hn"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.js"integrity="sha384-pK1WpvzWVBQiP0/GjnvRxV4mOb0oxFuyRxJlk6vVw146n3egcN5C925NCP7a7BY8"crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/contrib/auto-render.min.js"integrity="sha384-vZTG03m&#43;2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl"crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });})
+</script>
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">Related contents</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/x_pack/">
+        
+        
+            <div class="article-image">
+                <img src="/p/x_pack/x-pack.03b6883bf32ad168964ccfa7a68ecbff_huc4207ebc9b333ece948f0ec8e981e0d7_15854_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="x_pack" 
+                        data-hash="md5-A7aIO/Mq0WiWTM&#43;npo7L/w==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">[Elastic]ElasticSearch 安全</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/logstash_mysql/">
+        
+        
+            <div class="article-image">
+                <img src="/p/logstash_mysql/logstash-mysql.4f6b8497a2d0608059a79ee135e80e84_hubd922da79b2e986df34a25cd755e9ffb_77309_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="logstash_mysql" 
+                        data-hash="md5-T2uEl6LQYIBZp57hNegOhA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">[Elastic]使用logstash同步MySQL数据</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/es_docker/">
+        
+        
+            <div class="article-image">
+                <img src="/p/es_docker/elastic-docker.4df36a868a6a3cf5be844cd3edd50e34_hu1fc05f09d19ffda9f7576c23f66afe5c_19136_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="es_docker" 
+                        data-hash="md5-TfNqhopqPPW&#43;hEzT7dUONA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">[Elastic]使用docker安装ElasticSearch &#43; Kibana</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/jenkins_docker_springboot/">
+        
+        
+            <div class="article-image">
+                <img src="/p/jenkins_docker_springboot/jenkins-cicd.33501c75026a111501af63ce15b1106f_huac9b8bcc40d9704ef8edb1ad38827231_44206_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="jenkins_docker_springboot" 
+                        data-hash="md5-M1AcdQJqERUBr2POFbEQbw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Jenkins &#43; docker &#43; springboot 完美配合全流程教程</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/docker_nginx/">
+        
+        
+            <div class="article-image">
+                <img src="/p/docker_nginx/nginx-docker.23dd1d5d655b0db04797a64df73e9106_hu2ff739cd1ceaefb705a9e30c4218e66c_86441_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="docker_nginx" 
+                        data-hash="md5-I90dXWVbDbBHl6ZN9z6RBg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">[docker]用docker部署nginx</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-ccqstark-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2022 ccq&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        
+            一辈子热爱技术 <br/>
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.5.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">Table of contents</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#下载集成环境工具">下载集成环境工具</a>
+      <ol>
+        <li><a href="#xampp">xampp</a></li>
+        <li><a href="#phpenv">phpEnv</a></li>
+      </ol>
+    </li>
+    <li><a href="#安装ide">安装IDE</a>
+      <ol>
+        <li>
+          <ol>
+            <li><a href="#学校邮箱获取方法">学校邮箱获取方法</a></li>
+          </ol>
+        </li>
+        <li><a href="#1-新建一个项目">1. 新建一个项目</a></li>
+        <li><a href="#2-选择创建路径">2. 选择创建路径</a></li>
+        <li><a href="#3-修改运行目录">3. 修改运行目录</a></li>
+        <li><a href="#4-hello-world">4. Hello World!</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>gopher</title>
+	
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-PXLPFFZ3XD"></script>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
+
+	  gtag('config', 'G-PXLPFFZ3XD');
+	</script>
+</head>
+<body>
+<canvas id="view" width="200" height="180" style="position: fixed; right: 0; bottom: 0; z-index: 9999"></canvas>
+<script type="text/javascript">
+    "use strict";
+
+    if(window.animationLoop) {
+        window.cancelAnimationFrame(window.animationLoop)
+    }
+
+    class HSL {
+        constructor(h, s, l) {
+            this.h = h
+            this.s = s
+            this.l = l
+        }
+
+        toString() {
+            return "hsl(" +
+                (this.h * 360).toFixed(2) + "," +
+                (this.s * 100).toFixed(2) + "%," +
+                (this.l * 100).toFixed(2) + "%)";
+        }
+    }
+
+    const tau = Math.PI * 2
+
+    let view = document.getElementById("view")
+    let context = view.getContext("2d")
+    updateViewSize()
+
+    let gopher = {
+        body: new HSL(205.0/360, 1.0,  0.81),
+        bodyDark: new HSL(205.0/360, 0.55,  0.71),
+        dark: new HSL(217.0/360, 0.19, 0.18),
+        light: new HSL(217.0/360, 0.0, 1.00),
+        lightDark: new HSL(217.0/360, 0.0, 0.90),
+        limb: new HSL(46.0/360, 0.38, 0.80),
+
+        head: {x: 0, y:0},
+        gaze: {x: 0, y:0},
+    };
+
+    window.animationLoop = tick();
+
+    window.addEventListener("resize", updateViewSize)
+
+    function updateViewSize() {
+        
+        
+
+        view.width = view.clientWidth;
+        view.height = view.clientHeight;
+    }
+
+    window.addEventListener("mousemove", (ev) => {
+        let screenSize = {x: view.width, y: view.height}
+
+		gopher.gaze.x = - (ev.clientX * 1.5 / view.width-1);
+		gopher.gaze.y = - (ev.clientY * 1.5 / view.height-1);
+
+        gopher.head.x = gopher.gaze.x * 0.5;
+        gopher.head.y = gopher.gaze.y * 0.5;
+   
+    });
+
+    window.addEventListener("touchmove", (ev) => {
+        if(ev.targetTouches.length == 0) return;
+
+        let screenSize = {x: view.width, y: view.height}
+        let touch = ev.targetTouches[0]
+
+        gopher.gaze.x = touch.clientX * 2.0 / view.width - 1;
+        gopher.gaze.y = touch.clientY * 2.0 / view.height - 1;
+
+        gopher.head.x = gopher.gaze.x * 0.5;
+        gopher.head.y = gopher.gaze.y * 0.5;
+
+    });
+
+    function tick(t) {
+        context.clearRect(0,0,10000,10000);
+        context.save()
+
+        
+        
+        
+
+        let screenSize = {x: view.width, y: view.height}
+        render(gopher, context, screenSize)
+        context.restore()
+        return window.requestAnimationFrame(tick)
+    }
+
+    function stringify(v) {
+        return JSON.stringify(v, (key, val) => {
+            if(typeof val == "number"){
+                return val.toFixed(2)
+            }
+            return val
+        })
+    }
+
+    function render(gopher, draw, screenSize) {
+        let bodyRadius = Math.min(screenSize.x, screenSize.y) / 2
+        bodyRadius *= 0.8
+
+        let eyeRadius = bodyRadius * 0.4
+        let earRadius = eyeRadius * 0.53
+        let lineWidth = bodyRadius * 0.045
+        let highlightSize = eyeRadius * 0.06
+
+        draw.lineWidth = lineWidth
+        draw.strokeStyle = gopher.dark.toString()
+
+        
+        draw.translate(screenSize.x/2, screenSize.y)
+
+        for(let ear = -1; ear <= 1; ear+=2){
+            saved(draw, (draw) => { 
+                let earOffset = headOffset(gopher, -ear, bodyRadius)
+                earOffset.x *= -1
+                earOffset.x += ear*earRadius*0.3
+                earOffset.y = -bodyRadius*1.8 - Math.sin(gopher.head.y)*earRadius * 0.5
+
+                draw.translate(earOffset.x, earOffset.y)
+                draw.scale(ear, 1)
+                draw.rotate(tau / 10)
+                draw.translate(0, earRadius)
+
+                let earPath = new Path2D()
+
+                earPath.moveTo(-earRadius, earRadius)
+                earPath.lineTo(-earRadius, -earRadius)
+                earPath.bezierCurveTo(
+                    -earRadius, -earRadius-earRadius*1.3,
+                    earRadius, -earRadius-earRadius*1.3,
+                    earRadius, -earRadius)
+                earPath.lineTo(earRadius, earRadius)
+
+                draw.fillStyle = gopher.body.toString()
+                draw.fill(earPath)
+                draw.stroke(earPath)
+
+                let earInline = new Path2D()
+                earInline.moveTo(0, 0)
+                earInline.quadraticCurveTo(
+                    -earRadius*0.6, -earRadius,
+                    earRadius*0.2, -earRadius*1.4
+                );
+                earInline.moveTo(0, 0)
+                earInline.quadraticCurveTo(
+                    -earRadius*0.6, -earRadius,
+                    earRadius*0.3, -earRadius*1.0
+                );
+
+                draw.lineWidth = lineWidth * 0.7
+                draw.lineCap = "round"
+                draw.stroke(earInline)
+            })
+        }
+
+        saved(draw, (draw) => { 
+            let bodyPath = new Path2D()
+
+            bodyPath.moveTo(-bodyRadius, 0)
+            bodyPath.lineTo(-bodyRadius, -bodyRadius)
+            bodyPath.bezierCurveTo(
+                -bodyRadius, -bodyRadius-bodyRadius*1.2,
+                bodyRadius, -bodyRadius-bodyRadius*1.2,
+                bodyRadius, -bodyRadius)
+            bodyPath.lineTo(bodyRadius, 0)
+
+            draw.fillStyle = gopher.bodyDark.toString()
+            draw.fill(bodyPath)
+            saved(draw, (draw) => {
+                draw.clip(bodyPath)
+                draw.translate(bodyRadius * 0.1, 0)
+                draw.fillStyle = gopher.body.toString()
+                draw.fill(bodyPath)
+            })
+            draw.stroke(bodyPath)
+        })
+
+        for(let eye = -1; eye <= 1; eye+=2){
+            let gaze = gopher.gaze;
+
+            saved(draw, (draw) => { 
+                let eyeOffset = headOffset(gopher, eye, bodyRadius);
+                draw.translate(eyeOffset.x, eyeOffset.y);
+
+                let eyePath = new Path2D();
+                eyePath.arc(0, 0, eyeRadius, 0, tau, true);
+
+                draw.fillStyle = gopher.lightDark.toString()
+                draw.fill(eyePath)
+
+                saved(draw, (draw) => {
+                    draw.clip(eyePath)
+                    draw.translate(eyeRadius*0.2, -eyeRadius*0.15)
+                    draw.fillStyle = gopher.light.toString()
+                    draw.fill(eyePath)
+                })
+
+                draw.stroke(eyePath)
+
+                let pupil = { x: gaze.x, y: gaze.y}
+                let mag = Math.sqrt(pupil.x*pupil.x + pupil.y*pupil.y)
+                if(mag > 1){
+                    pupil.x /= mag + 0.0001;
+                    pupil.y /= mag + 0.0001;
+                }
+                pupil.x = Math.sin(pupil.x + eye * 0.4) * eyeRadius * 0.6
+                pupil.y = Math.sin(pupil.y) * eyeRadius * 0.6
+                let pupilSize = eyeRadius*0.25
+
+                let pupilPath = new Path2D();
+                pupilPath.arc(pupil.x, pupil.y, pupilSize, 0, tau, true)
+                draw.fillStyle = gopher.dark.toString()
+                draw.fill(pupilPath)
+
+                
+                let highlighPath = new Path2D()
+                highlighPath.arc(
+                    pupil.x + pupilSize * 0.3 - gaze.x * highlightSize * 0.3,
+                    pupil.y - pupilSize * 0.3 - gaze.y * highlightSize * 0.3, highlightSize, 0, tau, true)
+                draw.fillStyle = gopher.light.toString()
+                draw.fill(highlighPath)
+            })
+        }
+
+        saved(draw, (draw) => { 
+            let tipSize = eyeRadius*0.2;
+            let toothSize = tipSize;
+            let noseSize = tipSize * 2.2;
+
+            let noseOffset = headOffset(gopher, 0, bodyRadius)
+            noseOffset.y += eyeRadius * 0.8;
+            draw.translate(noseOffset.x, noseOffset.y);
+
+            saved(draw, (draw) => { 
+                draw.translate(0, tipSize*1.2 - gopher.head.y * tipSize * 0.3)
+                draw.beginPath()
+                draw.moveTo(-toothSize, 0)
+                draw.lineTo(-toothSize, toothSize*1.5)
+                draw.bezierCurveTo(
+                    -toothSize, toothSize*2,
+                    toothSize, toothSize*2,
+                    toothSize, toothSize*1.5,
+                )
+                draw.lineTo(toothSize, 0)
+                draw.fillStyle = gopher.light.toString()
+                draw.fill()
+                draw.lineWidth = lineWidth * 0.7;
+                draw.stroke()
+            })
+
+            saved(draw, (draw) => { 
+                draw.translate(0, tipSize*1.2)
+                draw.beginPath()
+
+                draw.moveTo(-noseSize, 0)
+                draw.bezierCurveTo(
+                    -noseSize, -noseSize,
+                    noseSize, -noseSize,
+                    noseSize, 0
+                )
+                draw.bezierCurveTo(
+                    noseSize, noseSize*0.4,
+                    -noseSize, noseSize*0.4,
+                    -noseSize, 0
+                )
+                draw.closePath()
+
+                draw.fillStyle = gopher.limb.toString()
+                draw.fill()
+                draw.stroke()
+            })
+
+            saved(draw, (draw) => { 
+                let tip = {
+                    x: Math.sin(gopher.head.x) * tipSize,
+                    y: Math.sin(gopher.head.y) * tipSize * 0.5 - tipSize*0.2,
+                };
+
+                draw.beginPath()
+                draw.scale(1.2, 0.9)
+                draw.arc(tip.x, tip.y, tipSize, 0, tau, true)
+                draw.fillStyle = gopher.dark.toString()
+                draw.fill()
+
+                
+                draw.beginPath()
+                draw.arc(
+                    tip.x + tipSize * 0.3 - gopher.head.x * highlightSize * 0.3,
+                    tip.y - tipSize * 0.3 - gopher.head.y * highlightSize * 0.3, highlightSize, 0, tau, true)
+                draw.fillStyle = gopher.light.toString()
+                draw.fill()
+            })
+        })
+    }
+
+    function headOffset(gopher, eye, bodyRadius) {
+        let x = eye*bodyRadius*0.4
+        let y = -bodyRadius*1.1
+
+        x += Math.sin(gopher.head.x - eye*0.4) * bodyRadius*0.3
+        y += Math.sin(gopher.head.y*tau/4) * bodyRadius*0.15
+
+        return {x: x, y: y}
+    }
+
+    function saved(draw, fn) {
+        draw.save()
+        fn(draw)
+        draw.restore()
+    }
+</script>
+</body>
+</html>
+    </body>
+</html>

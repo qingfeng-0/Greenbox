@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>其它技术 on ccq&#39;s blog</title>
+    <link>https://ccqstark.github.io/categories/%E5%85%B6%E5%AE%83%E6%8A%80%E6%9C%AF/</link>
+    <description>Recent content in 其它技术 on ccq&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 02 Dec 2021 18:31:11 +0800</lastBuildDate><atom:link href="https://ccqstark.github.io/categories/%E5%85%B6%E5%AE%83%E6%8A%80%E6%9C%AF/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>关于CORS的Access-Control-Allow-Credentials设置问题</title>
+      <link>https://ccqstark.github.io/p/cors_credentials/</link>
+      <pubDate>Thu, 02 Dec 2021 18:31:11 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/cors_credentials/</guid>
+      <description>前言 众所周知，跨域设置CORS的话我们需要设置Access-Control-Allow-Origin、Access-Control-Allow-Methods 等header，但是我们的Access-Control-Allow-Origin 只能设置为三种情况：
+ 星号 * 单域名 none  同时还有一个限制就是设置为星号的时候，Access-Control-Allow-Credentials 不能设置为true，下面来自MDN：
+ 对于附带身份凭证的请求，服务器不得设置 Access-Control-Allow-Origin 的值为“*”。这是因为请求的首部中携带了 Cookie 信息，如果 Access-Control-Allow-Origin 的值为“*”，请求将会失败。
+ 而Access-Control-Allow-Credentials 则一般是服务器用来设置是否允许前端携带Cookies的标志位，withCredentials 是前端用来表示是否给服务器发请求的时候带上Cookies的标志位：
+ 将 [XMLHttpRequest](https://developer.mozilla.org/en-US/DOM/XMLHttpRequest)的 withCredentials 标志设置为 true，从而向服务器发送 Cookies。因为这是一个简单 GET 请求，所以浏览器不会对其发起“预检请求”。但是，如果服务器端的响应中未携带 Access-Control-Allow-Credentials: true ，浏览器将不会把响应内容返回给请求的发送者。
+ 基于以上的规则，如果我们需要发Cookies的话，前端withCredentials 和后端的Access-Control-Allow-Credentials 都要设置为true，同时Access-Control-Allow-Origin 不能设置为星号，只能设置为单域名。
+问题 但是在我看一个开源项目源码的时候，看到它CORS的地方：
+@Override public void addCorsMappings(CorsRegistry registry) { registry.addMapping(&amp;#34;/**&amp;#34;).allowedOrigins(&amp;#34;*&amp;#34;) .allowedMethods(&amp;#34;GET&amp;#34;, &amp;#34;HEAD&amp;#34;, &amp;#34;POST&amp;#34;, &amp;#34;PUT&amp;#34;, &amp;#34;DELETE&amp;#34;, &amp;#34;OPTIONS&amp;#34;) .allowCredentials(true).maxAge(3600); } 出现了疑惑，为什么它同时设为星号同时设置了true但是仍然请求正常呢？
+打开了F12看响应的header，发现Access-Control-Allow-Origin 是前端的地址，不是设置了星号吗，怎么变成单origin了？然后把allowCredentials方法里传个false，发现请求就异常了，开始搞不懂了，因为这个项目其实也没有用到cookies呀，只用了token，token也是放在header里的。
+探究 然后只能猜测是Spring MVC帮我们做了这一切，就去扒源码了，果然扒到了！
+在org.springframework.web.cors 下的CorsConfiguration 类，有这么一个checkOrigin方法：
+@Nullable public String checkOrigin(@Nullable String requestOrigin) { if (!</description>
+    </item>
+    
+    <item>
+      <title>我的vim入门配置折腾</title>
+      <link>https://ccqstark.github.io/p/vim/</link>
+      <pubDate>Sun, 31 Jan 2021 21:26:00 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/vim/</guid>
+      <description>由于这几天开始看《CS:APP》，我就开始寻求一款Mac上的轻量的C语言编辑器。找来找去，无非是VSCode、CLion和大名鼎鼎的Vim。
+为了减少磁盘占用同时让自己更接近于底层，我还是硬着头皮折腾起了Vim，这个上古神器之前就一直让我望而却步，我对它的掌握程度也差不多是会退出的程度，这一次就打算好好来折腾下。
+安装NeoVim Vim其实到目前为止，不同的分支版本还是很多的，比较流行的现代版本就要属NeoVim了，所以我在终端安装了它，用iTerm2运行着。
+brew install neovim 安装完成后用nvim命令就可以打开
+nvim 配置文件路径
+传统的vim的配置配置文件为~/.vimrc
+而nvim的配置文件为/.config/nvim/init.vim ，之后修改nvim配置文件就用这个，以下简称为init.vim
+安装SpaceVim 作为小白，快速搭建一个好看实用的Vim开发环境那最好的选择就是SpaceVim 了，下面是官方的介绍：
+ SpaceVim 是一个社区驱动的模块化的 Vim IDE，以模块的方式组织管理插件以及相关配置， 为不同的语言开发量身定制了相关的开发模块，该模块提供代码自动补全， 语法检查、格式化、调试、REPL 等特性。用户仅需载入相关语言的模块即可得到一个开箱即用的 Vim IDE。
+ 官网地址：
+主页 | SpaceVim
+官网的文档还是很全的，按官方文档就可以快速搭建出来了。以MacOS为例：
+安装spacevim
+curl -sLf https://spacevim.org/cn/install.sh | bash 完成后重新打开nvim就会自动下载相关插件。
+然后就是主界面：
+  主题的修改可以参考官方文档
+SpaceVim colorscheme 模块 | SpaceVim
+快捷键符号说明
+SPC 代表空格
+&amp;lt;Leader&amp;gt; 默认为\
+以下一些功能需要对mac进行一定的设置才能正常使用。
+打开系统偏好设置 → 键盘
+勾选将F1、F2等键用作标准功能键
+这同时也解决了Chrome的F12 不能打开控制台的问题
+  文件目录树
+按F3 可以打开或关闭
+语法函数树
+按F2可以打开或关闭
+mac下可能会出现错误，解决方案：
+brew install ctags-exuberant 然后init.</description>
+    </item>
+    
+    <item>
+      <title>Alfred &#43; iTerm2 快速ssh连接服务器</title>
+      <link>https://ccqstark.github.io/p/alfred_iterm/</link>
+      <pubDate>Sun, 10 Jan 2021 16:35:00 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/alfred_iterm/</guid>
+      <description>为了提高在mac下连接ssh的效率，我们可以用alfred和iTerm配合，达到只要在输入框中输入ssh [主机名] 就可以快速连上了，效果如下图：
+ 
+使用ssh config 在~/.ssh/config文件里添加服务器信息，没有的话就新建一个
+vim ~/.ssh/config然后在文件中输入主机的信息，有多个主机就追加在后面就行
+Host [主机名] HostName [ip] User root Port [端口]使用密钥登陆 如果本地的~/.ssh 目录下没有id_rsa 私钥文件，可以是使用下面这个目录生成，一路回车即可，如果已经有了就可以跳过这步
+ssh-keygen然后将私钥复制到远程服务器
+ssh-copy-id -i -p[端口号] root@ip按提示输入一次密码，就会自动将刚才生成的公钥id_rsa.pub追加到远程主机的~/.ssh/authorized_keys后面了，这样以后的 ssh 连接都不用输入密码了
+安装alfred-ssh插件 https://github.com/deanishe/alfred-ssh
+到上面github链接下载最新版：Secure-SHell的alfredworkflow，双击自动添加到alfred的workflow
+添加后打开alfred的偏好设置可以看到效果如下：
+  测试用alfred输入ssh+主机名就可以连上服务器了，但是默认是用mac自带但终端，想用好看的iTrem2还需要进一步操作
+安装alfred集成iTerm2配置 如下图，打开iTrem2的偏好设置，如下图设置默认方式为ssh
+  进入下面github链接，按说明操作
+https://github.com/vitorgalvao/custom-alfred-iterm-scripts
+  按上面要求运行命令并粘贴到对应地方就完成了！
+参考文章： 开发效率神器之alfred集成ssh+iTerm2实现一步登录服务器</description>
+    </item>
+    
+    <item>
+      <title>macOS终端美化指北</title>
+      <link>https://ccqstark.github.io/p/mac_terminal/</link>
+      <pubDate>Wed, 06 Jan 2021 02:07:00 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/mac_terminal/</guid>
+      <description>终于从Windows转到心心念念的macOS上进行开发，虽然是黑苹果但是软件层面上没有太大的区别，程序员还是得用mac啊这终端上真的比windows好用无数倍，那终端到手后还是要折腾美化的，那就开始吧。 先看下我，还可以吧？  1 
+准备工作 先保证自己下载homebrew和wget，安装软件或下载包很多情况下要用到它们，特别homebrew是mac下最好用的包管理器一定要有。下载方法网上也很多的，建议先下homebrew再用它下wget。
+iTerm2 首先是下载第三方终端iTerm2，mac自带的终端用的比较少，大家用的最多还是这个。 官网下载
+zsh zsh是shell的一种，mac默认的shell是bash，一般来说我们也是用zsh比较多，因为命令更多更好用。
+下载zsh brew install zsh 切换shell为zsh # 查看当前使用的shell echo $SHELL # 切换为zsh chsh -s /bin/zsh 运行完上面命令后重启一下即可
+oh-my-zsh oh-my-zsh用于美化终端，可以让你拥有很多好看的主题。
+安装 wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | sh sh install.sh运行上面的命令来下载安装脚本并运行脚本，成功后会有如下画面
+ 2 
+更换主题 oh-my-zsh有很多默认的主题，可以在~/.zshrc中修改ZSH_THEME来切换不同主题。 这里我推荐powerlever10k，它集合了很多不同主题风格的样式，支持自定义，如果默认主题中没有你满意的那推荐就用它。下面就讲powerlevel10k的安装方法。
+下载 git clone --depth=1 https://gitee.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k安装所需字体 # 安装 nerd-font 字体 brew tap homebrew/cask-fonts # 其他所需字体 cd ~ git clone https://github.com/powerline/fonts.git --depth=1 # 到目录下执行安装脚本 cd fonts .</description>
+    </item>
+    
+    <item>
+      <title>使用Hugo&#43;github/gitee搭建个人博客</title>
+      <link>https://ccqstark.github.io/p/%E4%BD%BF%E7%94%A8hugo-github/gitee%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</link>
+      <pubDate>Sun, 04 Oct 2020 02:44:33 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/%E4%BD%BF%E7%94%A8hugo-github/gitee%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/</guid>
+      <description>基本操作 下载hugo 首先要有Golang的环境
+然后在GitHub上选择对应平台下载
+https://github.com/gohugoio/hugo/releases
+Windows下载完要设置环境变量
+创建新的站点 hugo new site &amp;lt;path&amp;gt; 
+在指定路径下创建博客站点目录，目录最后是博客站点名
+找到心仪主题 在下面这个网站上找到喜欢的主题，按照各自的文档进行设置
+https://themes.gohugo.io/
+本地预览 hugo server -t hugo-theme-stack --buildDrafts &amp;lt;theme&amp;gt;的位置填写主题的名称
+创建博客 hugo new post/blog.md 博客的markdown文件一开始都是放在\content\post目录下
+创建GitHub/Gitee仓库 Github把仓库命名为&amp;lt;name&amp;gt;.github.io即可开启博客托管服务
+Gitee直接命名为自己的用户名，一字不差，同时需要手动开启Gitee Page服务
+部署到远端仓库  生成\public目录  hugo --theme=hugo-theme-stack --baseUrl=&amp;#34;https://ccqstark.github.io/&amp;#34; --buildDrafts 根据具体仓库修改，也可以是&amp;quot;https://ccqstark.gitee.io/&amp;quot; 然后cd进public目录 在这个目录下创建git仓库，部署也是部署这个目录中的内容
+ 三部曲  git add . git commit -m &amp;#39;...&amp;#39; git push github master 更新博客 要新增一篇博客就继续按下面这个步骤走
+hugo new post/name.md hugo --theme=hugo-theme-stack --baseUrl=&amp;#34;https://ccqstark.github.io/&amp;#34; --buildDrafts cd public git add .</description>
+    </item>
+    
+  </channel>
+</rss>

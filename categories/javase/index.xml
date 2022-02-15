@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>JavaSE on ccq&#39;s blog</title>
+    <link>https://ccqstark.github.io/categories/javase/</link>
+    <description>Recent content in JavaSE on ccq&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 15 Jan 2022 17:13:23 +0800</lastBuildDate><atom:link href="https://ccqstark.github.io/categories/javase/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[并发编程]AQS源码分析</title>
+      <link>https://ccqstark.github.io/p/aqs/</link>
+      <pubDate>Sat, 15 Jan 2022 17:13:23 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/aqs/</guid>
+      <description>简介 AQS（Abstract Queue Synchronizer）在java.util.concurrent.locks包下面，是一个用来构建锁和同步器的框架，使用AQS可以简单高效地构造出大量应用广泛的同步器，比如我们提到的 ReentrantLock，Semaphore，其他的诸如 ReentrantReadWriteLock，SynchronousQueue，FutureTask 等等皆是基于 AQS 的。当然，我们自己也能利用 AQS 非常轻松容易地构造出符合我们自己需求的同步器。
+基本原理   AQS内部维护了一个FIFO的CLH队列，用来对获取资源线程的阻塞和排队。 还使用一个 int 成员变量state来表示同步状态，AQS 使用 CAS 对该同步状态进行原子操作实现对其值的修改。
+private volatile int state; // 共享变量，使用volatile修饰保证线程可见性 状态信息通过 protected 类型的getState()，setState()，compareAndSetState() 进行操作。 不同的自定义同步器争用共享资源的方式也不同，实际上就是对共享资源state的获取与释放方式进行不同的实现，至于具体线程等待队列的维护（如获取资源失败入队/唤醒出队等），AQS已经在顶层实现好了。自定义同步器实现时主要实现以下几种方法：
+  tryAcquire(int)：独占方式。尝试获取资源，成功则返回true，失败则返回false。
+  tryRelease(int)：独占方式。尝试释放资源，成功则返回true，失败则返回false。
+  tryAcquireShared(int)：共享方式。尝试获取资源。负数表示失败；0表示成功，但没有剩余可用资源；正数表示成功，且有剩余资源。
+  tryReleaseShared(int)：共享方式。尝试释放资源，如果释放后允许唤醒后续等待结点返回true，否则返回false。 AQS使用了模板方法的设计模式，用户实现自己的同步组件的时候只需要重写以上几个方法，实现自己对state操作的逻辑，然后这些子类重写的方法就会被AQS顶层的一些方法调用去实现线程排队阻塞唤醒等具体操作。
+实现例子     ReentrantLock：state初始化为0，表示未锁定状态。A线程lock()时，会调用tryAcquire()独占该锁并将state+1。此后，其他线程再tryAcquire()时就会失败，直到A线程unlock()到state=0（即释放锁）为止，其它线程才有机会获取该锁。当然，释放锁之前，A线程自己是可以重复获取此锁的（state会累加），这就是可重入的概念。但要注意，获取多少次就要释放多么次，这样才能保证state是能回到零态的。
+  CountDownLatch：任务分为N个子线程去执行，state也初始化为N，每个子线程执行完后countDown()一次，state会CAS减1。等到所有子线程都执行完后(即state=0)，会唤醒主调用线程，然后主调用线程就会从await()函数返回，继续后续动作。
+锁的分类    独占锁：也就是同一时刻只允许一个线程访问资源，类似写锁。 共享锁：允许多个线程同时访问一个资源，类似读锁。  Node节点状态  CANCELLED(1)：表示当前结点已取消调度。当timeout或被中断（响应中断的情况下），会触发变更为此状态，进入该状态后的结点将不会再变化。 SIGNAL(-1)：表示后继结点在等待当前结点唤醒。后继结点入队时，会将前继结点的状态更新为SIGNAL。 CONDITION(-2)：表示结点等待在Condition上，当其他线程调用了Condition的signal()方法后，CONDITION状态的结点将从等待队列转移到同步队列中，等待获取同步锁。（使用到Condition时才有等待队列的概念，原本的CLH队列是同步队列） PROPAGATE(-3)：共享模式下，前继结点不仅会唤醒其后继结点，同时也可能会唤醒后继的后继结点。共享式同步状态获取将会无条件传播下去。 初始值(0)：新结点入队时的默认状态。   负值表示结点处于有效等待状态，而正值表示结点已被取消。所以源码中很多地方用&amp;gt;0、&amp;lt;0来判断结点的状态是否正常。</description>
+    </item>
+    
+    <item>
+      <title>ConcurrentHashMap源码分析</title>
+      <link>https://ccqstark.github.io/p/concurrenthashmap/</link>
+      <pubDate>Mon, 03 Jan 2022 02:15:23 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/concurrenthashmap/</guid>
+      <description>前言 上篇分析完HashMap之后，这次来分析下ConcurrentHashMap这个并发条件下线程安全的HashMap又有哪些精妙绝伦、惊为天人的设计呢🤔
+ 本文同样主要分析JDK1.8版本的ConcurrentHashMap
+ sizeCtl的作用 这个变量的作用比较复杂，起到标识位作用的同时也可以记录阈值等实际意义，主要有以下几种情况
+   sizeCtl值的情况 意义     0 代表数组未初始化，且数组的初始容量为16   正数 如果数组未初始化，那么其记录的是数组的初始容量；如果数组已经初始化，那么其记录的就是i扩容阈值（数组的初始容量*0.75）   -1 表示数组正在进行初始化   负数且不是-1 表示数组正在扩容，高16位是扩容标识戳，低16位是扩容线程数+1    扰动函数 static final int spread(int h) { // HASH_BITS（01111111111111111111111111111111）保证hash值一定是为正数，因为符号位为0  // 高低位去异或运算，这里和HashMap的类似，让高位参与运算是为了哈希得更均匀  return (h ^ (h &amp;gt;&amp;gt;&amp;gt; 16)) &amp;amp; HASH_BITS; } table数组的初始化 private final Node&amp;lt;K,V&amp;gt;[] initTable() { Node&amp;lt;K,V&amp;gt;[] tab; int sc; while ((tab = table) == null || tab.</description>
+    </item>
+    
+    <item>
+      <title>HashMap源码与扩容机制分析</title>
+      <link>https://ccqstark.github.io/p/hashmap/</link>
+      <pubDate>Sat, 01 Jan 2022 13:58:40 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/hashmap/</guid>
+      <description>本文主要针对JDK1.8进行分析
+ 四个构造方法 // 默认构造函数。 public HashMap() { this.loadFactor = DEFAULT_LOAD_FACTOR; // 其他字段都是默认值 } // 包含另一个“Map”的构造函数 public HashMap(Map&amp;lt;? extends K, ? extends V&amp;gt; m) { this.loadFactor = DEFAULT_LOAD_FACTOR; putMapEntries(m, false); } // 指定“容量大小”的构造函数 public HashMap(int initialCapacity) { this(initialCapacity, DEFAULT_LOAD_FACTOR); } // 指定“容量大小”和“加载因子”的构造函数 public HashMap(int initialCapacity, float loadFactor) { if (initialCapacity &amp;lt; 0) throw new IllegalArgumentException(&amp;#34;Illegal initial capacity: &amp;#34; + initialCapacity); if (initialCapacity &amp;gt; MAXIMUM_CAPACITY) initialCapacity = MAXIMUM_CAPACITY; if (loadFactor &amp;lt;= 0 || Float.</description>
+    </item>
+    
+    <item>
+      <title>红黑树，这次终于拿下了</title>
+      <link>https://ccqstark.github.io/p/red_black_tree/</link>
+      <pubDate>Thu, 30 Dec 2021 00:52:42 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/red_black_tree/</guid>
+      <description>前言 由于最近在看Java的容器，看到HashMap，发现它底层有用到红黑树，想起了一些段子以及很久之前曾经挑战过学习它但是没有成功，于是这次打算再次挑战一波，并写成博客。
+应用场景  JDK的HashMap、TreeMap和TreeSet Linux内核的虚拟内存管理 Nginx的Timer管理 C++的STL  可以看到在实际工程场景中还是用得很多的一种数据结构的。
+五大基本性质 首先红黑树是一颗二叉搜索树，然后再加上下面五大性质：
+ 节点有红色和黑色两种 根节点一定是黑色的 叶子节点（nil节点）都是黑色的 不能有连续的红色节点 任意节点到叶子节点所经过的黑色节点数相同   第5点就是红黑树维持平衡的重要条件，我们常说的达到黑色平衡或者红黑树达到平衡主要说的就是达到这个条件。
+ 如果精力充足的话建议可以再去了解一下2-3-4树，红黑树就是对概念模型2-3-4树的一种实现，这里推荐我当时看的敖丙写的一篇文章，介绍了2-3-4树的概念及其与红黑树的转化，最后介绍了红黑树的简化版——左倾红黑树的插入与删除。
+本质与意义 这一部分要说的就是面试经常问的：为什么有了二查找查找树/平衡树还需要红黑树？
+二叉查找树的缺点 二叉查找树大家应该很熟悉，特点就是左子树的节点都比父节点小，而右子树的节点值都比父节点大。基于这个特点，我们在二叉查找树查找某一个值时，采用类似二分查找的思想，时间复杂度只用O(logn)。
+但是这是正常情况下，因为二叉查找树有可能出现一种极端，就是所有节点都同一方向上（如下图），这个时候二叉搜索树以及近似退化为一条链表了，查找的时间复杂度也顿时变成了O(n) ，那这样的话二叉搜索树也就失去了原本的意义——让搜索变得更快。
+ 
+为了解决这个问题，出现了平衡二叉搜索树（也就是我们常说的AVL树）。
+AVL树 为了解决二叉搜索树可能退化为链表的问题而生，有以下特点：
+ 拥有二叉树的全部特性 每个节点的左子树和右子树的高度差不超过1  由于第二点的约束使得AVL树不会出现大量节点一边倒的情况，但是在AVL树构建的过程中就需要很多额外的操作来保证其符合这个特性，使得其最坏情况下查找的时间复杂度也还是为O(logn)
+为什么有了AVL树还要红黑树？ 虽然AVL树解决了二叉搜索树退化了近似链表的缺点，但是由于每个节点的左子树和右子树的高度差不超过1这个要求实在是太严苛了，导致每次插入和删除节点的时候很容易就破坏了这条规则，之后就需要左大量的左旋和右旋来进行调整时期再次符合AVL树的要求。
+所以如果在插入和删除很频繁的场景中，AVL树需要很频繁地进行调整，这样的话效率就大大降低了，为了解决这个问题所以出现了红黑树。（如果在面试中接下来这里就可以说出红黑树的那5个特点）。
+正由于红黑树的这些特点，使其最坏情况下不仅还能维持用O(logn)的时间复杂度找到某个节点，而且与AVL树相比，优势就在于不会那么频繁地破坏红黑树的规则，从而不用那么频繁地进行调整，这就是我们大多数情况下使用红黑树的原因。
+所以红黑树是一种相对AVL树来说不那么严格的平衡树，也就是一种折中的方案，介于普通的二叉搜索树和AVL树之间。极端情况下左右子树的节点数（也就是深度）相差一倍，也就是左边都有黑节点，右边都是红黑相间，右子树的节点数或者说深度就也是左子树的2倍，这个要求就比AVL树的相差最多只能为1宽松多了，因此调整也就更少，效率也就更高。
+为什么红黑树查找的时间复杂度还能维持在O(logn)？ 我们对最坏情况下的时间复杂度进行计算。
+最坏情况下就是上面说的红黑相间，总节点数=红节点数+黑节点数，红黑节点数一致。
+$$n = n_r + n_b$$
+所以时间复杂度就是
+$$O(2* \log n_b ) = O(2 * \log \frac{n}{2})$$
+常数2直接去掉
+$$O(\log \frac{n}{2}) = O(\log n - 1)$$</description>
+    </item>
+    
+    <item>
+      <title>[并发编程]volatile篇</title>
+      <link>https://ccqstark.github.io/p/concurrent_volatile/</link>
+      <pubDate>Sun, 12 Dec 2021 22:38:19 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/concurrent_volatile/</guid>
+      <description>volatile简介 synchronized在锁竞争激烈的情况下会升级为重量级锁，而volatile是Java虚拟机提供的另一种轻量的同步机制。它会将共享变量从主内存中拷贝到线程自己的工作内存中，然后基于工作内存中的数据进行操作处理。而被volatile修饰的变量经过Java虚拟机的特殊约定，使一个线程对其的修改会立刻被其他线程所感知，就不会出现脏读的现象，从而保证数据的“可见性”。
+相关概念 内存可见性 由于JMM（Java内存模型）是让线程在工作时把共享变量的副本拷贝到线程的本地内存，而不是直接在主存中进行读写。这就可能造成一个线程在主存中修改了一个变量的值，而另外一个线程还继续使用它自己的拷贝副本值，造成数据的不一致。
+ 
+内存可见性，指的是线程之间的可见性，当一个线程修改了共享变量时，另一个线程可以读取到这个修改后的值。
+重排序 为了优化程序的性能，对原有的指令顺序进行重新排序。也就是说在指令层面，执行不一定是按原本顺序一条条执行的。重排序可能发生在多个阶段，比如编译重排序、CPU重排序等。
+happens-before规则 happens-before规则是JVM对程序员作出的一个承诺，它保证指令在多线程之间的顺序性符合程序员的预期，但是实际的代码执行顺序可能是经过重排序的，也就是说JVM保证结果的正确性，实际优化实现则对程序员透明。
+volatile的两个主要功能  保证变量的内存可见性 禁止volatile变量与普通变量重排序  保证可见性的原理（内存语义） 上面说到线程会把共享变量复制一份到自己线程的工作内存进行计算操作，之后再在某个时机写回主内存中，而volatile保证的可见性就是通过通知另外的线程说它拷贝的值是旧的，需要去主内存中去重新读最新的，具体操作如下：
+在生成汇编代码时会在volatile修饰的共享变量进行写操作的时候会多出Lock前缀的指令，这个Lock前缀的指令在多核处理器下主要有两方面影响：
+ 将当前处理器缓存（即CPU缓存，如L1，L2）的数据写回系统内存 这个写回内存的操作回使得其他CPU里缓存来该内存地址的数据无效  在多处理器下，为了保证各个处理器的缓存是一致的，就会实现缓存一致性协议，每个处理器通过嗅探在总线上传播的数据来检查自己缓存的值是不是过期了，当处理器发现自己缓存行对应的内存地址被修改，就会将当前处理器的缓存行设置成无效状态，之后需要对此变量进行操作的时候需要去主存中读取最新值。
+所以volatile可以保证被修饰的变量可以让每个线程都获取它的最新值，也就是保证了可见性。
+阻止重排序的原理 阻止重排序主要靠的是内存屏障 的策略：
+ 在每个volatile写操作前插入一个StoreStore屏障； 在每个volatile写操作后插入一个StoreLoad屏障； 在每个volatile读操作后插入一个LoadLoad屏障； 在每个volatile读操作后再插入一个LoadStore屏障。   
+volatile与普通变量的重排序规则:
+ 如果第一个操作是volatile读，那无论第二个操作是什么，都不能重排序； 如果第二个操作是volatile写，那无论第一个操作是什么，都不能重排序； 如果第一个操作是volatile写，第二个操作是volatile读，那不能重排序。  理解：
+ volatile读就是让当前缓存行的数据失效，重新去主存中读取变量 volatile写就是把当前线程缓存行的变量刷到主存中让别的线程可以读到这个最新的，保证可见性   如果第一个操作是volatile 读，第二个是另外一种操作还进行重排序的话，那肯定不行，因为先volatile读就是为了保证后面的操作拿到的数值是最新的。 如果第二个操作是volatile写，第一个是另外一种操作还进行重排序的话，那肯定也不行，因为我们要保证valatile写更新到主存中的数据是最新的。 第三个很好理解，先把最新数据更新到主存，再去主存中读才能读到最新的。  并发编程的三个重要特性  原子性 : 一个的操作或者多次操作，要么所有的操作全部都得到执行并且不会收到任何因素的干扰而中断，要么都不执行。synchronized 可以保证代码片段的原子性。 可见性 ：当一个线程对共享变量进行了修改，那么另外的线程都是立即可以看到修改后的最新值。volatile 关键字可以保证共享变量的可见性。 有序性 ：代码在执行的过程中的先后顺序，Java 在编译器以及运行期间的优化，代码的执行顺序未必就是编写代码时候的顺序。volatile 关键字可以禁止指令进行重排序优化。  </description>
+    </item>
+    
+    <item>
+      <title>[并发编程]Synchronized优化篇——Java中的各种锁</title>
+      <link>https://ccqstark.github.io/p/concurrent_synchronized_optimization/</link>
+      <pubDate>Sat, 11 Dec 2021 17:09:24 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/concurrent_synchronized_optimization/</guid>
+      <description>synchronized在JDK1.6之后官方对其进行优化，先要了解CAS和Java对象头，再去学习锁的四种状态：无锁、偏向锁、轻量级锁、重量级锁。这篇文章参考了多方资料，算是总结得比较全面，希望可以帮到你。
+CAS CAS操作（又称为无锁操作）是一种乐观锁策略，它假设所有线程访问共享资源的时候不会出现冲突。CAS就是compare and swap ，通过比较内存中当前的值等不等于预期值，如果等于就可以赋值成功，如果不等于说明这个值被修改过了不再是预期的旧值。
+当多个线程使用CAS操作一个变量的时候，只有一个线程会成功，其他的会因为冲突失败，失败后一般就会自旋重试，多次失败后选择挂起线程。
+CAS实现需要硬件指令集的支撑，在JDK1.5后虚拟机才可以使用处理器提供的CMPXCHG 指令实现。
+synchronized和CAS的区别 未优化的Synchronized最主要的问题是：当存在线程竞争的情况下会出现线程阻塞和唤醒带来的开销问题，这是一种阻塞同步（互斥同步）。而CAS不是直接就把线程挂起，在CAS操作失败后会进行一定的重试，而非直接进行耗时的挂起和唤醒等操作，因此叫做非阻塞同步。
+CAS存在的问题   ABA问题
+因为CAS会检测旧的值有没有发生变化，但是假如一个值从A变成了B，然后又变成了A，刚好CAS在检查的时候发现旧值A没有发生变化，但是实际上是发生了变化的。解决办法是添加一个版本号，Java在1.5后的atomic包中提供了AtomicStampedReference来解决ABA问题，思路也是这样的。
+  自旋时间过长
+CAS是非阻塞同步，会自选（死循环）进行下一次尝试，如果自旋时间过长的话对性能又很大影响。
+  只能保证一个共享变量的原子操作
+当CAS对一个变量进行操作时可以保证其原子性，如果对多个变量进行操作就不能保证其原子性，解决办法就是利用对象去整合多个共享变量，然后对整个对象进行CAS操作就可以保证原子性来。atomic包提供来AtomicReference来保证引用对象之间的原子性。
+  Java对象头 Java的锁是基于对象的，而不是基于线程的（所以wait、notify等方法是Object中的不是Thread中的），那锁的存放自然是在对象中，存储在Java的对象头中。
+1字宽在32位处理器中是32位，64位中是64。每个对象都有对象头，非数组类型长度是2个字宽，数组是3个。
+   长度 内容 说明     1字宽 Mark Word 存储对象的hashCode、分代信息、锁信息等   1字宽 Class Metadata Address 存储到对象类型数据的指针   1字宽 Array length 数组的长度（如果是数组）    Mark Word的格式：
+   锁状态 29 bit 或 61 bit 1 bit 是否是偏向锁？ 2 bit 锁标志位     无锁  0 01   偏向锁 线程ID 1 01   轻量级锁 指向栈中锁记录的指针 此时这一位不用于标识偏向锁 00   重量级锁 指向互斥量（重量级锁）的指针 此时这一位不用于标识偏向锁 10   GC标记  此时这一位不用于标识偏向锁 11    当对象状态为偏向锁时，Mark Word存储的是偏向的线程ID；</description>
+    </item>
+    
+    <item>
+      <title>[并发编程]ReentrantLock篇</title>
+      <link>https://ccqstark.github.io/p/concurrent_reentrantlock/</link>
+      <pubDate>Sat, 11 Dec 2021 17:05:58 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/concurrent_reentrantlock/</guid>
+      <description>基本介绍 对于ReentrantLock（重入锁），是常用的Lock接口的一个实现，最主要的是了解他的重入性和公平锁/非公平锁，还有用他于synchronized机械能对比，下面进行具体介绍。
+重入性实现原理 重入性有2个基本特点：
+ 在线程获取锁的时候，如果锁已经存在且锁还是当前线程的，那可以直接再次获取成功 由于锁可以被同一线程获取n次，在释放时同样要释放n次才能把锁完全释放开。  许多同步组件都是通过重写AQS的方法来实现自己的同步功能的，下面以ReentrantLock的非公平锁的源码来解析其重入的实现。核心方法nonfairTryAcquire ：
+final boolean nonfairTryAcquire(int acquires) { final Thread current = Thread.currentThread(); int c = getState(); //1. 如果该锁未被任何线程占有，该锁能被当前线程获取  if (c == 0) { if (compareAndSetState(0, acquires)) { setExclusiveOwnerThread(current); return true; } } //2.若被占有，检查占有线程是否是当前线程  else if (current == getExclusiveOwnerThread()) { // 3. 再次获取，计数加一  int nextc = c + acquires; if (nextc &amp;lt; 0) // overflow  throw new Error(&amp;#34;Maximum lock count exceeded&amp;#34;); setState(nextc); return true; } return false; } 首先是判断当前是否存在锁，如果不存在，那自然可以获取。</description>
+    </item>
+    
+    <item>
+      <title>[并发编程]synchronized篇</title>
+      <link>https://ccqstark.github.io/p/concurrent_synchronized/</link>
+      <pubDate>Sat, 11 Dec 2021 16:56:15 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/concurrent_synchronized/</guid>
+      <description>说一说你对synchronized的理解？ synchronized关键字用于解决多个线程访问临界资源的同步问题，它可以保证同一时刻只有一个线程在操作一个临界资源。
+在Java的早期版本synchronized属于重量级锁，效率低下。因为监视器锁（monitor）是以来于操作系统底层的Mutex Lock来实现的，Java的线程映射到操作系统的原生线程上，要挂起或者唤醒一个线程实现线程的切换，都需要涉及到操作系统的用户态和内核态的转换，开销比较大。
+但是在Java6之后，Java官方在JVM层面对synchronized进行来优化，JDK1.6实现来自旋锁、自适应自旋锁、锁消除、锁粗化、偏向锁、轻量级锁等减少来锁的开销。
+说说synchronized怎么使用的？  加在实例方法上，获取的是当前对象实例的锁 加在静态方法上，获取的是class的锁，不会与实例对象上的锁冲突 加载某一代码块上，可以this来表示要获得当前对象的锁，也可以写类.class表示获取类的锁  使用synchronized实现双重检验锁方法写的单例模式 保证了线程安全
+// 单例：双重校验锁 public class Singleton { private volatile static Singleton instance; private Singleton() { } public static Singleton getUniqueInstance() { if (instance == null) { synchronized (Singleton.class) { if (instance == null) { instance = new Singleton(); } } } return instance; } } 为什么要加双重锁呢，因为instance = new Singleton(); 这段代码其实是分三步执行的：
+ 为instance分配空间 初始化instance 将instance指向分配的内存地址  但是由于JVM有指令重排的特性，执行循序又可能变成1→3→2，多线程环境下有可能导致一个线程获得一个还没有初始化的实例。比如线程A执行了1和3，此时线程B调用getUniqueInstance()后发现instance不为空，但是得到的instance此时还未被初始化。
+使用 volatile 可以禁止 JVM 的指令重排，保证在多线程环境下也能正常运行。</description>
+    </item>
+    
+    <item>
+      <title>[并发编程]基础篇</title>
+      <link>https://ccqstark.github.io/p/concurrent_basic/</link>
+      <pubDate>Sun, 05 Dec 2021 20:20:47 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/concurrent_basic/</guid>
+      <description>什么是进程？什么是线程？ 进程是程序的一次执行过程，是系统运行程序的基本单位，进程是一个系统对一个程序从创建，运行到消亡的过程。
+在Java中，我们启动main函数就是启动了一个JVM的进程，main函数所在线程就是这个进程中的主线程。
+线程是程序的一个更小的执行单位，一个进程在执行过程中可以产生多个线程。不同在与，同类的多个线程可以共享进程的堆和方法区资源，但每个线程有自己的程序计数器、虚拟机栈和本地方法栈，系统在线程之间切换的代价要比进程小得多。
+请简要描述线程与进程的关系,区别及优缺点？ 从JVM的角度说明
+ 
+一个进程中包括多个线程，线程可以共享进程的堆和方法区，但是每个线程都有自己的虚拟机栈，本地方法栈，程序计数器
+线程是进程划分成的更小的运行单位，区别在与进程基本上是各自独立的，而同一进程的不同线程则可能会相互影响。线程开销更小，但是不利于资源的管理和保护；进程则相反。
+程序计数器为什么是私有的？ 程序计数器主要作用：
+ 字节码解释器通过改变程序计数器的位置来读取指令，从而实现代码的流程控制。如：顺序执行、选择、循环、异常处理。 多线程环境下，程序计数器用于记录当前程序的运行到的位置，当从别的线程切换回来的时候才能从上次运行到的位置继续运行。  所以程序计数器私有主要是为了线程切换回来后，能从原来停止的位置正确恢复运行。
+虚拟机栈和本地方法栈为什么是私有的?  虚拟机栈：每个Java方法在执行的同时会创建一个栈帧用于存储局部变量表、函数返回地址和参数、划定栈帧范围的ebp和esp指针等信息。一个方法从被调用到执行完成，就对应着一个栈帧在Java虚拟机中入栈和出栈的过程。 本地方法栈：和虚拟机栈作用差不多，区别在与虚拟机栈为虚拟机执行Java方法（也就是字节码）服务，而本地方法栈则为Native方法用的。在HotSpot虚拟机中两者合二为一。  所以为了保证线程中的局部变量不被别的线程访问到，虚拟机栈和本地方法栈就是线程私有的。
+简单介绍下堆和方法区 堆和方法区都是线程共享的资源。
+堆是进程中最大的一块内存，主要用于存放新创建的对象，几乎所有的对象都在这里分配内存。
+方法区主要用于存放已被加载的类信息、常量、静态变量、即时编译器编译后的代码等数据。
+说说并发和并行的区别？  并行：在单位时间内多个任务同时进程，一般在是多核CPU上出现， 并发：在同一段时间内，多个任务由CPU切换着处理，在某一瞬间是不一定同时处理多个任务的。例外就是当我们CPU使用了因特尔的超线程技术，一个内核被虚拟成2个逻辑内核，当两个任务分别用到CPU的不同运算资源时，比如一个任务计算整数另一个计算浮点数，这个时候就又可能是真的同时进行的。  为什么要使用多线程？ 从总体上说：
+ 从计算机底层的角度，线程是轻量级的进程，是程序执行的最小单位，线程切换的开销要远小于进程的切换，另外多核CPU时代意味着多个线程可以同时运行，再次减少了开销。 从当代互联网的发展趋势角度：现在的系统基本上就动辄百万千万级的并发，多线程技术就是高并发系统的基础，可以大大提高系统整体的性能和并发能力。  从计算机底层来说：
+ 单核时代：如果我们只有一个线程，那请求进程IO就会阻塞我们整个进程，而CPU就会被闲置了，如果由多个线程，那我们可以在一个线程被IO阻塞的时候，用另一个线程继续使用CPU的运算能力，提高系统整体的资源利用效率。 多核时代：如果有多个核心，那多个线程可以映射不同核心上并行执行，在没发生资源争抢的情况下执行效率就会显著提高。  使用多线程可能会带来什么问题？  内存泄漏：ThreadLocal就可能会导致内存泄漏 死锁：两个线程互相占用对方需要的资源并互相等待其释放 线程不安全：多线程访问并修改临界资源  说说线程的生命周期和状态？    状态名称 说明     NEW 初始状态，线程被构建，但是还没有调用start()方法   RUNNABLE 运行状态，Java线程将操作系统中的就绪和运行   BLOCKED 阻塞状态，表示线程阻塞于锁   WAITING 等待状态，表示线程进入等待状态，进入该状态表示当前线程需要等待其它线程作出一些特定动作（通知或中断）   TIME_WAITING 超时等待状态，该状态不同于WAITING，它是可以在指定的时间自行返回的   TERMINATED 终止状态，表示当前线程已经执行完毕    线程随着代码的执行在不同状态之间切换，Java线程状态变迁如下所示：</description>
+    </item>
+    
+    <item>
+      <title>[实战]自己动手编译JDK实录</title>
+      <link>https://ccqstark.github.io/p/compile_jdk/</link>
+      <pubDate>Tue, 27 Jul 2021 03:44:28 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/compile_jdk/</guid>
+      <description>前言 最近在看周志明老师的经典《深入理解Java虚拟机》，第1章最后是一个自己编译JDK的实战，想到羊哥之前也出过这样一期视频，觉得做一做也蛮有成就感的，还可以加深下对Java的理解，所以边做边写下此篇博文。
+环境准备 系统环境 我的环境是macOS10.14.6(黑苹果)，问题相对Windows应该会少很多，推荐大家也是用Linux或者macOS来进行编译。
+ 
+Xcode下载 一些C/C++相关的工具链一般是用Xcode带的，所以去官网下载就行。但是如果像我一样是黑苹果，系统不是最新的，官网的版本很可能不适配（目前最新Xcode 13要求macOS 11以上），所以只能翻到以前百度云里存的Xcode11.xip下载解压并安装就可以了。
+xip文件在解压时需要用系统自带的解压工具，不要用第三方的，不然解压出来不是一个.app文件。
+还有就是解压时可能会遇到系统验证问题，通过以下两步解决：
+ 运行以下命令行  # 最后是xip文件的位置 xattr -d com.apple.quarantine Xcode_11.xip 在系统设置中修改系统的时间约为2018年7月，然后允许任何来源的软件安装。  所有软件环境基础 以下都是编译中需要用到的软件环境，确保都已经安装
+# 有一个已经可用的jdk，版本至少是要编译的版本-1 java -version # 输出 openjdk version &amp;#34;11.0.9&amp;#34; 2020-10-20 OpenJDK Runtime Environment (build 11.0.9+11) OpenJDK 64-Bit Server VM (build 11.0.9+11, mixed mode) # C的编译器 clang --version # 输出 Apple clang version 11.0.0 (clang-1100.0.33.8) Target: x86_64-apple-darwin18.7.0 Thread model: posix InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin # C++的编译器 clang++ --version # 输出 Apple clang version 11.</description>
+    </item>
+    
+    <item>
+      <title>Java注解和反射</title>
+      <link>https://ccqstark.github.io/p/java_annotaion_reflection/</link>
+      <pubDate>Thu, 22 Jul 2021 23:43:42 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/java_annotaion_reflection/</guid>
+      <description>注解 概述 不是程序本身，可以对程序作出解释，可以被其他程序（如编译器等）读取
+可以附加在package、class、method、field等上面，可以通过反射机制编程实现对这些元数据对访问
+内置注解 @Override
+只用修饰方法，表示一个方法声明打算重写超类中的另一个方法声明
+@Deprecated
+可以用于修饰方法，属性，类，表示不鼓励程序猿使用，但是还是可以使用的，只是使用它可能有危险或者存在更好的选择。
+@SuppressWarnings
+用来抑制编译时的警告信息，需要添加一个参数
+ 
+元注解 @Target
+用于描述注解的使用范围
+@Target(value = {ElementType.METHOD, ElementType.TYPE}) @Retention
+表示需要在什么级别保存该注释信息（SOURCE &amp;gt; CLASS &amp;gt; RUNTIME）
+@Retention(value = RetentionPolicy.RUNTIME) @Document 说明该注解将被包含在javadoc中
+@Inherited
+说明子类可以继承父类中的该注解
+自定义注解 使用@interface自定义注解时,自动继承了java. lang.annotation Annotation接口
+@interface用来声明一个注解，格式: public @interface 注解名 { 定义内容 }
+其中的每一个方法实际上是声明了一个配置参数，方法的名称就是参数的名称 返回值类型就是参数的类型(返回值只能是基本类型, Class, String, enum)
+可以通过 default来声明参数的默认值
+如果只有一个参数成员,一般参数名为 value 注解元素必须要有值，我们定义注解元素时，经常使用空字符串和0作为默认值
+@Target({ElementType.TYPE, ElementType.METHOD}) @Retention(RetentionPolicy.RUNTIME) @interface MyAnnotation2 { // 方法名为参数名  String name() default &amp;#34;&amp;#34;; int age() default 0; int id() default -1; // 如果默认值为-1, 代表不存在  String[] schools() default {&amp;#34;西部开源&amp;#34;, &amp;#34;东部闭源&amp;#34;}; } 反射 概述 Java不是动态语言，但是可以通过反射机制获得类似动态语言的特性。</description>
+    </item>
+    
+    <item>
+      <title>一次理解String的不可变性</title>
+      <link>https://ccqstark.github.io/p/string/</link>
+      <pubDate>Tue, 06 Apr 2021 21:07:00 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/string/</guid>
+      <description>今天在看有关StringBuilder和StringBuffer的文章的时候看到里面提及了有关String中的final字段和不可变的性质，发现这个知识点不是很熟悉，去查了很多文章之后整理出这篇。
+新建字符串与缓冲池 新建一个String我们一般有下面2种方式：
+String a = &amp;#34;ok&amp;#34;; String b = new String(&amp;#34;ok&amp;#34;); 这两种写法都可以创建一个String对象。
+第一种用赋值运算符进行字符串初始化时，JVM自动为每个字符串生成一个String类的实例。
+第二种就是创建String类的对象，因为String本来就是一个类，而不是像int和double那样的基本数据类型。
+Java的字符串采用了缓冲池的技术，我们新建一个字符串的时候会去缓冲池寻找是否有已经存在的相同的字符串，如果有的话直接指向它即可；没有的话再创建，缓冲池是在堆里面的。
+如下图，是下面代码的结果：
+// one和two内容相同，指向同一String对象 String one = &amp;#34;someString&amp;#34;; String two = &amp;#34;someString&amp;#34;;   关于更深入的创建对象和之间的比较可以看下面这篇：
+java 字符串缓冲池 String缓冲池_天天的专栏-CSDN博客
+哪里不可变？ 那为什么说String不可变呢？我们明明可以通过给字符串变量赋一个新值来改变它的内容。
+String str = &amp;#34;aaaaaaa&amp;#34;; System.out.println(str); str = &amp;#34;bbbbbbbbb&amp;#34;; System.out.println(str); // 输出 //aaaaaaa //bbbbbbbbb 实际上，当我们给字符串重新赋值的时候，它并不是去改变这个String对象中的字符数组char[] value的值（下面会讲到），而是去缓冲池里寻找有没有已经存在这个值的String对象，有的话就直接指向它，没有的话创建一个对象再指向它。
+  str只是一个引用，指向的String对象是在堆中的。改变字符串的值其实只是改变整个对象的引用。
+而原来的String对象还是在那里没有被改变，之后要是有别的变量赋这个值可以继续指向它。
+为什么不可变？ 我们看下String的部分源码：
+public final class String implements java.io.Serializable, Comparable&amp;lt;String&amp;gt;, CharSequence { /** The value is used for character storage.</description>
+    </item>
+    
+  </channel>
+</rss>

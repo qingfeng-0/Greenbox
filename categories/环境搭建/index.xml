@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>环境搭建 on ccq&#39;s blog</title>
+    <link>https://ccqstark.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/</link>
+    <description>Recent content in 环境搭建 on ccq&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 29 Jan 2021 21:26:00 +0800</lastBuildDate><atom:link href="https://ccqstark.github.io/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[Elastic]ElasticSearch 安全</title>
+      <link>https://ccqstark.github.io/p/x_pack/</link>
+      <pubDate>Fri, 29 Jan 2021 21:26:00 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/x_pack/</guid>
+      <description>ElacticSearch索引中有大量的数据，如果没有一些安全措施的话会让系统处于一个十分危险的处境，引发的相关安全事件可以看看这篇文章。
+你的Elasticsearch在&amp;quot;裸奔&amp;quot;吗？
+而ElaticSearch官方的高级安全服务是收费的，主要给企业提供。但是从6.8和7.1版本开始，基础安全功能就免费了，而且已经集成在里面不用额外安装。
+除此之外诸如Search Guard、ReadonlyREST、Nginx 等开源免费等方法来达到安全的目的，这里介绍的是使用官方的x-pack的基础安全功能，对于小项目来说够用了。
+本文版本为7.10.1
+修改配置文件 在elasticsearch.yml里新增
+xpack.security.enabled:truexpack.security.transport.ssl.enabled:true之后重启 es
+在es目录下执行 elasticsearch-setup-passwords interactive 然后输入多个用户的密码
+Initiating the setup of passwords for reserved users elastic,apm_system,kibana,logstash_system,beats_system,remote_monitoring_user. You will be prompted to enter passwords as the process progresses. Please confirm that you would like to continue [y/N]y Enter password for [elastic]: Reenter password for [elastic]: Passwords do not match. Try again. Enter password for [elastic]: Reenter password for [elastic]: Enter password for [apm_system]: Reenter password for [apm_system]: Enter password for [kibana]: Reenter password for [kibana]: Enter password for [logstash_system]: Reenter password for [logstash_system]: Enter password for [beats_system]: Reenter password for [beats_system]: Enter password for [remote_monitoring_user]: Reenter password for [remote_monitoring_user]: Changed password for user [apm_system] Changed password for user [kibana] Changed password for user [logstash_system] Changed password for user [beats_system] Changed password for user [remote_monitoring_user] Changed password for user [elastic] 其中elastic用户相当与es的root用户，之后使用es和kibana需要这个用户的密码</description>
+    </item>
+    
+    <item>
+      <title>[Elastic]使用logstash同步MySQL数据</title>
+      <link>https://ccqstark.github.io/p/logstash_mysql/</link>
+      <pubDate>Thu, 28 Jan 2021 21:26:00 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/logstash_mysql/</guid>
+      <description>安装logstash 在实际项目中使用es进行搜索，我们就要把mysql数据库中的数据同步到es索引库中。进行这项过程的工具很多，比如go-mysql-elasticsearch，canal等等，当然也可以使用ELK组合中的logsatsh 来完成。这里同样用docker来部署logstash容器。
+拉取镜像 docker pull logstash:7.10.1 启动容器 启动后进入容器内，修改jvm启动的内存设置，地址为/usr/share/logstash/config/jvm.options
+# 修改jvm内存分配 vi jvm.options # 修改下面的参数，单位可以为g和m -Xms256m -Xmx256m 修改后重启容器即可
+下载插件与依赖包 docker exec -it logstash bash 安装logstash-input-jdbc插件
+bin/logstash-plugin install logstash-input-jdbc 如果出现以下ERROR，说明logstash里本身已经包含有这个插件了，就无需安装。7.10.1的版本是已经自带了。
+ERROR: Installation aborted, plugin &amp;#39;logstash-input-jdbc&amp;#39; is already provided by &amp;#39;logstash-integration-jdbc&amp;#39; 下载mysql-connector-java，也就是jdbc驱动
+MySQL官方下载地址：https://downloads.mysql.com/archives/c-j/
+下载对应版本后本地解压，上传到服务器，然后用docker cp命令复制到logstash容器中
+只需要其中的jar包即可
+# 把文件复制到容器内 docker cp [jar包路径] logstash:[容器内路径] 在/usr/share/logstash目录下新建mysql/目录，把jar包复制到这里
+同步配置文件 在刚刚的mysql目录下新建jdbc.conf 文件，来配置同步操作
+ 单表同步  input { jdbc { # jar包的绝对路径 jdbc_driver_library =&amp;gt; &amp;#34;/usr/share/logstash/mysql/mysql-connector-java-5.1.48.jar&amp;#34; jdbc_driver_class =&amp;gt; &amp;#34;com.mysql.jdbc.Driver&amp;#34; # 数据库连接信息 jdbc_connection_string =&amp;gt; &amp;#34;jdbc:mysql://[ip]:3306/[库名]?</description>
+    </item>
+    
+    <item>
+      <title>[Elastic]使用docker安装ElasticSearch &#43; Kibana</title>
+      <link>https://ccqstark.github.io/p/es_docker/</link>
+      <pubDate>Wed, 27 Jan 2021 21:26:00 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/es_docker/</guid>
+      <description>安装ElasticSearch 拉取镜像 docker pull elasticsearch:7.10.1 启动容器 同时挂载目录（包括配置文件和data）（挂载出来的位置自己定义）
+docker run --name elasticsearch -p 9200:9200 -p 9300:9300 -e ES_JAVA_OPTS=&amp;#34;-Xms256m -Xmx256m&amp;#34; -d \ -v /home/es/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml \ -v /home/es/data:/usr/share/elasticsearch/data elasticsearch:7.10.1 注意这里还设置了JVM的内存大小，默认为2G，有点大，很可能会因为内存不够而无法正常启动。可以像我这里改为256m或者其他值。
+可能出现的错误 查看容器日志
+docker logs elasticsearch 如果出现以下错误
+max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144] 则要修改服务器配置
+vim /etc/sysctl.conf 添加这行
+vm.max_map_count=262144 立即生效, 执行：
+/sbin/sysctl -p 对挂载的宿主机data目录可能出现权限不足问题
+chmod 777 [宿主机data目录] 配置跨域 到挂载出来到位置编辑配置文件
+vim elasticsearch.yml 添加以下几行
+network.host:0.0.0.0discovery.type:single-nodehttp.cors.enabled:truehttp.cors.allow-origin:&amp;#34;*&amp;#34;同时安全组和防火墙记得打开对应端口
+记得每次修改完配置都要重启 docker restart elasticsearch 浏览器访问测试 http://[IP]:9200 看到类似以下的json就成功了</description>
+    </item>
+    
+    <item>
+      <title>Jenkins &#43; docker &#43; springboot 完美配合全流程教程</title>
+      <link>https://ccqstark.github.io/p/jenkins_docker_springboot/</link>
+      <pubDate>Sat, 09 Jan 2021 23:01:00 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/jenkins_docker_springboot/</guid>
+      <description>DevOps现在非常流行，CI/CD持续集成、持续部署也大火，而Jenkins就是自动化部署主要的工具之一。
+这篇博客就来详细介绍用jenkins来实现自动化部署springboot项目的docker容器，堪称保姆级教学了。
+用docker拉取jenkins镜像，启动Jenkins容器 这里采用的jenkins本身也是用docker容器部署的，不得不说docker确实好用，当然也可以直接运行在主机上
+首先拉取Jenkins镜像 docker pull jenkins/jenkins ⚠️注意：切勿docker pull jenkins，已经废弃
+启动Jenkins容器 docker run -u root -itd --name jenkins \ -p 6001:8080 \ -v $(which docker):/usr/bin/docker \ -v /var/run/docker.sock:/var/run/docker.sock -e TZ=&amp;#34;Asia/Shanghai&amp;#34; \ -v /etc/localtime:/etc/localtime:ro \ -v /volume1/docker/jenkins:/var/jenkins_home \ jenkins/jenkins  -p 6001:8080Jenkins默认网页访问端口为8080，将端口映射到外部主机6001端口 -v $(which docker):/usr/bin/docker -v /var/run/docker.sock:/var/run/docker.sock使Jenkins内部可以使用docker命令 -e TZ=&amp;quot;Asia/Shanghai&amp;quot; -v /etc/localtime:/etc/localtime:ro配置Jenkins容器的时区 -v /volume1/docker/jenkins:/var/jenkins_home 将Jenkins的配置映射到外部主机卷，容器删除仍可保留配置  测试Jenkins容器内部 # 进入Jenkins的容器内部 docker exec -it jenkins bash # 判断docker命令是否正常执行 docker info 访问Jenkins网页端 用http://主机IP:6001 就可以访问Jenkins的网页端了</description>
+    </item>
+    
+    <item>
+      <title>[docker]用docker部署nginx</title>
+      <link>https://ccqstark.github.io/p/docker_nginx/</link>
+      <pubDate>Fri, 08 Jan 2021 15:46:00 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/docker_nginx/</guid>
+      <description>如果是单体应用的话nginx用docker部署其实是更麻烦的，不过既然操作过就记录一下。
+拉取nginx镜像 docker pull nginx 还是一样，默认是拉取latest版本，也可以选择想要的特定版本
+启动并挂载html目录 docker container run \  -d \  -p 80:80 \  --name mynginx \  --v [本机挂载目录]:/usr/share/nginx/html \  nginx 复制出配置文件 docker container cp mynginx:/etc/nginx . 将复制出来的文件夹改名并移动到你想要的目录下，然后把容器停止并删除
+挂载配置文件目录 最后一步就是重新启动一个容器并把html和配置文件目录都挂载了
+docker run \  --name test-nginx \  -v [本机挂载html目录]:/usr/share/nginx/html \  -v [本机挂载nginx目录]:/etc/nginx \  -p 80:80 \  -d \  nginx 访问一下试试就可以了！
+参考：
+Nginx 容器教程</description>
+    </item>
+    
+    <item>
+      <title>[docker]用docker部署SpringBoot项目</title>
+      <link>https://ccqstark.github.io/p/docker_springboot/</link>
+      <pubDate>Thu, 07 Jan 2021 21:39:00 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/docker_springboot/</guid>
+      <description>这篇文章介绍的是把整个Springboot后端项目部署到docker容器中，当然包括mysql和redis
+按下面步骤一步步来
+本地打出jar包 以Maven的话直接就IDEA里打出jar包到target目录下，这一步和以前一样
+编写Dockerfile 可以用IDEA里的插件来写，也可以自己写dockerfile
+在项目文件夹下新建一个文件Dockerfile
+FROMopenjdk:8MAINTAINERccqstarkADD /target/[项目jar包名].jar app.jarEXPOSE8080ENTRYPOINT [&amp;#34;java&amp;#34;,&amp;#34;-jar&amp;#34;,&amp;#34;/app.jar&amp;#34;]⚠️注意：ADD后两个参数，第一个是项目jar包的相对路径，第二是把jar包在容器内重新命的名
+构建镜像 在Dockerfile所在文件夹下运行build 命令，注意最后有一个.
+docker build -f Dockerfile -t [镜像名]:[版本tag] .构建之后用docker images 查看一下自己构架的镜像
+构建完之后本地run一下容器测试下
+push上传到镜像仓库 其实也可以把jar包上传服务器后用服务器的docker来构建和运行
+但这里采用的是把本地构建的镜像上传到repository，相当于镜像仓库，其他人想用这个镜像就可以从那拉取下来使用。
+repository可以是官方的Docker Hub，但是比较慢，也可以花钱上传到阿里云的容器镜像服务就会快很多
+这里是上传到docker hub，首先要登陆自己到docker账号，没有的话可以去官网注册一个
+docker login -u [账户名] 输入密码成功后登陆
+在push之前要给镜像打个tag，这样才能上传到自己账号对应的仓库下
+docker tag [镜像名] [账户名]/[镜像仓库名]:latest 之后就可以上传了
+docker push [账户名]/[镜像仓库名]:latest pull拉取镜像 docker pull [账户名]/[镜像仓库名]:[tag] 在服务器上拉取到镜像后就可以启动容器了
+docker run -it -d -p [对外暴露端口]:8080 app:[tag] 部署MySQL容器 # 拉取mysql镜像 docker pull mysql:5.7 # 跑起来 docker run \ -d \ -p 3306:3306 \ -v /home/mysql/conf:/etc/mysql/conf.</description>
+    </item>
+    
+    <item>
+      <title>[docker]初识Dockerfile</title>
+      <link>https://ccqstark.github.io/p/dockerfile/</link>
+      <pubDate>Wed, 06 Jan 2021 21:13:00 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/dockerfile/</guid>
+      <description>Dockerfile介绍 dockfile是用来构建docker镜像的文件，命令参数脚本
+💡构建步骤：
+ 编写dockerfile脚本 用docker build命令构建一个镜像 用docker run运行镜像 用docker push发布镜像（DockerHub、阿里云仓库）  在官网点击镜像会跳转到github对应的dockerfile
+可以发现这些镜像也是通过dockerfile来构建的
+  上图是centos的dockerfile，其中scratch是最基本的，90%都是基于这个镜像。
+然后ADD 就是添加来一层centos相关的镜像文件
+官方很多镜像都是基础包，功能很少，很多我们需要的都没有，所以我们通常都会构建自己的镜像。
+比如我们可以直接构建一个centos+jdk+tomcat+mysql的镜像，不就直接有来一个可以运行javaweb项目的环境镜像了吗？
+Dockerfile构建过程 基本规则  每个关键字（保留字）都是大写的 执行顺序是从上到下的 &amp;ldquo;#&amp;rdquo; 表示注释 每一个指令都会创建一个新的镜像层，并提交    以前开发交付都是用jar包或war包，现在云原生时代交付的就是docker镜像，docker镜像也逐渐成为企业交付标准，而构建docker镜像就需要学会编写dockerfile
+什么是云原生？聊聊云原生的今生_阿里云开发者-CSDN博客
+Dockerfile常用指令    指令关键字 作用     FROM 构建镜像所用的基础镜像   MAINTAINER 镜像作者，一般是姓名+邮箱   RUN 镜像构建时运行的命令   ADD 为镜像添加内容   WORKDIR 镜像的工作目录   VOLUME 挂载目录   EXPOSE 暴露的端口   CMD 容器启动时需要运行的命令，只有最后一个会生效，可被替代   ENTRYPOINT 也是指定启动时需要运行的命令，但是可以追加   ONBUILD 构建一个被继承的dockerfile时会运行ONBUILD的指令。触发指令   COPY 类似ADD，将文件拷贝到镜像中   ENV 构建时设置的环境变量    实践：构建自己的centos 举个例子：</description>
+    </item>
+    
+    <item>
+      <title>[docker]容器数据卷</title>
+      <link>https://ccqstark.github.io/p/docker_volumes/</link>
+      <pubDate>Wed, 06 Jan 2021 16:51:00 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/docker_volumes/</guid>
+      <description>把容器内的目录挂载到宿主机的某一个目录下，实现双向同步。
+也就是说两者都指向了同一文件目录下，在其中一端所做的修改都会同步。
+好处：
+ MySQL数据持久化，不会因为删了容器就没了 方便修改文件，比如nginx的配置文件  基本使用 bind mounts 以启动一个centos容器为例
+docker run -it -v [宿主机目录]:[容器内目录] centos /bin/bash -it ：-t选项让Docker分配一个伪终端（pseudo-tty）并绑定到容器的标准输入上， -i 则让容器的标准输入保持打开，通常写成-it
+-v ：挂载卷所需参数，后面的映射是[宿主机目录]:[容器内目录]
+用此命令查看容器参数
+docker inspect [容器id]   如上图，在Mounts 字段中可以看到：
+Source 表示宿主机中被映射的目录
+Destination 表示容器内要映射的目录
+这种挂载方式称为bind mounts
+实践：MySQL挂载 拉取mysql镜像 docker search mysql docker pull mysql:5.7 启动容器 -d 后台运行
+-p 端口映射
+-v 数据卷挂载
+—name 容器名字
+docker run \ -d \ -p 3310:3306 \ -v /home/mysql/conf:/etc/mysql/conf.d \ -v /home/mysql/data:/var/lib/mysql \ -e MYSQL_ROOT_PASSWORD=[你配置的mysql密码] \ --name [容器名] \ mysql:5.</description>
+    </item>
+    
+    <item>
+      <title>php后台开发基础环境搭建教程</title>
+      <link>https://ccqstark.github.io/p/php_env/</link>
+      <pubDate>Sat, 10 Oct 2020 11:39:00 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/php_env/</guid>
+      <description>“工欲善其事，必先利其器”，作为后端搬砖工，我们敲代码之前需要给我们的电脑配上所需的软件环境，这样我们写的代码才能跑起来，原地起飞！
+下载集成环境工具 可以选择xampp或phpenv（二选一就行）
+xampp xampp = Apache + MySQL(MariaDB) + PHP + Perl，是一个集成环境软件，装了一个就可以轻松获得服务器，数据库和php语言的环境，轻松快捷而且免费，唯一的缺点可能是因为是外网所以速度稍慢或者可能需要科学上网
+官网下载：https://www.apachefriends.org/zh_cn/index.html
+选择自己的平台，然后点击下载，完成后运行exe
+按普通安装步骤来就好，下面这个界面也默认选择就好，有些环境之后会用到
+ 
+安装路径建议安装在D盘，然后等待安装完成就可以了，打开软件看到主面板
+ 
+点击Apache和start按钮，等待图标变绿后再点击admin按钮或者浏览器地址栏输入localhost进行访问
+如果可以看到服务器主页面说明成功
+然后点击MySQL的start和admin，或者地址栏输入localhost/phpmyadmin/
+出现一个登录界面，账号填写root，密码为空不用填，直接点击登录，出现下面画面说明成功
+ 
+phpEnv 如果xampp实在太慢或者根本无法下载，也可以用phpEnv
+官网下载：https://www.phpenv.cn/
+根据你电脑是64位或者32位进行选择对应版本下载，如果不知道自己电脑是几位的可以点击教程查看
+同样建议放在D盘，其它的默认就行，运行后出现下面界面
+ 
+点击启动服务上面的图标，再点击打开主页的图标，看到phpEnv的主页面就说明成功了
+页面拉到最下面如下
+ 
+数据库端口填3306
+用户名填root
+密码也填root（注意：这里和xampp不一样）
+点击连接按钮后再把页面拉到最下面显示连接成功就行啦
+点击顶部菜单栏的开始，再点击phpMyAdmin，然后按上面xampp的对应内容操作就行
+安装IDE IDE(Integrated Development Environment)，集成开发环境，为开发者提供了基本的代码编辑器的同时还提供了许多适用工具，功能强大，是码农开发的利器。
+php语言我们使用的比较多的是JetBrains公司出的PhpStorm
+官网下载：https://www.jetbrains.com/phpstorm/
+软件体积较大，如果你不想装它的话可以自己下载VSCode然后下载相应插件（自己查）
+由于软件是收费的，但是我们是学生，可以用学校给的邮箱进行学生认证就可以在毕业前都免费使用
+学生认证地址：https://www.jetbrains.com/community/education/#students
+学校邮箱获取方法 进入学校官网，进入智慧广外，	在个人事务中可以看到自己的邮箱地址，一般是学号@gdufs.edu.cn
+ 
+下载破解版也可以，但可能比较花时间
+按步骤完成后打开phpstorm，进行下面的配置流程
+1. 新建一个项目  
+2. 选择创建路径 建议把目录建在集成环境指定的网络根目录下，目录路径如下（以安装在D盘为例）：
+xampp：D:\xampp\htdocs
+phpEnv：D:\phpEnv\www\localhost</description>
+    </item>
+    
+  </channel>
+</rss>

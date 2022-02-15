@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>JavaEE on ccq&#39;s blog</title>
+    <link>https://ccqstark.github.io/categories/javaee/</link>
+    <description>Recent content in JavaEE on ccq&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 11 Dec 2021 17:09:24 +0800</lastBuildDate><atom:link href="https://ccqstark.github.io/categories/javaee/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[并发编程]Synchronized优化篇——Java中的各种锁</title>
+      <link>https://ccqstark.github.io/p/concurrent_synchronized_optimization/</link>
+      <pubDate>Sat, 11 Dec 2021 17:09:24 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/concurrent_synchronized_optimization/</guid>
+      <description>synchronized在JDK1.6之后官方对其进行优化，先要了解CAS和Java对象头，再去学习锁的四种状态：无锁、偏向锁、轻量级锁、重量级锁。这篇文章参考了多方资料，算是总结得比较全面，希望可以帮到你。
+CAS CAS操作（又称为无锁操作）是一种乐观锁策略，它假设所有线程访问共享资源的时候不会出现冲突。CAS就是compare and swap ，通过比较内存中当前的值等不等于预期值，如果等于就可以赋值成功，如果不等于说明这个值被修改过了不再是预期的旧值。
+当多个线程使用CAS操作一个变量的时候，只有一个线程会成功，其他的会因为冲突失败，失败后一般就会自旋重试，多次失败后选择挂起线程。
+CAS实现需要硬件指令集的支撑，在JDK1.5后虚拟机才可以使用处理器提供的CMPXCHG 指令实现。
+synchronized和CAS的区别 未优化的Synchronized最主要的问题是：当存在线程竞争的情况下会出现线程阻塞和唤醒带来的开销问题，这是一种阻塞同步（互斥同步）。而CAS不是直接就把线程挂起，在CAS操作失败后会进行一定的重试，而非直接进行耗时的挂起和唤醒等操作，因此叫做非阻塞同步。
+CAS存在的问题   ABA问题
+因为CAS会检测旧的值有没有发生变化，但是假如一个值从A变成了B，然后又变成了A，刚好CAS在检查的时候发现旧值A没有发生变化，但是实际上是发生了变化的。解决办法是添加一个版本号，Java在1.5后的atomic包中提供了AtomicStampedReference来解决ABA问题，思路也是这样的。
+  自旋时间过长
+CAS是非阻塞同步，会自选（死循环）进行下一次尝试，如果自旋时间过长的话对性能又很大影响。
+  只能保证一个共享变量的原子操作
+当CAS对一个变量进行操作时可以保证其原子性，如果对多个变量进行操作就不能保证其原子性，解决办法就是利用对象去整合多个共享变量，然后对整个对象进行CAS操作就可以保证原子性来。atomic包提供来AtomicReference来保证引用对象之间的原子性。
+  Java对象头 Java的锁是基于对象的，而不是基于线程的（所以wait、notify等方法是Object中的不是Thread中的），那锁的存放自然是在对象中，存储在Java的对象头中。
+1字宽在32位处理器中是32位，64位中是64。每个对象都有对象头，非数组类型长度是2个字宽，数组是3个。
+   长度 内容 说明     1字宽 Mark Word 存储对象的hashCode、分代信息、锁信息等   1字宽 Class Metadata Address 存储到对象类型数据的指针   1字宽 Array length 数组的长度（如果是数组）    Mark Word的格式：
+   锁状态 29 bit 或 61 bit 1 bit 是否是偏向锁？ 2 bit 锁标志位     无锁  0 01   偏向锁 线程ID 1 01   轻量级锁 指向栈中锁记录的指针 此时这一位不用于标识偏向锁 00   重量级锁 指向互斥量（重量级锁）的指针 此时这一位不用于标识偏向锁 10   GC标记  此时这一位不用于标识偏向锁 11    当对象状态为偏向锁时，Mark Word存储的是偏向的线程ID；</description>
+    </item>
+    
+    <item>
+      <title>[并发编程]ReentrantLock篇</title>
+      <link>https://ccqstark.github.io/p/concurrent_reentrantlock/</link>
+      <pubDate>Sat, 11 Dec 2021 17:05:58 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/concurrent_reentrantlock/</guid>
+      <description>基本介绍 对于ReentrantLock（重入锁），是常用的Lock接口的一个实现，最主要的是了解他的重入性和公平锁/非公平锁，还有用他于synchronized机械能对比，下面进行具体介绍。
+重入性实现原理 重入性有2个基本特点：
+ 在线程获取锁的时候，如果锁已经存在且锁还是当前线程的，那可以直接再次获取成功 由于锁可以被同一线程获取n次，在释放时同样要释放n次才能把锁完全释放开。  许多同步组件都是通过重写AQS的方法来实现自己的同步功能的，下面以ReentrantLock的非公平锁的源码来解析其重入的实现。核心方法nonfairTryAcquire ：
+final boolean nonfairTryAcquire(int acquires) { final Thread current = Thread.currentThread(); int c = getState(); //1. 如果该锁未被任何线程占有，该锁能被当前线程获取 	if (c == 0) { if (compareAndSetState(0, acquires)) { setExclusiveOwnerThread(current); return true; } } //2.若被占有，检查占有线程是否是当前线程  else if (current == getExclusiveOwnerThread()) { // 3. 再次获取，计数加一  int nextc = c + acquires; if (nextc &amp;lt; 0) // overflow  throw new Error(&amp;#34;Maximum lock count exceeded&amp;#34;); setState(nextc); return true; } return false; } 首先是判断当前是否存在锁，如果不存在，那自然可以获取。</description>
+    </item>
+    
+    <item>
+      <title>[并发编程]synchronized篇</title>
+      <link>https://ccqstark.github.io/p/concurrent_synchronized/</link>
+      <pubDate>Sat, 11 Dec 2021 16:56:15 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/concurrent_synchronized/</guid>
+      <description>说一说你对synchronized的理解？ synchronized关键字用于解决多个线程访问临界资源的同步问题，它可以保证同一时刻只有一个线程在操作一个临界资源。
+在Java的早期版本synchronized属于重量级锁，效率低下。因为监视器锁（monitor）是以来于操作系统底层的Mutex Lock来实现的，Java的线程映射到操作系统的原生线程上，要挂起或者唤醒一个线程实现线程的切换，都需要涉及到操作系统的用户态和内核态的转换，开销比较大。
+但是在Java6之后，Java官方在JVM层面对synchronized进行来优化，JDK1.6实现来自旋锁、自适应自旋锁、锁消除、锁粗化、偏向锁、轻量级锁等减少来锁的开销。
+说说synchronized怎么使用的？  加在实例方法上，获取的是当前对象实例的锁 加在静态方法上，获取的是class的锁，不会与实例对象上的锁冲突 加载某一代码块上，可以this来表示要获得当前对象的锁，也可以写类.class表示获取类的锁  使用synchronized实现双重检验锁方法写的单例模式 保证了线程安全
+// 单例：双重校验锁 public class Singleton { private volatile static Singleton instance; private Singleton() { } public static Singleton getUniqueInstance() { if (instance == null) { synchronized (Singleton.class) { if (instance == null) { instance = new Singleton(); } } } return instance; } } 为什么要加双重锁呢，因为instance = new Singleton(); 这段代码其实是分三步执行的：
+ 为instance分配空间 初始化instance 将instance指向分配的内存地址  但是由于JVM有指令重排的特性，执行循序又可能变成1→3→2，多线程环境下有可能导致一个线程获得一个还没有初始化的实例。比如线程A执行了1和3，此时线程B调用getUniqueInstance()后发现instance不为空，但是得到的instance此时还未被初始化。
+使用 volatile 可以禁止 JVM 的指令重排，保证在多线程环境下也能正常运行。</description>
+    </item>
+    
+    <item>
+      <title>[并发编程]基础篇</title>
+      <link>https://ccqstark.github.io/p/concurrent_basic/</link>
+      <pubDate>Sun, 05 Dec 2021 20:20:47 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/concurrent_basic/</guid>
+      <description>什么是进程？什么是线程？ 进程是程序的一次执行过程，是系统运行程序的基本单位，进程是一个系统对一个程序从创建，运行到消亡的过程。
+在Java中，我们启动main函数就是启动了一个JVM的进程，main函数所在线程就是这个进程中的主线程。
+线程是程序的一个更小的执行单位，一个进程在执行过程中可以产生多个线程。不同在与，同类的多个线程可以共享进程的堆和方法区资源，但每个线程有自己的程序计数器、虚拟机栈和本地方法栈，系统在线程之间切换的代价要比进程小得多。
+请简要描述线程与进程的关系,区别及优缺点？ 从JVM的角度说明
+ 
+一个进程中包括多个线程，线程可以共享进程的堆和方法区，但是每个线程都有自己的虚拟机栈，本地方法栈，程序计数器
+线程是进程划分成的更小的运行单位，区别在与进程基本上是各自独立的，而同一进程的不同线程则可能会相互影响。线程开销更小，但是不利于资源的管理和保护；进程则相反。
+程序计数器为什么是私有的？ 程序计数器主要作用：
+ 字节码解释器通过改变程序计数器的位置来读取指令，从而实现代码的流程控制。如：顺序执行、选择、循环、异常处理。 多线程环境下，程序计数器用于记录当前程序的运行到的位置，当从别的线程切换回来的时候才能从上次运行到的位置继续运行。  所以程序计数器私有主要是为了线程切换回来后，能从原来停止的位置正确恢复运行。
+虚拟机栈和本地方法栈为什么是私有的?  虚拟机栈：每个Java方法在执行的同时会创建一个栈帧用于存储局部变量表、函数返回地址和参数、划定栈帧范围的ebp和esp指针等信息。一个方法从被调用到执行完成，就对应着一个栈帧在Java虚拟机中入栈和出栈的过程。 本地方法栈：和虚拟机栈作用差不多，区别在与虚拟机栈为虚拟机执行Java方法（也就是字节码）服务，而本地方法栈则为Native方法用的。在HotSpot虚拟机中两者合二为一。  所以为了保证线程中的局部变量不被别的线程访问到，虚拟机栈和本地方法栈就是线程私有的。
+简单介绍下堆和方法区 堆和方法区都是线程共享的资源。
+堆是进程中最大的一块内存，主要用于存放新创建的对象，几乎所有的对象都在这里分配内存。
+方法区主要用于存放已被加载的类信息、常量、静态变量、即时编译器编译后的代码等数据。
+说说并发和并行的区别？  并行：在单位时间内多个任务同时进程，一般在是多核CPU上出现， 并发：在同一段时间内，多个任务由CPU切换着处理，在某一瞬间是不一定同时处理多个任务的。例外就是当我们CPU使用了因特尔的超线程技术，一个内核被虚拟成2个逻辑内核，当两个任务分别用到CPU的不同运算资源时，比如一个任务计算整数另一个计算浮点数，这个时候就又可能是真的同时进行的。  为什么要使用多线程？ 从总体上说：
+ 从计算机底层的角度，线程是轻量级的进程，是程序执行的最小单位，线程切换的开销要远小于进程的切换，另外多核CPU时代意味着多个线程可以同时运行，再次减少了开销。 从当代互联网的发展趋势角度：现在的系统基本上就动辄百万千万级的并发，多线程技术就是高并发系统的基础，可以大大提高系统整体的性能和并发能力。  从计算机底层来说：
+ 单核时代：如果我们只有一个线程，那请求进程IO就会阻塞我们整个进程，而CPU就会被闲置了，如果由多个线程，那我们可以在一个线程被IO阻塞的时候，用另一个线程继续使用CPU的运算能力，提高系统整体的资源利用效率。 多核时代：如果有多个核心，那多个线程可以映射不同核心上并行执行，在没发生资源争抢的情况下执行效率就会显著提高。  使用多线程可能会带来什么问题？  内存泄漏：ThreadLocal就可能会导致内存泄漏 死锁：两个线程互相占用对方需要的资源并互相等待其释放 线程不安全：多线程访问并修改临界资源  说说线程的生命周期和状态？    状态名称 说明     NEW 初始状态，线程被构建，但是还没有调用start()方法   RUNNABLE 运行状态，Java线程将操作系统中的就绪和运行   BLOCKED 阻塞状态，表示线程阻塞于锁   WAITING 等待状态，表示线程进入等待状态，进入该状态表示当前线程需要等待其它线程作出一些特定动作（通知或中断）   TIME_WAITING 超时等待状态，该状态不同于WAITING，它是可以在指定的时间自行返回的   TERMINATED 终止状态，表示当前线程已经执行完毕    线程随着代码的执行在不同状态之间切换，Java线程状态变迁如下所示：</description>
+    </item>
+    
+    <item>
+      <title>Java单元测试利器——Mockito</title>
+      <link>https://ccqstark.github.io/p/mockito/</link>
+      <pubDate>Mon, 30 Aug 2021 12:34:20 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/mockito/</guid>
+      <description>Mock介绍 基本介绍 为了提高代码质量，除了做静态代码测试，动态的单元测试也少不了。而在单元测试过程中，Mock是少不了的技术。
+Mock是允许用模拟对象替换测试中的系统部件，并断言它们是如何被使用的一项技术。
+Mock的作用如下  解决依赖问题：当测试一个接口或者功能模块的时候，如果这个接口或者功能模块依赖其他接口或其他模块，那么如果所依赖的接口或功能模块未开发完毕，那么我们就可以使用Mock模拟被依赖接口，完成目标接口的测试。 单元测试：如果某个功能未开发完成，又要进行测试用例的代码编写，也可以先模拟这个功能进行测试。 模拟复杂业务的接口：实际工作中如果我们在测试一个接口功能时，如果这个接口依赖一个非常复杂的接口业务或者来源于第三方接口（如第三方支付接口），那么我们完全可以使用Mock来模拟这个复杂的业务接口，其实这个和解决接口依赖是一样的原理。 前后端联调：进行前后端分离编程时，如果进行一个前端页面开发，需要根据后合返回的状态展示不同的页面，那么就需要调用后合的接口，但是后合接口还未开发完成，完全可以借助mock来模拟后台这个接口返回想要的数据。  Mock与Stub(桩)  桩代码(Stub)：用来代替真实代码的临时代码，主要作用是使被测代码能够独立编译、 链接，并独立运行 Mock代码：也是用来代替真实代码的临时代码，起到隔离和补齐的作用，但是它还可深入的模拟对象之间的交互方式，可以对结果进行验证  Mockito测试框架 Mockito是Java单元测试中使用率最高的Mock框架之一，同时也是SpringBoot默认引入的mock框架(spring-boot-starter-test包括JUnit, Hamcrest 和 Mockito)
+Maven依赖 &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;org.mockito&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;mockito-core&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;3.12.4&amp;lt;/version&amp;gt; &amp;lt;scope&amp;gt;test&amp;lt;/scope&amp;gt; &amp;lt;/dependency&amp;gt; 验证某些行为是否被调用 Mockito可以验证某些行为：一旦mock对象被创建了，mock对象会记住所有的交互
+使用方法verify() 判断方法是否被调用过
+@Test void verifyTest(){ Person mockPerson = Mockito.mock(Person.class); mockPerson.setId(1); Mockito.verify(mockPerson).setId(1); Mockito.verify(mockPerson).setName(&amp;#34;cc&amp;#34;); // 此方法没有调用过，所以会报错 } 测试桩Stub Mockito可以做一些测试桩（Stub），做测试桩的目的是为了在某些方法还没有开发出来，但我们测试时却需要调用它的时候，给这个方法模拟一个假的返回值供我们测试用。
+默认情况下，所有函数都有返回值。mock函数默认返回的是null，一个空的集合或者一个被对象类型包装的内置类型。
+当我们要指定某的函数的返回值时，可以使用when() 和 ThenReturn() 、ThenThrow() 方法
+之后调用这些函数时，就会返回我们上面指定的值（注意返回类型也要正确）
+@Test void stubTest(){ Person mockPerson = Mockito.mock(Person.class); Mockito.when(mockPerson.getId()).thenReturn(1); Mockito.when(mockPerson.getName()).thenThrow(new NoSuchMethodError()); System.out.println(mockPerson.getId()); // 返回1  System.out.println(mockPerson.getName()); // 抛出异常NoSuchMethodError } 一个方法可能多次调用，想要每次调用都设置对应返回值也是可以的</description>
+    </item>
+    
+    <item>
+      <title>Java注解和反射</title>
+      <link>https://ccqstark.github.io/p/java_annotaion_reflection/</link>
+      <pubDate>Thu, 22 Jul 2021 23:43:42 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/java_annotaion_reflection/</guid>
+      <description>注解 概述 不是程序本身，可以对程序作出解释，可以被其他程序（如编译器等）读取
+可以附加在package、class、method、field等上面，可以通过反射机制编程实现对这些元数据对访问
+内置注解 @Override
+只用修饰方法，表示一个方法声明打算重写超类中的另一个方法声明
+@Deprecated
+可以用于修饰方法，属性，类，表示不鼓励程序猿使用，但是还是可以使用的，只是使用它可能有危险或者存在更好的选择。
+@SuppressWarnings
+用来抑制编译时的警告信息，需要添加一个参数
+ 
+元注解 @Target
+用于描述注解的使用范围
+@Target(value = {ElementType.METHOD, ElementType.TYPE}) @Retention
+表示需要在什么级别保存该注释信息（SOURCE &amp;gt; CLASS &amp;gt; RUNTIME）
+@Retention(value = RetentionPolicy.RUNTIME) @Document 说明该注解将被包含在javadoc中
+@Inherited
+说明子类可以继承父类中的该注解
+自定义注解 使用@interface自定义注解时,自动继承了java. lang.annotation Annotation接口
+@interface用来声明一个注解，格式: public @interface 注解名 { 定义内容 }
+其中的每一个方法实际上是声明了一个配置参数，方法的名称就是参数的名称 返回值类型就是参数的类型(返回值只能是基本类型, Class, String, enum)
+可以通过 default来声明参数的默认值
+如果只有一个参数成员,一般参数名为 value 注解元素必须要有值，我们定义注解元素时，经常使用空字符串和0作为默认值
+@Target({ElementType.TYPE, ElementType.METHOD}) @Retention(RetentionPolicy.RUNTIME) @interface MyAnnotation2 { // 方法名为参数名  String name() default &amp;#34;&amp;#34;; int age() default 0; int id() default -1; // 如果默认值为-1, 代表不存在  String[] schools() default {&amp;#34;西部开源&amp;#34;, &amp;#34;东部闭源&amp;#34;}; } 反射 概述 Java不是动态语言，但是可以通过反射机制获得类似动态语言的特性。</description>
+    </item>
+    
+    <item>
+      <title>[SpringBoot]日志与异常捕获</title>
+      <link>https://ccqstark.github.io/p/log_catch_error/</link>
+      <pubDate>Thu, 18 Mar 2021 23:01:00 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/log_catch_error/</guid>
+      <description>项目中用到了之前说的日志门面slf4j+log4j，但是之后遇到了一些问题。比如程序报错没有记录在日志，记录的时间也和服务器的不一致（服务器是东八区时间），或者记录一些不需要的信息，此篇就来解决这些问题。
+slf4j与log4j 之前有一篇文章介绍了slf4j怎么整合进Springboot，slf4j是一个日志门面，和我们所用的logback、log4j这些日志框架不同，它是为这些日志框架统一调用的API，通过api来调用具体的日志实现，简化了日志的配置与使用。slf4j要与具体的日志框架搭配，我用的是log4j。
+&amp;lt;!-- SLF4j - log4j --&amp;gt; &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;org.slf4j&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;slf4j-log4j12&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;1.8.0-alpha2&amp;lt;/version&amp;gt; &amp;lt;/dependency&amp;gt; 使用时只要用注解@Slf4j ，然后直接用log.info() 方法就可以记录日志了。
+日志等级 日志分为以下几个等级：
+OFF：最高等级的，用于关闭所有日志记录。
+FATAL：会导致应用程序推出的严重错误。
+ERROR：虽然发生错误事件，但仍然不影响系统的继续运行，一般也是程序的各种Exception，但要注意的是并不是所有异常都会导致Error，这就是下面的要说的异常捕获。打印错误和异常信息，如果不想输出太多的日志，可以使用这个级别。
+WARN：警告，表明会出现潜在错误的情形，有些信息不是错误信息，只是一些提示。
+INFO：消息在粗粒度级别上突出强调应用程序的运行过程。打印一些你感兴趣的或者重要的信息，这个可以用于生产环境中输出程序运行的一些重要信息，但是不能滥用，避免打印过多的日志。
+DEBUG：主要用于开发过程中打印一些运行信息。但是打印但信息量过多，项目上线后不要用。
+TRACE：跟踪日志，日志消息的粒度太细，很低的日志级别，一般不会使用。
+ALL：最低等级的，用于打开所有日志记录。
+通过修改日志配置文件log4j.properties来改变日志等级：
+log4j.rootLogger = ERROR,stdout,log //第一个参数是日志等级 错误捕获 在SpringBoot我们希望有统一的操作来捕获系统运行过程中参数的所有错误，对未预测到对错误设置友好的返回值给用户，避免返回500状态码。甚至可以将系统产生的报错通过邮件发送给开发者，让生产环境中的错误能得到快速直接的监测和解决。
+我们用到@RestControllerAdvice和@ExceptionHandler 这两个注解
+@Slf4j @RestControllerAdvice // 用于拦截异常的注解 public class ExceptionProcesser extends ResponseEntityExceptionHandler { @Autowired private MailService mailService; /** * 全局异常捕获入日志 */ // 此注解用来标示处理哪个类的异常 	@ExceptionHandler(value = Exception.class) // 表示所有的异常都会处理 	public CommonResult&amp;lt;String&amp;gt; defaultErrorHandler(Exception e) { // slf4j下的日志用法，简洁易用 	log.</description>
+    </item>
+    
+    <item>
+      <title>[ElasticSearch]ElasticSearch入门与原理浅析</title>
+      <link>https://ccqstark.github.io/p/es_principle/</link>
+      <pubDate>Sat, 13 Mar 2021 23:01:00 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/es_principle/</guid>
+      <description>简介 引入 对于搜索功能，大家以前都是怎么做的呢？我相信很多人一开始也是用SQL的LIKE关键字加上%来匹配关键字的吧，为了实现更好的模糊效果就再加一个分词器来拆分关键词。但是，一旦被搜索的数据量一大，这种方式就显得效率低下。为了实现更好的效果，我们可以使用当前最流行的分布式搜索引擎——ElasticSearch 。
+基本介绍 Elasticsearch 是一个分布式的免费开源搜索和分析引擎，适用于包括文本、数字、地理空间、结构化和非结构化数据等在内的所有类型的数据，基于著名的Lucene库进行开发，并以简单的RESTful风格的API进行调用，支持Java、JavaScript(Node)、Go、 C#(.NET)、PHP、Python、Ruby等多种语言。ElasticSearch已经成为非常流行的搜索引擎，一些著名厂商例如京东、滴滴、携程、Stack Overflow、GitHub等都在使用。
+官网地址：https://www.elastic.co/cn/elasticsearch/
+ 
+应用场景  应用程序搜索 网站搜索 企业搜索 日志处理和分析 基础设施指标和容器监测 应用程序性能监测 地理空间数据分析和可视化 安全分析 业务分析  ELK ELK，即ElasticSearch + logstash + Kibana ，是一套开源的日志收集与分析解决方案。利用ElasticSearch对数据进行快速的复杂条件检索，用logstash则作为数据管道从多个来源进行数据的采集、转换和传输，Kibana则通过生成多种可视化报表方便用户进行日志监控。
+一般小型系统我们分析日志可以直接在用grep、awk等命令进行过滤与检索，或者拉到本地用LogViewer等专门的日志工具打开查看。但是当系统体量一大，采用的是分布式架构，集群中的日志管理就成为一个难题。ELK目的就是为了解决大型系统中的日志收集、存储与分析问题，方便将节点中的日志统一管理从而提高效率。
+ 
+概念介绍 基本概念 ElasticSearch（简称es）搜索的时候不是去数据库里拿数据，它有自己的一套存储与索引体系。数据库中的数据需要同步到es中，通过索引的形式来存储数据才能实现高效检索。
+es索引体系的基本概念和关系型数据库中的有些类似，我们可以对比着来看
+   Index 索引 Database 数据库     Type 文档类型 Table 表   Document 文档 Row 记录   Field 字段 Column 属性   Mapping 映射 Schema 模型   Query DSL SQL    es的层次组织结构类似于MySQL这样的关系型数据库，index就像database那样存储着不同的type，也就是数据库中的table；再下一级就是document，类似于数据库中的一条条记录；每条记录的字段field就对应表中的column；mapping就如schema那样表示着库表的架构；es中的查询语言Query DSL则对标我们熟悉的SQL。通过类比可以更快地认识es的结构组成。</description>
+    </item>
+    
+    <item>
+      <title>[SpringBoot]整合ElasticSearch</title>
+      <link>https://ccqstark.github.io/p/springboot_es/</link>
+      <pubDate>Thu, 04 Feb 2021 23:01:00 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/springboot_es/</guid>
+      <description>导入依赖 我们使用springboot操作es要用到对应的data相关starter
+&amp;lt;!-- elasticsearch的starter依赖 --&amp;gt; &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;org.springframework.boot&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;spring-boot-starter-data-elasticsearch&amp;lt;/artifactId&amp;gt; &amp;lt;/dependency&amp;gt; &amp;lt;!-- 将对象转为json传入source时要用 --&amp;gt; &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;com.alibaba&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;fastjson&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;1.2.75&amp;lt;/version&amp;gt; &amp;lt;/dependency&amp;gt;  ⚠️ 各springboot的版本对应特定的elasticsearch版本，引入上面的依赖时会自动下载对应版本的rest-high-level-client，使用时尽量使得版本对应，避免潜在问题。
+ 版本对应表如下：
+  我使用的这里用Springboot2.4.1，所以对应的elasticsearch是7.9.3版本
+配置类 config目录下新建es的配置类ElasticSearchClientConfig.java
+@Configuration public class ElasticSearchClientConfig { @Bean public RestHighLevelClient restHighLevelClient() { final CredentialsProvider credentialsProvider = new BasicCredentialsProvider(); credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(&amp;#34;elastic&amp;#34;, &amp;#34;[密码]&amp;#34;)); RestHighLevelClient client = new RestHighLevelClient( RestClient.builder( new HttpHost(&amp;#34;[ip]&amp;#34;, 9200, &amp;#34;http&amp;#34;)) .setHttpClientConfigCallback(httpClientBuilder -&amp;gt; { httpClientBuilder.disableAuthCaching(); return httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider); })); return client; } } 这里有用到x-pack基础安全功能，所以配置了用户和密码。如果没有用户和密码，参照官方文档连接代码如下：
+RestHighLevelClient client = new RestHighLevelClient( RestClient.</description>
+    </item>
+    
+    <item>
+      <title>[ElasticSearch]REST风格操作</title>
+      <link>https://ccqstark.github.io/p/es_rest/</link>
+      <pubDate>Wed, 03 Feb 2021 23:01:00 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/es_rest/</guid>
+      <description>基本的rest命令    method url 功能     PUT localhost:9200/索引名称/类型名称/文档id 创建文档（指定文档id)   POST localhost:9200/索引名称/类型名称 创建文档（随机文档id）   POST localhost:9200/索引名称/类型名称/文档id/_update 修改文档   DELETE localhost:9200/索引名称/类型名称/文档id 删除文档   GET localhost:9200/索引名称/类型名称/文档id 查询文档，通过文档id   POST localhost:9200/索引名称/类型名称/_search 查询所有数据     ⚠️ 自定义类型将在以后的版本中弃用，规范起见一律使用_doc 类型
+ 文档字段的数据类型   字符串类型
+text keyword
+  数值类型
+long integer short byte double float half float scaled float
+  日期类型
+date</description>
+    </item>
+    
+    <item>
+      <title>[SpringBoot]整合shiro&#43;JWT做鉴权</title>
+      <link>https://ccqstark.github.io/p/springboot_shiro_jwt/</link>
+      <pubDate>Sat, 17 Oct 2020 16:52:00 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/springboot_shiro_jwt/</guid>
+      <description>添加依赖 &amp;lt;!-- shiro --&amp;gt; &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;org.apache.shiro&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;shiro-spring&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;1.4.0&amp;lt;/version&amp;gt; &amp;lt;/dependency&amp;gt; &amp;lt;!-- JWT --&amp;gt; &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;com.auth0&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;java-jwt&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;3.11.0&amp;lt;/version&amp;gt; &amp;lt;/dependency&amp;gt; &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;io.jsonwebtoken&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;jjwt&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;0.9.1&amp;lt;/version&amp;gt; &amp;lt;/dependency&amp;gt; JWT加密解密验证工具类 package com.ccqstark.springbootquick.util; import com.auth0.jwt.JWT; import com.auth0.jwt.JWTVerifier; import com.auth0.jwt.algorithms.Algorithm; import io.jsonwebtoken.Claims; import io.jsonwebtoken.JwtBuilder; import io.jsonwebtoken.Jwts; import io.jsonwebtoken.SignatureAlgorithm; import org.apache.commons.codec.binary.Base64; import java.util.Date; import java.util.HashMap; import java.util.Map; import java.util.UUID; /* * 总的来说，工具类中有三个方法 * 获取JwtToken，获取JwtToken中封装的信息，判断JwtToken是否存在 * 1. encode()，参数是=签发人，存在时间，一些其他的信息=。返回值是JwtToken对应的字符串 * 2. decode()，参数是=JwtToken=。返回值是荷载部分的键值对 * 3. isVerify()，参数是=JwtToken=。返回值是这个JwtToken是否存在 * */ public class JwtUtil { // 创建默认的秘钥和算法，供无参的构造方法使用  private static final String defaultbase64EncodedSecretKey = &amp;#34;wdnmd&amp;#34;; private static final SignatureAlgorithm defaultsignatureAlgorithm = SignatureAlgorithm.</description>
+    </item>
+    
+    <item>
+      <title>[SpringBoot]使用阿里云OSS上传文件</title>
+      <link>https://ccqstark.github.io/p/springboot_oss/</link>
+      <pubDate>Sat, 17 Oct 2020 10:54:00 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/springboot_oss/</guid>
+      <description>开通服务 登录阿里云，开通OSS服务，默认按量计费，为了业务稳定可以购买包月包年的资源包。
+准备工作 创建Bucket，如果是为了作为网站的静态资源存储供用户访问的话把权限设为公共读，填写信息后创建成功，可以在Bucket下新建目录什么的。
+单独创建一个RAM子用户用来调用API，选择编程访问，创建成功后一定要把AccessKeyID和AccessKeySecret等重要信息记下来，后面配置文件要用到。
+然后要给这个子用户添加权限AliyunOSSFullAccess
+Maven依赖 &amp;lt;!-- OSS --&amp;gt; &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;com.aliyun.oss&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;aliyun-sdk-oss&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;3.4.2&amp;lt;/version&amp;gt; &amp;lt;exclusions&amp;gt; &amp;lt;exclusion&amp;gt; &amp;lt;groupId&amp;gt;org.apache.httpcomponents&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;httpclient&amp;lt;/artifactId&amp;gt; &amp;lt;/exclusion&amp;gt; &amp;lt;/exclusions&amp;gt; &amp;lt;/dependency&amp;gt; &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;org.apache.httpcomponents&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;httpclient&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;4.4.1&amp;lt;/version&amp;gt; &amp;lt;/dependency&amp;gt; 配置文件 endpoint就是在存储桶的概览里地域节点，填外网访问那个就行
+url填资源访问的URL的前面部分（填到.com/）
+accessKeyId和accessKeySecret就是创建子用户时那个
+bucketName就是存储桶的名字
+# 阿里云ossoss:endpoint:*url:*accessKeyId:*accessKeySecret:*bucketName:*配置类 项目的config目录下新建OSS的配置类
+package com.ccqstark.springbootquick.config; import lombok.Data; import org.springframework.boot.context.properties.ConfigurationProperties; import org.springframework.context.annotation.Configuration; import org.springframework.stereotype.Component; import java.io.Serializable; /** * @Description: 阿里云 OSS 配置信息 * @Author: ccq * @Date: 2020/10/16 */ @Component //注册bean @Data @Configuration @ConfigurationProperties(prefix = &amp;#34;oss&amp;#34;) public class OSSConfig implements Serializable { private String endpoint; private String url; private String accessKeyId; private String accessKeySecret; private String bucketName; } 上传文件工具类 项目的util目录下新建这上传工具类</description>
+    </item>
+    
+    <item>
+      <title>[SpringBoot]整合Druid数据源</title>
+      <link>https://ccqstark.github.io/p/springboot_druid/</link>
+      <pubDate>Sat, 17 Oct 2020 10:54:00 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/springboot_druid/</guid>
+      <description>添加依赖 &amp;lt;!-- druid数据库连接池 --&amp;gt; &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;com.alibaba&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;druid&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;1.1.21&amp;lt;/version&amp;gt; &amp;lt;/dependency&amp;gt; &amp;lt;!-- MySql数据库驱动 --&amp;gt; &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;mysql&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;mysql-connector-java&amp;lt;/artifactId&amp;gt; &amp;lt;/dependency&amp;gt; &amp;lt;!--分页插件 --&amp;gt; &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;com.github.pagehelper&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;pagehelper-spring-boot-starter&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;1.0.0&amp;lt;/version&amp;gt; &amp;lt;/dependency&amp;gt; &amp;lt;!-- log4j日志 --&amp;gt; &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;log4j&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;log4j&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;1.2.17&amp;lt;/version&amp;gt; &amp;lt;/dependency&amp;gt; 添加配置 spring:datasource:username:rootpassword:root#serverTimezone=UTC解决时区的报错url:jdbc:mysql://localhost:3306/mybatis?serverTimezone=UTC&amp;amp;useUnicode=true&amp;amp;characterEncoding=utf-8driver-class-name:com.mysql.cj.jdbc.Drivertype:com.alibaba.druid.pool.DruidDataSource#Spring Boot 默认是不注入这些属性值的，需要自己绑定#druid 数据源专有配置initialSize:5minIdle:5maxActive:20maxWait:60000timeBetweenEvictionRunsMillis:60000minEvictableIdleTimeMillis:300000validationQuery:SELECT 1 FROM DUALtestWhileIdle:truetestOnBorrow:falsetestOnReturn:falsepoolPreparedStatements:true#配置监控统计拦截的filters，stat:监控统计、log4j：日志记录、wall：防御sql注入#如果允许时报错 java.lang.ClassNotFoundException: org.apache.log4j.Priority#则导入 log4j 依赖即可，Maven 地址：https://mvnrepository.com/artifact/log4j/log4jfilters:stat,wall,log4jmaxPoolPreparedStatementPerConnectionSize:20useGlobalDataSourceStat:trueconnectionProperties:druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500测试 编写测试类
+@SpringBootTest class SpringbootQuickApplicationTests { @Autowired DataSource dataSource; @Test void contextLoads() throws SQLException { System.out.println(dataSource.getClass()); Connection connection = dataSource.getConnection(); System.out.println(connection); connection.close(); } } 运行后控制台出现如下druid连接池相关字样说明成功
+2020-10-15 10:40:34.179 INFO 11352 --- [ main] com.</description>
+    </item>
+    
+    <item>
+      <title>[SpringBoot]整合Mybatis</title>
+      <link>https://ccqstark.github.io/p/springboot_mybatis/</link>
+      <pubDate>Sat, 17 Oct 2020 10:54:00 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/springboot_mybatis/</guid>
+      <description>以我的项目目录结构为例: com.ccqstark.springbootquick
+导入依赖 &amp;lt;!-- springboot的mybatis --&amp;gt; &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;org.mybatis.spring.boot&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;mybatis-spring-boot-starter&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;2.1.1&amp;lt;/version&amp;gt; &amp;lt;/dependency&amp;gt; 配置 #整合mybatismybatis:type-aliases-package:com.ccqstark.springbootquick.pojomapper-locations:classpath:mybatis/mapper/*.xml编写POJO(用了Lombok) 在com.ccqstark.springbootquick下新建目录pojo，然后新建类User.java，用于存储数据的对象（与数据库中的表对应）
+package com.ccqstark.springbootquick.pojo; import lombok.AllArgsConstructor; import lombok.Data; import lombok.NoArgsConstructor; @Data @NoArgsConstructor @AllArgsConstructor public class User { private int id; private String name; private String pwd; } 编写Mapper 在com.ccqstark.springbootquick下新建目录mapper，然后新建UserMapper.java，用于写接口，CRUD函数
+package com.ccqstark.springbootquick.mapper; import com.ccqstark.springbootquick.pojo.User; import org.apache.ibatis.annotations.Mapper; import org.springframework.stereotype.Repository; import java.util.List; // Mapper注解说明这是一个mybatis的mapper类 //@Mapper //如果有扫描的话这里可以不用写这个注解了 @Repository public interface UserMapper { List&amp;lt;User&amp;gt; queryUserList(); User queryByUserId(int id); int addUser(User user); int updateUser(User user); int deleteUser(int id); } 如果是以扫描的形式，就是在项目的app启动类加上注解**@MapperScan**</description>
+    </item>
+    
+    <item>
+      <title>[SpringBoot]整合SLF4J-log4j</title>
+      <link>https://ccqstark.github.io/p/springboot_slf4j-log4j/</link>
+      <pubDate>Sat, 17 Oct 2020 10:54:00 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/springboot_slf4j-log4j/</guid>
+      <description>导入依赖 &amp;lt;!-- SLF4j - log4j --&amp;gt; &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;org.slf4j&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;slf4j-log4j12&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;1.8.0-alpha2&amp;lt;/version&amp;gt; &amp;lt;/dependency&amp;gt; 然后要在IDEA下载插件Maven Helper中把logback相关的包给Exclude，否则会出现冲突
+配置 log4j.properties中配置
+# rootLogger参数分别为：根Logger级别，输出器stdout，输出器loglog4j.rootLogger = info,stdout,log# 输出信息到控制台log4j.appender.stdout = org.apache.log4j.ConsoleAppenderlog4j.appender.stdout.layout = org.apache.log4j.PatternLayoutlog4j.appender.stdout.layout.ConversionPattern = %d [%-5p] %l %rms: %m%n# 输出DEBUG级别以上的日志到D://log/debug.log，这个是日志文件存放的路径，根据时间情况进行设置log4j.appender.log = org.apache.log4j.DailyRollingFileAppenderlog4j.appender.log.DatePattern = &#39;.&#39;yyyy-MM-ddlog4j.appender.log.File = D://log/debug.loglog4j.appender.log.Encoding = UTF-8#log4j.appender.log.Threshold = INFOlog4j.appender.log.layout = org.apache.log4j.PatternLayoutlog4j.appender.log.layout.ConversionPattern = %d [%-5p] (%c.%t): %m%n测试 编写测试类，使用@Slf4j注解之前确保使用了lombok
+package com.ccqstark.springbootquick; import lombok.extern.slf4j.Slf4j; import org.junit.Test; @Slf4j public class LoggerTest { // private static final Logger log = LoggerFactory.</description>
+    </item>
+    
+  </channel>
+</rss>

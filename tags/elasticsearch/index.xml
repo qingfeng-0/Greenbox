@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>ElasticSearch on ccq&#39;s blog</title>
+    <link>https://ccqstark.github.io/tags/elasticsearch/</link>
+    <description>Recent content in ElasticSearch on ccq&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 13 Mar 2021 23:01:00 +0800</lastBuildDate><atom:link href="https://ccqstark.github.io/tags/elasticsearch/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[ElasticSearch]ElasticSearch入门与原理浅析</title>
+      <link>https://ccqstark.github.io/p/es_principle/</link>
+      <pubDate>Sat, 13 Mar 2021 23:01:00 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/es_principle/</guid>
+      <description>简介 引入 对于搜索功能，大家以前都是怎么做的呢？我相信很多人一开始也是用SQL的LIKE关键字加上%来匹配关键字的吧，为了实现更好的模糊效果就再加一个分词器来拆分关键词。但是，一旦被搜索的数据量一大，这种方式就显得效率低下。为了实现更好的效果，我们可以使用当前最流行的分布式搜索引擎——ElasticSearch 。
+基本介绍 Elasticsearch 是一个分布式的免费开源搜索和分析引擎，适用于包括文本、数字、地理空间、结构化和非结构化数据等在内的所有类型的数据，基于著名的Lucene库进行开发，并以简单的RESTful风格的API进行调用，支持Java、JavaScript(Node)、Go、 C#(.NET)、PHP、Python、Ruby等多种语言。ElasticSearch已经成为非常流行的搜索引擎，一些著名厂商例如京东、滴滴、携程、Stack Overflow、GitHub等都在使用。
+官网地址：https://www.elastic.co/cn/elasticsearch/
+ 
+应用场景  应用程序搜索 网站搜索 企业搜索 日志处理和分析 基础设施指标和容器监测 应用程序性能监测 地理空间数据分析和可视化 安全分析 业务分析  ELK ELK，即ElasticSearch + logstash + Kibana ，是一套开源的日志收集与分析解决方案。利用ElasticSearch对数据进行快速的复杂条件检索，用logstash则作为数据管道从多个来源进行数据的采集、转换和传输，Kibana则通过生成多种可视化报表方便用户进行日志监控。
+一般小型系统我们分析日志可以直接在用grep、awk等命令进行过滤与检索，或者拉到本地用LogViewer等专门的日志工具打开查看。但是当系统体量一大，采用的是分布式架构，集群中的日志管理就成为一个难题。ELK目的就是为了解决大型系统中的日志收集、存储与分析问题，方便将节点中的日志统一管理从而提高效率。
+ 
+概念介绍 基本概念 ElasticSearch（简称es）搜索的时候不是去数据库里拿数据，它有自己的一套存储与索引体系。数据库中的数据需要同步到es中，通过索引的形式来存储数据才能实现高效检索。
+es索引体系的基本概念和关系型数据库中的有些类似，我们可以对比着来看
+   Index 索引 Database 数据库     Type 文档类型 Table 表   Document 文档 Row 记录   Field 字段 Column 属性   Mapping 映射 Schema 模型   Query DSL SQL    es的层次组织结构类似于MySQL这样的关系型数据库，index就像database那样存储着不同的type，也就是数据库中的table；再下一级就是document，类似于数据库中的一条条记录；每条记录的字段field就对应表中的column；mapping就如schema那样表示着库表的架构；es中的查询语言Query DSL则对标我们熟悉的SQL。通过类比可以更快地认识es的结构组成。</description>
+    </item>
+    
+    <item>
+      <title>[SpringBoot]整合ElasticSearch</title>
+      <link>https://ccqstark.github.io/p/springboot_es/</link>
+      <pubDate>Thu, 04 Feb 2021 23:01:00 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/springboot_es/</guid>
+      <description>导入依赖 我们使用springboot操作es要用到对应的data相关starter
+&amp;lt;!-- elasticsearch的starter依赖 --&amp;gt; &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;org.springframework.boot&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;spring-boot-starter-data-elasticsearch&amp;lt;/artifactId&amp;gt; &amp;lt;/dependency&amp;gt; &amp;lt;!-- 将对象转为json传入source时要用 --&amp;gt; &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;com.alibaba&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;fastjson&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;1.2.75&amp;lt;/version&amp;gt; &amp;lt;/dependency&amp;gt;  ⚠️ 各springboot的版本对应特定的elasticsearch版本，引入上面的依赖时会自动下载对应版本的rest-high-level-client，使用时尽量使得版本对应，避免潜在问题。
+ 版本对应表如下：
+  我使用的这里用Springboot2.4.1，所以对应的elasticsearch是7.9.3版本
+配置类 config目录下新建es的配置类ElasticSearchClientConfig.java
+@Configuration public class ElasticSearchClientConfig { @Bean public RestHighLevelClient restHighLevelClient() { final CredentialsProvider credentialsProvider = new BasicCredentialsProvider(); credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(&amp;#34;elastic&amp;#34;, &amp;#34;[密码]&amp;#34;)); RestHighLevelClient client = new RestHighLevelClient( RestClient.builder( new HttpHost(&amp;#34;[ip]&amp;#34;, 9200, &amp;#34;http&amp;#34;)) .setHttpClientConfigCallback(httpClientBuilder -&amp;gt; { httpClientBuilder.disableAuthCaching(); return httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider); })); return client; } } 这里有用到x-pack基础安全功能，所以配置了用户和密码。如果没有用户和密码，参照官方文档连接代码如下：
+RestHighLevelClient client = new RestHighLevelClient( RestClient.</description>
+    </item>
+    
+    <item>
+      <title>[ElasticSearch]REST风格操作</title>
+      <link>https://ccqstark.github.io/p/es_rest/</link>
+      <pubDate>Wed, 03 Feb 2021 23:01:00 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/es_rest/</guid>
+      <description>基本的rest命令    method url 功能     PUT localhost:9200/索引名称/类型名称/文档id 创建文档（指定文档id)   POST localhost:9200/索引名称/类型名称 创建文档（随机文档id）   POST localhost:9200/索引名称/类型名称/文档id/_update 修改文档   DELETE localhost:9200/索引名称/类型名称/文档id 删除文档   GET localhost:9200/索引名称/类型名称/文档id 查询文档，通过文档id   POST localhost:9200/索引名称/类型名称/_search 查询所有数据     ⚠️ 自定义类型将在以后的版本中弃用，规范起见一律使用_doc 类型
+ 文档字段的数据类型   字符串类型
+text keyword
+  数值类型
+long integer short byte double float half float scaled float
+  日期类型
+date</description>
+    </item>
+    
+    <item>
+      <title>[Elastic]ElasticSearch 安全</title>
+      <link>https://ccqstark.github.io/p/x_pack/</link>
+      <pubDate>Fri, 29 Jan 2021 21:26:00 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/x_pack/</guid>
+      <description>ElacticSearch索引中有大量的数据，如果没有一些安全措施的话会让系统处于一个十分危险的处境，引发的相关安全事件可以看看这篇文章。
+你的Elasticsearch在&amp;quot;裸奔&amp;quot;吗？
+而ElaticSearch官方的高级安全服务是收费的，主要给企业提供。但是从6.8和7.1版本开始，基础安全功能就免费了，而且已经集成在里面不用额外安装。
+除此之外诸如Search Guard、ReadonlyREST、Nginx 等开源免费等方法来达到安全的目的，这里介绍的是使用官方的x-pack的基础安全功能，对于小项目来说够用了。
+本文版本为7.10.1
+修改配置文件 在elasticsearch.yml里新增
+xpack.security.enabled:truexpack.security.transport.ssl.enabled:true之后重启 es
+在es目录下执行 elasticsearch-setup-passwords interactive 然后输入多个用户的密码
+Initiating the setup of passwords for reserved users elastic,apm_system,kibana,logstash_system,beats_system,remote_monitoring_user. You will be prompted to enter passwords as the process progresses. Please confirm that you would like to continue [y/N]y Enter password for [elastic]: Reenter password for [elastic]: Passwords do not match. Try again. Enter password for [elastic]: Reenter password for [elastic]: Enter password for [apm_system]: Reenter password for [apm_system]: Enter password for [kibana]: Reenter password for [kibana]: Enter password for [logstash_system]: Reenter password for [logstash_system]: Enter password for [beats_system]: Reenter password for [beats_system]: Enter password for [remote_monitoring_user]: Reenter password for [remote_monitoring_user]: Changed password for user [apm_system] Changed password for user [kibana] Changed password for user [logstash_system] Changed password for user [beats_system] Changed password for user [remote_monitoring_user] Changed password for user [elastic] 其中elastic用户相当与es的root用户，之后使用es和kibana需要这个用户的密码</description>
+    </item>
+    
+    <item>
+      <title>[Elastic]使用logstash同步MySQL数据</title>
+      <link>https://ccqstark.github.io/p/logstash_mysql/</link>
+      <pubDate>Thu, 28 Jan 2021 21:26:00 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/logstash_mysql/</guid>
+      <description>安装logstash 在实际项目中使用es进行搜索，我们就要把mysql数据库中的数据同步到es索引库中。进行这项过程的工具很多，比如go-mysql-elasticsearch，canal等等，当然也可以使用ELK组合中的logsatsh 来完成。这里同样用docker来部署logstash容器。
+拉取镜像 docker pull logstash:7.10.1 启动容器 启动后进入容器内，修改jvm启动的内存设置，地址为/usr/share/logstash/config/jvm.options
+# 修改jvm内存分配 vi jvm.options # 修改下面的参数，单位可以为g和m -Xms256m -Xmx256m 修改后重启容器即可
+下载插件与依赖包 docker exec -it logstash bash 安装logstash-input-jdbc插件
+bin/logstash-plugin install logstash-input-jdbc 如果出现以下ERROR，说明logstash里本身已经包含有这个插件了，就无需安装。7.10.1的版本是已经自带了。
+ERROR: Installation aborted, plugin &amp;#39;logstash-input-jdbc&amp;#39; is already provided by &amp;#39;logstash-integration-jdbc&amp;#39; 下载mysql-connector-java，也就是jdbc驱动
+MySQL官方下载地址：https://downloads.mysql.com/archives/c-j/
+下载对应版本后本地解压，上传到服务器，然后用docker cp命令复制到logstash容器中
+只需要其中的jar包即可
+# 把文件复制到容器内 docker cp [jar包路径] logstash:[容器内路径] 在/usr/share/logstash目录下新建mysql/目录，把jar包复制到这里
+同步配置文件 在刚刚的mysql目录下新建jdbc.conf 文件，来配置同步操作
+ 单表同步  input { jdbc { # jar包的绝对路径 jdbc_driver_library =&amp;gt; &amp;#34;/usr/share/logstash/mysql/mysql-connector-java-5.1.48.jar&amp;#34; jdbc_driver_class =&amp;gt; &amp;#34;com.mysql.jdbc.Driver&amp;#34; # 数据库连接信息 jdbc_connection_string =&amp;gt; &amp;#34;jdbc:mysql://[ip]:3306/[库名]?</description>
+    </item>
+    
+    <item>
+      <title>[Elastic]使用docker安装ElasticSearch &#43; Kibana</title>
+      <link>https://ccqstark.github.io/p/es_docker/</link>
+      <pubDate>Wed, 27 Jan 2021 21:26:00 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/es_docker/</guid>
+      <description>安装ElasticSearch 拉取镜像 docker pull elasticsearch:7.10.1 启动容器 同时挂载目录（包括配置文件和data）（挂载出来的位置自己定义）
+docker run --name elasticsearch -p 9200:9200 -p 9300:9300 -e ES_JAVA_OPTS=&amp;#34;-Xms256m -Xmx256m&amp;#34; -d \ -v /home/es/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml \ -v /home/es/data:/usr/share/elasticsearch/data elasticsearch:7.10.1 注意这里还设置了JVM的内存大小，默认为2G，有点大，很可能会因为内存不够而无法正常启动。可以像我这里改为256m或者其他值。
+可能出现的错误 查看容器日志
+docker logs elasticsearch 如果出现以下错误
+max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144] 则要修改服务器配置
+vim /etc/sysctl.conf 添加这行
+vm.max_map_count=262144 立即生效, 执行：
+/sbin/sysctl -p 对挂载的宿主机data目录可能出现权限不足问题
+chmod 777 [宿主机data目录] 配置跨域 到挂载出来到位置编辑配置文件
+vim elasticsearch.yml 添加以下几行
+network.host:0.0.0.0discovery.type:single-nodehttp.cors.enabled:truehttp.cors.allow-origin:&amp;#34;*&amp;#34;同时安全组和防火墙记得打开对应端口
+记得每次修改完配置都要重启 docker restart elasticsearch 浏览器访问测试 http://[IP]:9200 看到类似以下的json就成功了</description>
+    </item>
+    
+  </channel>
+</rss>

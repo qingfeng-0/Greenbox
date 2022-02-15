@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='今天在看有关StringBuilder和StringBuffer的文章的时候看到里面提及了有关String中的final字段和不可变的性质，发现这个知识点不是很熟悉，去查了很多文章之后整理出这篇。
+新建字符串与缓冲池 新建一个String我们一般有下面2种方式：
+String a = &amp;#34;ok&amp;#34;; String b = new String(&amp;#34;ok&amp;#34;); 这两种写法都可以创建一个String对象。
+第一种用赋值运算符进行字符串初始化时，JVM自动为每个字符串生成一个String类的实例。
+第二种就是创建String类的对象，因为String本来就是一个类，而不是像int和double那样的基本数据类型。
+Java的字符串采用了缓冲池的技术，我们新建一个字符串的时候会去缓冲池寻找是否有已经存在的相同的字符串，如果有的话直接指向它即可；没有的话再创建，缓冲池是在堆里面的。
+如下图，是下面代码的结果：
+// one和two内容相同，指向同一String对象 String one = &amp;#34;someString&amp;#34;; String two = &amp;#34;someString&amp;#34;;   关于更深入的创建对象和之间的比较可以看下面这篇：
+java 字符串缓冲池 String缓冲池_天天的专栏-CSDN博客
+哪里不可变？ 那为什么说String不可变呢？我们明明可以通过给字符串变量赋一个新值来改变它的内容。
+String str = &amp;#34;aaaaaaa&amp;#34;; System.out.println(str); str = &amp;#34;bbbbbbbbb&amp;#34;; System.out.println(str); // 输出 //aaaaaaa //bbbbbbbbb 实际上，当我们给字符串重新赋值的时候，它并不是去改变这个String对象中的字符数组char[] value的值（下面会讲到），而是去缓冲池里寻找有没有已经存在这个值的String对象，有的话就直接指向它，没有的话创建一个对象再指向它。
+  str只是一个引用，指向的String对象是在堆中的。改变字符串的值其实只是改变整个对象的引用。
+而原来的String对象还是在那里没有被改变，之后要是有别的变量赋这个值可以继续指向它。
+为什么不可变？ 我们看下String的部分源码：
+public final class String implements java.io.Serializable, Comparable&amp;lt;String&amp;gt;, CharSequence { /** The value is used for character storage.'><title>一次理解String的不可变性</title>
+
+<link rel='canonical' href='https://ccqstark.github.io/p/string/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='一次理解String的不可变性'>
+<meta property='og:description' content='今天在看有关StringBuilder和StringBuffer的文章的时候看到里面提及了有关String中的final字段和不可变的性质，发现这个知识点不是很熟悉，去查了很多文章之后整理出这篇。
+新建字符串与缓冲池 新建一个String我们一般有下面2种方式：
+String a = &amp;#34;ok&amp;#34;; String b = new String(&amp;#34;ok&amp;#34;); 这两种写法都可以创建一个String对象。
+第一种用赋值运算符进行字符串初始化时，JVM自动为每个字符串生成一个String类的实例。
+第二种就是创建String类的对象，因为String本来就是一个类，而不是像int和double那样的基本数据类型。
+Java的字符串采用了缓冲池的技术，我们新建一个字符串的时候会去缓冲池寻找是否有已经存在的相同的字符串，如果有的话直接指向它即可；没有的话再创建，缓冲池是在堆里面的。
+如下图，是下面代码的结果：
+// one和two内容相同，指向同一String对象 String one = &amp;#34;someString&amp;#34;; String two = &amp;#34;someString&amp;#34;;   关于更深入的创建对象和之间的比较可以看下面这篇：
+java 字符串缓冲池 String缓冲池_天天的专栏-CSDN博客
+哪里不可变？ 那为什么说String不可变呢？我们明明可以通过给字符串变量赋一个新值来改变它的内容。
+String str = &amp;#34;aaaaaaa&amp;#34;; System.out.println(str); str = &amp;#34;bbbbbbbbb&amp;#34;; System.out.println(str); // 输出 //aaaaaaa //bbbbbbbbb 实际上，当我们给字符串重新赋值的时候，它并不是去改变这个String对象中的字符数组char[] value的值（下面会讲到），而是去缓冲池里寻找有没有已经存在这个值的String对象，有的话就直接指向它，没有的话创建一个对象再指向它。
+  str只是一个引用，指向的String对象是在堆中的。改变字符串的值其实只是改变整个对象的引用。
+而原来的String对象还是在那里没有被改变，之后要是有别的变量赋这个值可以继续指向它。
+为什么不可变？ 我们看下String的部分源码：
+public final class String implements java.io.Serializable, Comparable&amp;lt;String&amp;gt;, CharSequence { /** The value is used for character storage.'>
+<meta property='og:url' content='https://ccqstark.github.io/p/string/'>
+<meta property='og:site_name' content='ccq&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2021-04-06T21:07:00&#43;08:00'/><meta property='article:modified_time' content='2021-04-06T21:07:00&#43;08:00'/><meta property='og:image' content='https://ccqstark.github.io/p/string/java.png' />
+<meta name="twitter:site" content="@ccqstark">
+    <meta name="twitter:creator" content="@ccqstark"><meta name="twitter:title" content="一次理解String的不可变性">
+<meta name="twitter:description" content="今天在看有关StringBuilder和StringBuffer的文章的时候看到里面提及了有关String中的final字段和不可变的性质，发现这个知识点不是很熟悉，去查了很多文章之后整理出这篇。
+新建字符串与缓冲池 新建一个String我们一般有下面2种方式：
+String a = &amp;#34;ok&amp;#34;; String b = new String(&amp;#34;ok&amp;#34;); 这两种写法都可以创建一个String对象。
+第一种用赋值运算符进行字符串初始化时，JVM自动为每个字符串生成一个String类的实例。
+第二种就是创建String类的对象，因为String本来就是一个类，而不是像int和double那样的基本数据类型。
+Java的字符串采用了缓冲池的技术，我们新建一个字符串的时候会去缓冲池寻找是否有已经存在的相同的字符串，如果有的话直接指向它即可；没有的话再创建，缓冲池是在堆里面的。
+如下图，是下面代码的结果：
+// one和two内容相同，指向同一String对象 String one = &amp;#34;someString&amp;#34;; String two = &amp;#34;someString&amp;#34;;   关于更深入的创建对象和之间的比较可以看下面这篇：
+java 字符串缓冲池 String缓冲池_天天的专栏-CSDN博客
+哪里不可变？ 那为什么说String不可变呢？我们明明可以通过给字符串变量赋一个新值来改变它的内容。
+String str = &amp;#34;aaaaaaa&amp;#34;; System.out.println(str); str = &amp;#34;bbbbbbbbb&amp;#34;; System.out.println(str); // 输出 //aaaaaaa //bbbbbbbbb 实际上，当我们给字符串重新赋值的时候，它并不是去改变这个String对象中的字符数组char[] value的值（下面会讲到），而是去缓冲池里寻找有没有已经存在这个值的String对象，有的话就直接指向它，没有的话创建一个对象再指向它。
+  str只是一个引用，指向的String对象是在堆中的。改变字符串的值其实只是改变整个对象的引用。
+而原来的String对象还是在那里没有被改变，之后要是有别的变量赋这个值可以继续指向它。
+为什么不可变？ 我们看下String的部分源码：
+public final class String implements java.io.Serializable, Comparable&amp;lt;String&amp;gt;, CharSequence { /** The value is used for character storage."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://ccqstark.github.io/p/string/java.png' />
+    <link rel="shortcut icon" href="/icon.ico" />
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PXLPFFZ3XD"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-PXLPFFZ3XD', { 'anonymize_ip': false });
+}
+</script>
+<a href="https://github.com/ccqstark" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#64CEAA; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>Back</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/string/">
+                <img src="/p/string/java_hu4a52e4833b2d51fc82bb34a9877f5e42_192896_800x0_resize_box_3.png"
+                        srcset="/p/string/java_hu4a52e4833b2d51fc82bb34a9877f5e42_192896_800x0_resize_box_3.png 800w, /p/string/java_hu4a52e4833b2d51fc82bb34a9877f5e42_192896_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="467" 
+                        loading="lazy"
+                        alt="Featured image of post 一次理解String的不可变性" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/javase/" >
+                JavaSE
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/string/">一次理解String的不可变性</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Apr 06, 2021</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    1 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <p>今天在看有关StringBuilder和StringBuffer的文章的时候看到里面提及了有关String中的final字段和不可变的性质，发现这个知识点不是很熟悉，去查了很多文章之后整理出这篇。</p>
+<h2 id="新建字符串与缓冲池">新建字符串与缓冲池</h2>
+<p>新建一个String我们一般有下面2种方式：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="n">String</span> <span class="n">a</span> <span class="o">=</span> <span class="s">&#34;ok&#34;</span><span class="o">;</span>
+<span class="n">String</span> <span class="n">b</span> <span class="o">=</span> <span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="s">&#34;ok&#34;</span><span class="o">);</span>
+</code></pre></div><p>这两种写法都可以创建一个String对象。</p>
+<p>第一种用赋值运算符进行字符串初始化时，JVM自动为每个字符串生成一个String类的实例。</p>
+<p>第二种就是创建String类的对象，因为String本来就是一个类，而不是像int和double那样的基本数据类型。</p>
+<p>Java的字符串采用了缓冲池的技术，我们新建一个字符串的时候会去缓冲池寻找是否有已经存在的相同的字符串，如果有的话直接指向它即可；没有的话再创建，缓冲池是在<code>堆</code>里面的。</p>
+<p>如下图，是下面代码的结果：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="c1">// one和two内容相同，指向同一String对象
+</span><span class="c1"></span><span class="n">String</span> <span class="n">one</span> <span class="o">=</span> <span class="s">&#34;someString&#34;</span><span class="o">;</span>
+<span class="n">String</span> <span class="n">two</span> <span class="o">=</span> <span class="s">&#34;someString&#34;</span><span class="o">;</span>
+</code></pre></div><p><figure 
+	>
+	<a href="/71d827920f870b82c93d06f8a9c0b247_720w.jpg?source=1940ef5c" >
+		<img src="/71d827920f870b82c93d06f8a9c0b247_720w.jpg?source=1940ef5c"
+			
+			
+			
+			loading="lazy"
+			>
+	</a>
+	
+</figure>
+关于更深入的创建对象和之间的比较可以看下面这篇：</p>
+<p><a class="link" href="https://blog.csdn.net/tiantiandjava/article/details/46309163"  target="_blank" rel="noopener"
+    >java 字符串缓冲池 String缓冲池_天天的专栏-CSDN博客</a></p>
+<h2 id="哪里不可变">哪里不可变？</h2>
+<p>那为什么说String不可变呢？我们明明可以通过给字符串变量赋一个新值来改变它的内容。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="n">String</span> <span class="n">str</span> <span class="o">=</span> <span class="s">&#34;aaaaaaa&#34;</span><span class="o">;</span>
+<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">str</span><span class="o">);</span>
+<span class="n">str</span> <span class="o">=</span> <span class="s">&#34;bbbbbbbbb&#34;</span><span class="o">;</span>
+<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">str</span><span class="o">);</span>
+
+<span class="c1">// 输出
+</span><span class="c1">//aaaaaaa
+</span><span class="c1">//bbbbbbbbb
+</span></code></pre></div><p>实际上，当我们给字符串重新赋值的时候，它并不是去改变这个String对象中的字符数组<code>char[] value</code>的值（下面会讲到），而是去缓冲池里寻找有没有已经存在这个值的<code>String对象</code>，有的话就直接指向它，没有的话创建一个对象再指向它。</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 214; 
+			flex-basis: 515px"
+	>
+	<a href="/p/string/Untitled.png" data-size="1118x521">
+		<img src="/p/string/Untitled.png"
+			width="1118"
+			height="521"
+			srcset="/p/string/Untitled_hu8a4e164ee6ff022b62fb27deb89cf723_55485_480x0_resize_box_3.png 480w, /p/string/Untitled_hu8a4e164ee6ff022b62fb27deb89cf723_55485_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure>
+str只是一个引用，指向的String对象是在堆中的。<strong>改变字符串的值其实只是改变整个对象的引用</strong>。</p>
+<p>而原来的String对象还是在那里没有被改变，之后要是有别的变量赋这个值可以继续指向它。</p>
+<h2 id="为什么不可变">为什么不可变？</h2>
+<p>我们看下String的部分源码：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">String</span>
+    <span class="kd">implements</span> <span class="n">java</span><span class="o">.</span><span class="na">io</span><span class="o">.</span><span class="na">Serializable</span><span class="o">,</span> <span class="n">Comparable</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;,</span> <span class="n">CharSequence</span>
+<span class="o">{</span>
+    <span class="cm">/** The value is used for character storage. */</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">char</span> <span class="n">value</span><span class="o">[];</span>
+ 
+    <span class="cm">/** Cache the hash code for the string */</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">hash</span><span class="o">;</span> <span class="c1">// Default to 0
+</span><span class="c1"></span><span class="o">}</span>
+</code></pre></div><p>重点在这个字符数组<code>value</code>就是存放字符串内容的地方，注意它是被<code>final</code> 修饰的，也就是一旦初始化之后它的值就不能改变。</p>
+<p>不过它value也只是个引用，引用不可变，但是如果真的想改是可以改变数组中元素但值的，但由于String中没有setValue方法，我们要改的话就要通过<code>反射</code>了。</p>
+<h3 id="利用反射改变">利用反射改变</h3>
+<p>下面这段代码就利用了反射改变了value数组中的元素的值，但是数组的地址是没有改变的哦。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="n">String</span> <span class="n">s</span><span class="o">=</span><span class="s">&#34;123&#34;</span><span class="o">;</span>
+<span class="n">Field</span> <span class="n">valueArray</span><span class="o">=</span><span class="n">String</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getDeclaredField</span><span class="o">(</span><span class="s">&#34;value&#34;</span><span class="o">);</span>
+<span class="n">valueArray</span><span class="o">.</span><span class="na">setAccessible</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+<span class="kt">char</span><span class="o">[]</span> <span class="n">array</span><span class="o">=(</span><span class="kt">char</span><span class="o">[])</span> <span class="n">valueArray</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+<span class="n">array</span><span class="o">[</span><span class="n">0</span><span class="o">]=</span><span class="sc">&#39;2&#39;</span><span class="o">;</span>
+<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s</span><span class="o">);</span><span class="c1">//223
+</span></code></pre></div><h2 id="设计成不可变的原因">设计成不可变的原因？</h2>
+<h3 id="代码安全">代码安全</h3>
+<p>String类本身也是<code>final</code> 的，这样设计使得String不可被继承，不可扩展与重写方法，主要是为了安全。因为String作为一个比较底层的类使用得也比较频繁，而且很多实现是通过系统调用的，如果让开发者可以随意修改一些东西就很可能带来问题甚至注入病毒。</p>
+<h3 id="为了实现字符串缓冲池">为了实现字符串缓冲池</h3>
+<p><strong>只有当字符串是不可变的，字符串池才有可能实现</strong>。字符串池的实现可以在运行时节约很多heap空间，因为不同的字符串变量都指向池中的同一个字符串。但如果字符串是可变的，那改变一个字符串的值就会导致其它指向这个String对象的字符串引用对应的值也会改变。</p>
+<h3 id="作为hashmap的键">作为HashMap的键</h3>
+<p>因为字符串是不可变的，所以在它创建的时候<strong>HashCode</strong>就被缓存了，不需要重新计算。这就使得字符串很适合作为Map中的键，字符串的处理速度要快过其它的键对象。这就是HashMap中的键往往都使用字符串。</p>
+<h3 id="线程安全">线程安全</h3>
+<p>因为字符串是不可变的，所以是多线程安全的，同一个字符串实例可以被多个线程共享。这样便不用因为线程安全问题而使用同步。字符串自己便是线程安全的。</p>
+<h3 id="参考文章">参考文章</h3>
+<p><a class="link" href="https://www.jianshu.com/p/9c7f5daac283"  target="_blank" rel="noopener"
+    >Java String类为什么是final的？</a></p>
+<p><a class="link" href="https://www.zhihu.com/question/20618891"  target="_blank" rel="noopener"
+    >如何理解 String 类型值的不可变？</a></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.css"integrity="sha384-RZU/ijkSsFbcmivfdRBQDtwuwVqK7GMOw6IMvKyeWL2K5UAlyp6WonmB8m7Jd0Hn"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.js"integrity="sha384-pK1WpvzWVBQiP0/GjnvRxV4mOb0oxFuyRxJlk6vVw146n3egcN5C925NCP7a7BY8"crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/contrib/auto-render.min.js"integrity="sha384-vZTG03m&#43;2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl"crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });})
+</script>
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">Related contents</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/aqs/">
+        
+        
+            <div class="article-image">
+                <img src="/p/aqs/cover.3b19f2d1afe0242cad61d6f187e2279b_hu61c3bca774698dc1e72a329e3b4305c2_117700_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="aqs" 
+                        data-hash="md5-Oxny0a/gJCytYdbxh&#43;Inmw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">[并发编程]AQS源码分析</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/concurrenthashmap/">
+        
+        
+            <div class="article-image">
+                <img src="/p/concurrenthashmap/cover.79972d4c2cfda116716444e55dd80233_huc96d02dfde7960de9a20cc4a3d1809da_315641_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="concurrenthashmap" 
+                        data-hash="md5-eZctTCz9oRZxZETlXdgCMw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">ConcurrentHashMap源码分析</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/hashmap/">
+        
+        
+            <div class="article-image">
+                <img src="/p/hashmap/cover.535529dc9861b5ef4fc0cf82a2087830_hu1511f3a3e5b8bd5321cac5b96fbe8ed4_1324881_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="hashmap" 
+                        data-hash="md5-U1Up3Jhhte9PwM&#43;Cogh4MA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">HashMap源码与扩容机制分析</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/red_black_tree/">
+        
+        
+            <div class="article-image">
+                <img src="/p/red_black_tree/cover.48d1c20f3879f82758e77d14bb4fd118_hub9c0e50fdb57d51b987a72e16255d0e2_204381_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="red_black_tree" 
+                        data-hash="md5-SNHCDzh5&#43;CdY530Uu0/RGA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">红黑树，这次终于拿下了</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/concurrent_volatile/">
+        
+        
+            <div class="article-image">
+                <img src="/p/concurrent_volatile/cover.533970812e1dfd0c0f1cf766509ee13d_hu7fad456951eb20fdb97374db4ac4bdd8_54974_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="concurrent_volatile" 
+                        data-hash="md5-UzlwgS4d/QwPHPdmUJ7hPQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">[并发编程]volatile篇</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-ccqstark-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2022 ccq&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        
+            一辈子热爱技术 <br/>
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.5.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">Table of contents</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#新建字符串与缓冲池">新建字符串与缓冲池</a></li>
+    <li><a href="#哪里不可变">哪里不可变？</a></li>
+    <li><a href="#为什么不可变">为什么不可变？</a>
+      <ol>
+        <li><a href="#利用反射改变">利用反射改变</a></li>
+      </ol>
+    </li>
+    <li><a href="#设计成不可变的原因">设计成不可变的原因？</a>
+      <ol>
+        <li><a href="#代码安全">代码安全</a></li>
+        <li><a href="#为了实现字符串缓冲池">为了实现字符串缓冲池</a></li>
+        <li><a href="#作为hashmap的键">作为HashMap的键</a></li>
+        <li><a href="#线程安全">线程安全</a></li>
+        <li><a href="#参考文章">参考文章</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>gopher</title>
+	
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-PXLPFFZ3XD"></script>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
+
+	  gtag('config', 'G-PXLPFFZ3XD');
+	</script>
+</head>
+<body>
+<canvas id="view" width="200" height="180" style="position: fixed; right: 0; bottom: 0; z-index: 9999"></canvas>
+<script type="text/javascript">
+    "use strict";
+
+    if(window.animationLoop) {
+        window.cancelAnimationFrame(window.animationLoop)
+    }
+
+    class HSL {
+        constructor(h, s, l) {
+            this.h = h
+            this.s = s
+            this.l = l
+        }
+
+        toString() {
+            return "hsl(" +
+                (this.h * 360).toFixed(2) + "," +
+                (this.s * 100).toFixed(2) + "%," +
+                (this.l * 100).toFixed(2) + "%)";
+        }
+    }
+
+    const tau = Math.PI * 2
+
+    let view = document.getElementById("view")
+    let context = view.getContext("2d")
+    updateViewSize()
+
+    let gopher = {
+        body: new HSL(205.0/360, 1.0,  0.81),
+        bodyDark: new HSL(205.0/360, 0.55,  0.71),
+        dark: new HSL(217.0/360, 0.19, 0.18),
+        light: new HSL(217.0/360, 0.0, 1.00),
+        lightDark: new HSL(217.0/360, 0.0, 0.90),
+        limb: new HSL(46.0/360, 0.38, 0.80),
+
+        head: {x: 0, y:0},
+        gaze: {x: 0, y:0},
+    };
+
+    window.animationLoop = tick();
+
+    window.addEventListener("resize", updateViewSize)
+
+    function updateViewSize() {
+        
+        
+
+        view.width = view.clientWidth;
+        view.height = view.clientHeight;
+    }
+
+    window.addEventListener("mousemove", (ev) => {
+        let screenSize = {x: view.width, y: view.height}
+
+		gopher.gaze.x = - (ev.clientX * 1.5 / view.width-1);
+		gopher.gaze.y = - (ev.clientY * 1.5 / view.height-1);
+
+        gopher.head.x = gopher.gaze.x * 0.5;
+        gopher.head.y = gopher.gaze.y * 0.5;
+   
+    });
+
+    window.addEventListener("touchmove", (ev) => {
+        if(ev.targetTouches.length == 0) return;
+
+        let screenSize = {x: view.width, y: view.height}
+        let touch = ev.targetTouches[0]
+
+        gopher.gaze.x = touch.clientX * 2.0 / view.width - 1;
+        gopher.gaze.y = touch.clientY * 2.0 / view.height - 1;
+
+        gopher.head.x = gopher.gaze.x * 0.5;
+        gopher.head.y = gopher.gaze.y * 0.5;
+
+    });
+
+    function tick(t) {
+        context.clearRect(0,0,10000,10000);
+        context.save()
+
+        
+        
+        
+
+        let screenSize = {x: view.width, y: view.height}
+        render(gopher, context, screenSize)
+        context.restore()
+        return window.requestAnimationFrame(tick)
+    }
+
+    function stringify(v) {
+        return JSON.stringify(v, (key, val) => {
+            if(typeof val == "number"){
+                return val.toFixed(2)
+            }
+            return val
+        })
+    }
+
+    function render(gopher, draw, screenSize) {
+        let bodyRadius = Math.min(screenSize.x, screenSize.y) / 2
+        bodyRadius *= 0.8
+
+        let eyeRadius = bodyRadius * 0.4
+        let earRadius = eyeRadius * 0.53
+        let lineWidth = bodyRadius * 0.045
+        let highlightSize = eyeRadius * 0.06
+
+        draw.lineWidth = lineWidth
+        draw.strokeStyle = gopher.dark.toString()
+
+        
+        draw.translate(screenSize.x/2, screenSize.y)
+
+        for(let ear = -1; ear <= 1; ear+=2){
+            saved(draw, (draw) => { 
+                let earOffset = headOffset(gopher, -ear, bodyRadius)
+                earOffset.x *= -1
+                earOffset.x += ear*earRadius*0.3
+                earOffset.y = -bodyRadius*1.8 - Math.sin(gopher.head.y)*earRadius * 0.5
+
+                draw.translate(earOffset.x, earOffset.y)
+                draw.scale(ear, 1)
+                draw.rotate(tau / 10)
+                draw.translate(0, earRadius)
+
+                let earPath = new Path2D()
+
+                earPath.moveTo(-earRadius, earRadius)
+                earPath.lineTo(-earRadius, -earRadius)
+                earPath.bezierCurveTo(
+                    -earRadius, -earRadius-earRadius*1.3,
+                    earRadius, -earRadius-earRadius*1.3,
+                    earRadius, -earRadius)
+                earPath.lineTo(earRadius, earRadius)
+
+                draw.fillStyle = gopher.body.toString()
+                draw.fill(earPath)
+                draw.stroke(earPath)
+
+                let earInline = new Path2D()
+                earInline.moveTo(0, 0)
+                earInline.quadraticCurveTo(
+                    -earRadius*0.6, -earRadius,
+                    earRadius*0.2, -earRadius*1.4
+                );
+                earInline.moveTo(0, 0)
+                earInline.quadraticCurveTo(
+                    -earRadius*0.6, -earRadius,
+                    earRadius*0.3, -earRadius*1.0
+                );
+
+                draw.lineWidth = lineWidth * 0.7
+                draw.lineCap = "round"
+                draw.stroke(earInline)
+            })
+        }
+
+        saved(draw, (draw) => { 
+            let bodyPath = new Path2D()
+
+            bodyPath.moveTo(-bodyRadius, 0)
+            bodyPath.lineTo(-bodyRadius, -bodyRadius)
+            bodyPath.bezierCurveTo(
+                -bodyRadius, -bodyRadius-bodyRadius*1.2,
+                bodyRadius, -bodyRadius-bodyRadius*1.2,
+                bodyRadius, -bodyRadius)
+            bodyPath.lineTo(bodyRadius, 0)
+
+            draw.fillStyle = gopher.bodyDark.toString()
+            draw.fill(bodyPath)
+            saved(draw, (draw) => {
+                draw.clip(bodyPath)
+                draw.translate(bodyRadius * 0.1, 0)
+                draw.fillStyle = gopher.body.toString()
+                draw.fill(bodyPath)
+            })
+            draw.stroke(bodyPath)
+        })
+
+        for(let eye = -1; eye <= 1; eye+=2){
+            let gaze = gopher.gaze;
+
+            saved(draw, (draw) => { 
+                let eyeOffset = headOffset(gopher, eye, bodyRadius);
+                draw.translate(eyeOffset.x, eyeOffset.y);
+
+                let eyePath = new Path2D();
+                eyePath.arc(0, 0, eyeRadius, 0, tau, true);
+
+                draw.fillStyle = gopher.lightDark.toString()
+                draw.fill(eyePath)
+
+                saved(draw, (draw) => {
+                    draw.clip(eyePath)
+                    draw.translate(eyeRadius*0.2, -eyeRadius*0.15)
+                    draw.fillStyle = gopher.light.toString()
+                    draw.fill(eyePath)
+                })
+
+                draw.stroke(eyePath)
+
+                let pupil = { x: gaze.x, y: gaze.y}
+                let mag = Math.sqrt(pupil.x*pupil.x + pupil.y*pupil.y)
+                if(mag > 1){
+                    pupil.x /= mag + 0.0001;
+                    pupil.y /= mag + 0.0001;
+                }
+                pupil.x = Math.sin(pupil.x + eye * 0.4) * eyeRadius * 0.6
+                pupil.y = Math.sin(pupil.y) * eyeRadius * 0.6
+                let pupilSize = eyeRadius*0.25
+
+                let pupilPath = new Path2D();
+                pupilPath.arc(pupil.x, pupil.y, pupilSize, 0, tau, true)
+                draw.fillStyle = gopher.dark.toString()
+                draw.fill(pupilPath)
+
+                
+                let highlighPath = new Path2D()
+                highlighPath.arc(
+                    pupil.x + pupilSize * 0.3 - gaze.x * highlightSize * 0.3,
+                    pupil.y - pupilSize * 0.3 - gaze.y * highlightSize * 0.3, highlightSize, 0, tau, true)
+                draw.fillStyle = gopher.light.toString()
+                draw.fill(highlighPath)
+            })
+        }
+
+        saved(draw, (draw) => { 
+            let tipSize = eyeRadius*0.2;
+            let toothSize = tipSize;
+            let noseSize = tipSize * 2.2;
+
+            let noseOffset = headOffset(gopher, 0, bodyRadius)
+            noseOffset.y += eyeRadius * 0.8;
+            draw.translate(noseOffset.x, noseOffset.y);
+
+            saved(draw, (draw) => { 
+                draw.translate(0, tipSize*1.2 - gopher.head.y * tipSize * 0.3)
+                draw.beginPath()
+                draw.moveTo(-toothSize, 0)
+                draw.lineTo(-toothSize, toothSize*1.5)
+                draw.bezierCurveTo(
+                    -toothSize, toothSize*2,
+                    toothSize, toothSize*2,
+                    toothSize, toothSize*1.5,
+                )
+                draw.lineTo(toothSize, 0)
+                draw.fillStyle = gopher.light.toString()
+                draw.fill()
+                draw.lineWidth = lineWidth * 0.7;
+                draw.stroke()
+            })
+
+            saved(draw, (draw) => { 
+                draw.translate(0, tipSize*1.2)
+                draw.beginPath()
+
+                draw.moveTo(-noseSize, 0)
+                draw.bezierCurveTo(
+                    -noseSize, -noseSize,
+                    noseSize, -noseSize,
+                    noseSize, 0
+                )
+                draw.bezierCurveTo(
+                    noseSize, noseSize*0.4,
+                    -noseSize, noseSize*0.4,
+                    -noseSize, 0
+                )
+                draw.closePath()
+
+                draw.fillStyle = gopher.limb.toString()
+                draw.fill()
+                draw.stroke()
+            })
+
+            saved(draw, (draw) => { 
+                let tip = {
+                    x: Math.sin(gopher.head.x) * tipSize,
+                    y: Math.sin(gopher.head.y) * tipSize * 0.5 - tipSize*0.2,
+                };
+
+                draw.beginPath()
+                draw.scale(1.2, 0.9)
+                draw.arc(tip.x, tip.y, tipSize, 0, tau, true)
+                draw.fillStyle = gopher.dark.toString()
+                draw.fill()
+
+                
+                draw.beginPath()
+                draw.arc(
+                    tip.x + tipSize * 0.3 - gopher.head.x * highlightSize * 0.3,
+                    tip.y - tipSize * 0.3 - gopher.head.y * highlightSize * 0.3, highlightSize, 0, tau, true)
+                draw.fillStyle = gopher.light.toString()
+                draw.fill()
+            })
+        })
+    }
+
+    function headOffset(gopher, eye, bodyRadius) {
+        let x = eye*bodyRadius*0.4
+        let y = -bodyRadius*1.1
+
+        x += Math.sin(gopher.head.x - eye*0.4) * bodyRadius*0.3
+        y += Math.sin(gopher.head.y*tau/4) * bodyRadius*0.15
+
+        return {x: x, y: y}
+    }
+
+    function saved(draw, fn) {
+        draw.save()
+        fn(draw)
+        draw.restore()
+    }
+</script>
+</body>
+</html>
+    </body>
+</html>

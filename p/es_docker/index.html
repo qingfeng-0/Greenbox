@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='安装ElasticSearch 拉取镜像 docker pull elasticsearch:7.10.1 启动容器 同时挂载目录（包括配置文件和data）（挂载出来的位置自己定义）
+docker run --name elasticsearch -p 9200:9200 -p 9300:9300 -e ES_JAVA_OPTS=&amp;#34;-Xms256m -Xmx256m&amp;#34; -d \ -v /home/es/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml \ -v /home/es/data:/usr/share/elasticsearch/data elasticsearch:7.10.1 注意这里还设置了JVM的内存大小，默认为2G，有点大，很可能会因为内存不够而无法正常启动。可以像我这里改为256m或者其他值。
+可能出现的错误 查看容器日志
+docker logs elasticsearch 如果出现以下错误
+max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144] 则要修改服务器配置
+vim /etc/sysctl.conf 添加这行
+vm.max_map_count=262144 立即生效, 执行：
+/sbin/sysctl -p 对挂载的宿主机data目录可能出现权限不足问题
+chmod 777 [宿主机data目录] 配置跨域 到挂载出来到位置编辑配置文件
+vim elasticsearch.yml 添加以下几行
+network.host:0.0.0.0discovery.type:single-nodehttp.cors.enabled:truehttp.cors.allow-origin:&amp;#34;*&amp;#34;同时安全组和防火墙记得打开对应端口
+记得每次修改完配置都要重启 docker restart elasticsearch 浏览器访问测试 http://[IP]:9200 看到类似以下的json就成功了'><title>[Elastic]使用docker安装ElasticSearch &#43; Kibana</title>
+
+<link rel='canonical' href='https://ccqstark.github.io/p/es_docker/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='[Elastic]使用docker安装ElasticSearch &#43; Kibana'>
+<meta property='og:description' content='安装ElasticSearch 拉取镜像 docker pull elasticsearch:7.10.1 启动容器 同时挂载目录（包括配置文件和data）（挂载出来的位置自己定义）
+docker run --name elasticsearch -p 9200:9200 -p 9300:9300 -e ES_JAVA_OPTS=&amp;#34;-Xms256m -Xmx256m&amp;#34; -d \ -v /home/es/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml \ -v /home/es/data:/usr/share/elasticsearch/data elasticsearch:7.10.1 注意这里还设置了JVM的内存大小，默认为2G，有点大，很可能会因为内存不够而无法正常启动。可以像我这里改为256m或者其他值。
+可能出现的错误 查看容器日志
+docker logs elasticsearch 如果出现以下错误
+max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144] 则要修改服务器配置
+vim /etc/sysctl.conf 添加这行
+vm.max_map_count=262144 立即生效, 执行：
+/sbin/sysctl -p 对挂载的宿主机data目录可能出现权限不足问题
+chmod 777 [宿主机data目录] 配置跨域 到挂载出来到位置编辑配置文件
+vim elasticsearch.yml 添加以下几行
+network.host:0.0.0.0discovery.type:single-nodehttp.cors.enabled:truehttp.cors.allow-origin:&amp;#34;*&amp;#34;同时安全组和防火墙记得打开对应端口
+记得每次修改完配置都要重启 docker restart elasticsearch 浏览器访问测试 http://[IP]:9200 看到类似以下的json就成功了'>
+<meta property='og:url' content='https://ccqstark.github.io/p/es_docker/'>
+<meta property='og:site_name' content='ccq&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='ElasticSearch' /><meta property='article:published_time' content='2021-01-27T21:26:00&#43;08:00'/><meta property='article:modified_time' content='2021-01-27T21:26:00&#43;08:00'/><meta property='og:image' content='https://ccqstark.github.io/p/es_docker/elastic-docker.png' />
+<meta name="twitter:site" content="@ccqstark">
+    <meta name="twitter:creator" content="@ccqstark"><meta name="twitter:title" content="[Elastic]使用docker安装ElasticSearch &#43; Kibana">
+<meta name="twitter:description" content="安装ElasticSearch 拉取镜像 docker pull elasticsearch:7.10.1 启动容器 同时挂载目录（包括配置文件和data）（挂载出来的位置自己定义）
+docker run --name elasticsearch -p 9200:9200 -p 9300:9300 -e ES_JAVA_OPTS=&amp;#34;-Xms256m -Xmx256m&amp;#34; -d \ -v /home/es/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml \ -v /home/es/data:/usr/share/elasticsearch/data elasticsearch:7.10.1 注意这里还设置了JVM的内存大小，默认为2G，有点大，很可能会因为内存不够而无法正常启动。可以像我这里改为256m或者其他值。
+可能出现的错误 查看容器日志
+docker logs elasticsearch 如果出现以下错误
+max virtual memory areas vm.max_map_count [65530] is too low, increase to at least [262144] 则要修改服务器配置
+vim /etc/sysctl.conf 添加这行
+vm.max_map_count=262144 立即生效, 执行：
+/sbin/sysctl -p 对挂载的宿主机data目录可能出现权限不足问题
+chmod 777 [宿主机data目录] 配置跨域 到挂载出来到位置编辑配置文件
+vim elasticsearch.yml 添加以下几行
+network.host:0.0.0.0discovery.type:single-nodehttp.cors.enabled:truehttp.cors.allow-origin:&amp;#34;*&amp;#34;同时安全组和防火墙记得打开对应端口
+记得每次修改完配置都要重启 docker restart elasticsearch 浏览器访问测试 http://[IP]:9200 看到类似以下的json就成功了"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://ccqstark.github.io/p/es_docker/elastic-docker.png' />
+    <link rel="shortcut icon" href="/icon.ico" />
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PXLPFFZ3XD"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-PXLPFFZ3XD', { 'anonymize_ip': false });
+}
+</script>
+<a href="https://github.com/ccqstark" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#64CEAA; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>Back</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/es_docker/">
+                <img src="/p/es_docker/elastic-docker_hu1fc05f09d19ffda9f7576c23f66afe5c_19136_800x0_resize_box_3.png"
+                        srcset="/p/es_docker/elastic-docker_hu1fc05f09d19ffda9f7576c23f66afe5c_19136_800x0_resize_box_3.png 800w, /p/es_docker/elastic-docker_hu1fc05f09d19ffda9f7576c23f66afe5c_19136_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="375" 
+                        loading="lazy"
+                        alt="Featured image of post [Elastic]使用docker安装ElasticSearch &#43; Kibana" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" >
+                环境搭建
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/es_docker/">[Elastic]使用docker安装ElasticSearch &#43; Kibana</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jan 27, 2021</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    2 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h2 id="安装elasticsearch">安装ElasticSearch</h2>
+<h3 id="拉取镜像">拉取镜像</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">docker pull elasticsearch:7.10.1
+</code></pre></div><h3 id="启动容器">启动容器</h3>
+<p>同时挂载目录（包括配置文件和data）（挂载出来的位置自己定义）</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">docker run --name elasticsearch -p 9200:9200 -p 9300:9300 -e <span class="nv">ES_JAVA_OPTS</span><span class="o">=</span><span class="s2">&#34;-Xms256m -Xmx256m&#34;</span> -d <span class="se">\
+</span><span class="se"></span>-v /home/es/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml <span class="se">\
+</span><span class="se"></span>-v /home/es/data:/usr/share/elasticsearch/data elasticsearch:7.10.1
+</code></pre></div><p>注意这里还设置了<code>JVM的内存</code>大小，默认为2G，有点大，很可能会因为内存不够而无法正常启动。可以像我这里改为256m或者其他值。</p>
+<h3 id="可能出现的错误">可能出现的错误</h3>
+<p>查看容器日志</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">docker logs elasticsearch
+</code></pre></div><p>如果出现以下错误</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">max virtual memory areas vm.max_map_count <span class="o">[</span>65530<span class="o">]</span> is too low, increase to at least <span class="o">[</span>262144<span class="o">]</span>
+</code></pre></div><p>则要修改服务器配置</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">vim /etc/sysctl.conf
+</code></pre></div><p>添加这行</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">vm.max_map_count<span class="o">=</span><span class="m">262144</span>
+</code></pre></div><p>立即生效, 执行：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">/sbin/sysctl -p
+</code></pre></div><p>对挂载的宿主机data目录可能出现权限不足问题</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">chmod <span class="m">777</span> <span class="o">[</span>宿主机data目录<span class="o">]</span>
+</code></pre></div><h3 id="配置跨域">配置跨域</h3>
+<p>到挂载出来到位置编辑配置文件</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">vim elasticsearch.yml
+</code></pre></div><p>添加以下几行</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">network.host</span><span class="p">:</span><span class="w"> </span><span class="m">0.0.0.0</span><span class="w">
+</span><span class="w"></span><span class="nt">discovery.type</span><span class="p">:</span><span class="w"> </span><span class="l">single-node</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="nt">http.cors.enabled</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span><span class="w"></span><span class="nt">http.cors.allow-origin</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;*&#34;</span><span class="w">
+</span></code></pre></div><p>同时安全组和防火墙记得打开对应端口</p>
+<h3 id="记得每次修改完配置都要重启">记得每次修改完配置都要重启</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">docker restart elasticsearch
+</code></pre></div><h3 id="浏览器访问测试">浏览器访问测试</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">http://<span class="o">[</span>IP<span class="o">]</span>:9200
+</code></pre></div><p>看到类似以下的json就成功了</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+	<span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;8c819d377714&#34;</span><span class="p">,</span>
+	<span class="nt">&#34;cluster_name&#34;</span><span class="p">:</span> <span class="s2">&#34;elasticsearch&#34;</span><span class="p">,</span>
+	<span class="nt">&#34;cluster_uuid&#34;</span><span class="p">:</span> <span class="s2">&#34;-AkgwTlbS1SsjvzNtG45nw&#34;</span><span class="p">,</span>
+	<span class="nt">&#34;version&#34;</span><span class="p">:</span> <span class="p">{</span>
+	<span class="nt">&#34;number&#34;</span><span class="p">:</span> <span class="s2">&#34;7.10.1&#34;</span><span class="p">,</span>
+	<span class="nt">&#34;build_flavor&#34;</span><span class="p">:</span> <span class="s2">&#34;default&#34;</span><span class="p">,</span>
+	<span class="nt">&#34;build_type&#34;</span><span class="p">:</span> <span class="s2">&#34;docker&#34;</span><span class="p">,</span>
+	<span class="nt">&#34;build_hash&#34;</span><span class="p">:</span> <span class="s2">&#34;1c34507e66d7db1211f66f3513706fdf548736aa&#34;</span><span class="p">,</span>
+	<span class="nt">&#34;build_date&#34;</span><span class="p">:</span> <span class="s2">&#34;2020-12-05T01:00:33.671820Z&#34;</span><span class="p">,</span>
+	<span class="nt">&#34;build_snapshot&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+	<span class="nt">&#34;lucene_version&#34;</span><span class="p">:</span> <span class="s2">&#34;8.7.0&#34;</span><span class="p">,</span>
+	<span class="nt">&#34;minimum_wire_compatibility_version&#34;</span><span class="p">:</span> <span class="s2">&#34;6.8.0&#34;</span><span class="p">,</span>
+	<span class="nt">&#34;minimum_index_compatibility_version&#34;</span><span class="p">:</span> <span class="s2">&#34;6.0.0-beta1&#34;</span>
+	<span class="p">},</span>
+	<span class="nt">&#34;tagline&#34;</span><span class="p">:</span> <span class="s2">&#34;You Know, for Search&#34;</span>
+<span class="p">}</span>
+</code></pre></div><blockquote>
+<p>如果无法访问到</p>
+</blockquote>
+<p>如果开了安全组和防火墙的话还是无法访问到的话，看看在容器启动时是否有如下警告：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">WARNING: IPv4 forwarding is disabled. Networking will not work.
+</code></pre></div><p>按如下步骤操作再访问即可</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">vim /etc/sysctl.conf
+
+<span class="c1">#添加如下代码：</span>
+net.ipv4.ip_forward<span class="o">=</span><span class="m">1</span>
+
+<span class="c1">#重启network服务</span>
+systemctl restart network
+
+<span class="c1">#查看是否修改成功</span>
+sysctl net.ipv4.ip_forward
+
+<span class="c1">#如果返回为“net.ipv4.ip_forward = 1”则表示成功了</span>
+<span class="c1">#这时，重启容器即可。</span>
+</code></pre></div><h2 id="安装elasticsearch-head">安装elasticsearch-head</h2>
+<h3 id="拉取镜像-1">拉取镜像</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">docker pull mobz/elasticsearch-head:5
+</code></pre></div><h3 id="启动容器-1">启动容器</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">docker run -it -d --name head -p 9100:9100 mobz/elasticsearch-head:5
+</code></pre></div><p>浏览器打开</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">http://<span class="o">[</span>ip<span class="o">]</span>:9100/
+</code></pre></div><p>在上面集群连接处的输入框输入elasticsearch的地址</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">http://<span class="o">[</span>IP<span class="o">]</span>:9200
+</code></pre></div><p>之后点击连接，右边的<code>集群健康值</code>字样出现绿色背景代表成功连接</p>
+<h2 id="安装kibana">安装Kibana</h2>
+<h3 id="拉取镜像-2">拉取镜像</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">docker pull kibana:7.10.1
+</code></pre></div><p>注意版本和ES的要对应</p>
+<h3 id="配置文件kibanayml">配置文件kibana.yml</h3>
+<p>为了挂载配置文件，我们先在本机创建一个配置文件，这里以<code>/home/kibana/config/kibana.yml</code> 为例</p>
+<p>配置文件中写入</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="nt">server.host</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;0.0.0.0&#39;</span><span class="w">
+</span><span class="w"></span><span class="nt">elasticsearch.hosts</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&#34;http://[ip地址]:9200/&#34;</span><span class="p">]</span><span class="w">
+</span><span class="w"></span><span class="nt">xpack</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">apm.ui.enabled</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span><span class="w">  </span><span class="nt">graph.enabled</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span><span class="w">  </span><span class="nt">ml.enabled</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span><span class="w">  </span><span class="nt">monitoring.enabled</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span><span class="w">  </span><span class="nt">reporting.enabled</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span><span class="w">  </span><span class="nt">security.enabled</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span><span class="w">  </span><span class="nt">grokdebugger.enabled</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span><span class="w">  </span><span class="nt">searchprofiler.enabled</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span></code></pre></div><h3 id="启动容器-2">启动容器</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">docker run -d -it <span class="se">\
+</span><span class="se"></span>--name kibana -p 5601:5601 <span class="se">\
+</span><span class="se"></span>-v /home/kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml kibana:7.10.1
+</code></pre></div><p>浏览器打开</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">http://<span class="o">[</span>ip<span class="o">]</span>:5601/
+</code></pre></div><h3 id="安装ik分词器">安装ik分词器</h3>
+<p>首先进入es的容器内</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">docker <span class="nb">exec</span> -it elasticsearch /bin/bash
+</code></pre></div><p>使用bin目录下的elasticsearch-plugin install安装ik分词器插件（注意版本要对应）</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># github官方</span>
+bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.10.1/elasticsearch-analysis-ik-7.10.1.zip
+</code></pre></div><p>这里可能会很慢，可以用镜像加速</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># 镜像加速</span>
+bin/elasticsearch-plugin install https://github.91chifun.workers.dev//https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.10.1/elasticsearch-analysis-ik-7.10.1.zip
+</code></pre></div><p>也可以选择本地下载解压完再上传到服务器，再把它移动到容器内的plugins文件夹里</p>
+<p><strong>然后重启容器</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">docker restart elasticsearch
+</code></pre></div><h3 id="在kibana中测试">在kibana中测试</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">GET _analyze
+<span class="o">{</span>
+  <span class="s2">&#34;analyzer&#34;</span>: <span class="s2">&#34;ik_max_word&#34;</span>,
+  <span class="s2">&#34;text&#34;</span>: <span class="s2">&#34;各地校车将享最高路权&#34;</span>
+<span class="o">}</span>
+</code></pre></div><p>有<code>ik_smart</code> 和 <code>ik_max_word</code> 两种模式，分别是<code>最粗粒度的拆分</code>和<code>最细粒度的拆分</code></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/elasticsearch/">ElasticSearch</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.css"integrity="sha384-RZU/ijkSsFbcmivfdRBQDtwuwVqK7GMOw6IMvKyeWL2K5UAlyp6WonmB8m7Jd0Hn"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.js"integrity="sha384-pK1WpvzWVBQiP0/GjnvRxV4mOb0oxFuyRxJlk6vVw146n3egcN5C925NCP7a7BY8"crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/contrib/auto-render.min.js"integrity="sha384-vZTG03m&#43;2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl"crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });})
+</script>
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">Related contents</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/x_pack/">
+        
+        
+            <div class="article-image">
+                <img src="/p/x_pack/x-pack.03b6883bf32ad168964ccfa7a68ecbff_huc4207ebc9b333ece948f0ec8e981e0d7_15854_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="x_pack" 
+                        data-hash="md5-A7aIO/Mq0WiWTM&#43;npo7L/w==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">[Elastic]ElasticSearch 安全</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/logstash_mysql/">
+        
+        
+            <div class="article-image">
+                <img src="/p/logstash_mysql/logstash-mysql.4f6b8497a2d0608059a79ee135e80e84_hubd922da79b2e986df34a25cd755e9ffb_77309_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="logstash_mysql" 
+                        data-hash="md5-T2uEl6LQYIBZp57hNegOhA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">[Elastic]使用logstash同步MySQL数据</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/jenkins_docker_springboot/">
+        
+        
+            <div class="article-image">
+                <img src="/p/jenkins_docker_springboot/jenkins-cicd.33501c75026a111501af63ce15b1106f_huac9b8bcc40d9704ef8edb1ad38827231_44206_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="jenkins_docker_springboot" 
+                        data-hash="md5-M1AcdQJqERUBr2POFbEQbw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Jenkins &#43; docker &#43; springboot 完美配合全流程教程</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/docker_nginx/">
+        
+        
+            <div class="article-image">
+                <img src="/p/docker_nginx/nginx-docker.23dd1d5d655b0db04797a64df73e9106_hu2ff739cd1ceaefb705a9e30c4218e66c_86441_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="docker_nginx" 
+                        data-hash="md5-I90dXWVbDbBHl6ZN9z6RBg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">[docker]用docker部署nginx</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/docker_springboot/">
+        
+        
+            <div class="article-image">
+                <img src="/p/docker_springboot/docker-springboot.180380aae35bb65f058f26374c2966a0_hu705e70abdc72815dabd2267940e19d94_40186_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="docker_springboot" 
+                        data-hash="md5-GAOAquNbtl8FjyY3TClmoA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">[docker]用docker部署SpringBoot项目</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-ccqstark-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2022 ccq&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        
+            一辈子热爱技术 <br/>
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.5.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">Table of contents</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#安装elasticsearch">安装ElasticSearch</a>
+      <ol>
+        <li><a href="#拉取镜像">拉取镜像</a></li>
+        <li><a href="#启动容器">启动容器</a></li>
+        <li><a href="#可能出现的错误">可能出现的错误</a></li>
+        <li><a href="#配置跨域">配置跨域</a></li>
+        <li><a href="#记得每次修改完配置都要重启">记得每次修改完配置都要重启</a></li>
+        <li><a href="#浏览器访问测试">浏览器访问测试</a></li>
+      </ol>
+    </li>
+    <li><a href="#安装elasticsearch-head">安装elasticsearch-head</a>
+      <ol>
+        <li><a href="#拉取镜像-1">拉取镜像</a></li>
+        <li><a href="#启动容器-1">启动容器</a></li>
+      </ol>
+    </li>
+    <li><a href="#安装kibana">安装Kibana</a>
+      <ol>
+        <li><a href="#拉取镜像-2">拉取镜像</a></li>
+        <li><a href="#配置文件kibanayml">配置文件kibana.yml</a></li>
+        <li><a href="#启动容器-2">启动容器</a></li>
+        <li><a href="#安装ik分词器">安装ik分词器</a></li>
+        <li><a href="#在kibana中测试">在kibana中测试</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>gopher</title>
+	
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-PXLPFFZ3XD"></script>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
+
+	  gtag('config', 'G-PXLPFFZ3XD');
+	</script>
+</head>
+<body>
+<canvas id="view" width="200" height="180" style="position: fixed; right: 0; bottom: 0; z-index: 9999"></canvas>
+<script type="text/javascript">
+    "use strict";
+
+    if(window.animationLoop) {
+        window.cancelAnimationFrame(window.animationLoop)
+    }
+
+    class HSL {
+        constructor(h, s, l) {
+            this.h = h
+            this.s = s
+            this.l = l
+        }
+
+        toString() {
+            return "hsl(" +
+                (this.h * 360).toFixed(2) + "," +
+                (this.s * 100).toFixed(2) + "%," +
+                (this.l * 100).toFixed(2) + "%)";
+        }
+    }
+
+    const tau = Math.PI * 2
+
+    let view = document.getElementById("view")
+    let context = view.getContext("2d")
+    updateViewSize()
+
+    let gopher = {
+        body: new HSL(205.0/360, 1.0,  0.81),
+        bodyDark: new HSL(205.0/360, 0.55,  0.71),
+        dark: new HSL(217.0/360, 0.19, 0.18),
+        light: new HSL(217.0/360, 0.0, 1.00),
+        lightDark: new HSL(217.0/360, 0.0, 0.90),
+        limb: new HSL(46.0/360, 0.38, 0.80),
+
+        head: {x: 0, y:0},
+        gaze: {x: 0, y:0},
+    };
+
+    window.animationLoop = tick();
+
+    window.addEventListener("resize", updateViewSize)
+
+    function updateViewSize() {
+        
+        
+
+        view.width = view.clientWidth;
+        view.height = view.clientHeight;
+    }
+
+    window.addEventListener("mousemove", (ev) => {
+        let screenSize = {x: view.width, y: view.height}
+
+		gopher.gaze.x = - (ev.clientX * 1.5 / view.width-1);
+		gopher.gaze.y = - (ev.clientY * 1.5 / view.height-1);
+
+        gopher.head.x = gopher.gaze.x * 0.5;
+        gopher.head.y = gopher.gaze.y * 0.5;
+   
+    });
+
+    window.addEventListener("touchmove", (ev) => {
+        if(ev.targetTouches.length == 0) return;
+
+        let screenSize = {x: view.width, y: view.height}
+        let touch = ev.targetTouches[0]
+
+        gopher.gaze.x = touch.clientX * 2.0 / view.width - 1;
+        gopher.gaze.y = touch.clientY * 2.0 / view.height - 1;
+
+        gopher.head.x = gopher.gaze.x * 0.5;
+        gopher.head.y = gopher.gaze.y * 0.5;
+
+    });
+
+    function tick(t) {
+        context.clearRect(0,0,10000,10000);
+        context.save()
+
+        
+        
+        
+
+        let screenSize = {x: view.width, y: view.height}
+        render(gopher, context, screenSize)
+        context.restore()
+        return window.requestAnimationFrame(tick)
+    }
+
+    function stringify(v) {
+        return JSON.stringify(v, (key, val) => {
+            if(typeof val == "number"){
+                return val.toFixed(2)
+            }
+            return val
+        })
+    }
+
+    function render(gopher, draw, screenSize) {
+        let bodyRadius = Math.min(screenSize.x, screenSize.y) / 2
+        bodyRadius *= 0.8
+
+        let eyeRadius = bodyRadius * 0.4
+        let earRadius = eyeRadius * 0.53
+        let lineWidth = bodyRadius * 0.045
+        let highlightSize = eyeRadius * 0.06
+
+        draw.lineWidth = lineWidth
+        draw.strokeStyle = gopher.dark.toString()
+
+        
+        draw.translate(screenSize.x/2, screenSize.y)
+
+        for(let ear = -1; ear <= 1; ear+=2){
+            saved(draw, (draw) => { 
+                let earOffset = headOffset(gopher, -ear, bodyRadius)
+                earOffset.x *= -1
+                earOffset.x += ear*earRadius*0.3
+                earOffset.y = -bodyRadius*1.8 - Math.sin(gopher.head.y)*earRadius * 0.5
+
+                draw.translate(earOffset.x, earOffset.y)
+                draw.scale(ear, 1)
+                draw.rotate(tau / 10)
+                draw.translate(0, earRadius)
+
+                let earPath = new Path2D()
+
+                earPath.moveTo(-earRadius, earRadius)
+                earPath.lineTo(-earRadius, -earRadius)
+                earPath.bezierCurveTo(
+                    -earRadius, -earRadius-earRadius*1.3,
+                    earRadius, -earRadius-earRadius*1.3,
+                    earRadius, -earRadius)
+                earPath.lineTo(earRadius, earRadius)
+
+                draw.fillStyle = gopher.body.toString()
+                draw.fill(earPath)
+                draw.stroke(earPath)
+
+                let earInline = new Path2D()
+                earInline.moveTo(0, 0)
+                earInline.quadraticCurveTo(
+                    -earRadius*0.6, -earRadius,
+                    earRadius*0.2, -earRadius*1.4
+                );
+                earInline.moveTo(0, 0)
+                earInline.quadraticCurveTo(
+                    -earRadius*0.6, -earRadius,
+                    earRadius*0.3, -earRadius*1.0
+                );
+
+                draw.lineWidth = lineWidth * 0.7
+                draw.lineCap = "round"
+                draw.stroke(earInline)
+            })
+        }
+
+        saved(draw, (draw) => { 
+            let bodyPath = new Path2D()
+
+            bodyPath.moveTo(-bodyRadius, 0)
+            bodyPath.lineTo(-bodyRadius, -bodyRadius)
+            bodyPath.bezierCurveTo(
+                -bodyRadius, -bodyRadius-bodyRadius*1.2,
+                bodyRadius, -bodyRadius-bodyRadius*1.2,
+                bodyRadius, -bodyRadius)
+            bodyPath.lineTo(bodyRadius, 0)
+
+            draw.fillStyle = gopher.bodyDark.toString()
+            draw.fill(bodyPath)
+            saved(draw, (draw) => {
+                draw.clip(bodyPath)
+                draw.translate(bodyRadius * 0.1, 0)
+                draw.fillStyle = gopher.body.toString()
+                draw.fill(bodyPath)
+            })
+            draw.stroke(bodyPath)
+        })
+
+        for(let eye = -1; eye <= 1; eye+=2){
+            let gaze = gopher.gaze;
+
+            saved(draw, (draw) => { 
+                let eyeOffset = headOffset(gopher, eye, bodyRadius);
+                draw.translate(eyeOffset.x, eyeOffset.y);
+
+                let eyePath = new Path2D();
+                eyePath.arc(0, 0, eyeRadius, 0, tau, true);
+
+                draw.fillStyle = gopher.lightDark.toString()
+                draw.fill(eyePath)
+
+                saved(draw, (draw) => {
+                    draw.clip(eyePath)
+                    draw.translate(eyeRadius*0.2, -eyeRadius*0.15)
+                    draw.fillStyle = gopher.light.toString()
+                    draw.fill(eyePath)
+                })
+
+                draw.stroke(eyePath)
+
+                let pupil = { x: gaze.x, y: gaze.y}
+                let mag = Math.sqrt(pupil.x*pupil.x + pupil.y*pupil.y)
+                if(mag > 1){
+                    pupil.x /= mag + 0.0001;
+                    pupil.y /= mag + 0.0001;
+                }
+                pupil.x = Math.sin(pupil.x + eye * 0.4) * eyeRadius * 0.6
+                pupil.y = Math.sin(pupil.y) * eyeRadius * 0.6
+                let pupilSize = eyeRadius*0.25
+
+                let pupilPath = new Path2D();
+                pupilPath.arc(pupil.x, pupil.y, pupilSize, 0, tau, true)
+                draw.fillStyle = gopher.dark.toString()
+                draw.fill(pupilPath)
+
+                
+                let highlighPath = new Path2D()
+                highlighPath.arc(
+                    pupil.x + pupilSize * 0.3 - gaze.x * highlightSize * 0.3,
+                    pupil.y - pupilSize * 0.3 - gaze.y * highlightSize * 0.3, highlightSize, 0, tau, true)
+                draw.fillStyle = gopher.light.toString()
+                draw.fill(highlighPath)
+            })
+        }
+
+        saved(draw, (draw) => { 
+            let tipSize = eyeRadius*0.2;
+            let toothSize = tipSize;
+            let noseSize = tipSize * 2.2;
+
+            let noseOffset = headOffset(gopher, 0, bodyRadius)
+            noseOffset.y += eyeRadius * 0.8;
+            draw.translate(noseOffset.x, noseOffset.y);
+
+            saved(draw, (draw) => { 
+                draw.translate(0, tipSize*1.2 - gopher.head.y * tipSize * 0.3)
+                draw.beginPath()
+                draw.moveTo(-toothSize, 0)
+                draw.lineTo(-toothSize, toothSize*1.5)
+                draw.bezierCurveTo(
+                    -toothSize, toothSize*2,
+                    toothSize, toothSize*2,
+                    toothSize, toothSize*1.5,
+                )
+                draw.lineTo(toothSize, 0)
+                draw.fillStyle = gopher.light.toString()
+                draw.fill()
+                draw.lineWidth = lineWidth * 0.7;
+                draw.stroke()
+            })
+
+            saved(draw, (draw) => { 
+                draw.translate(0, tipSize*1.2)
+                draw.beginPath()
+
+                draw.moveTo(-noseSize, 0)
+                draw.bezierCurveTo(
+                    -noseSize, -noseSize,
+                    noseSize, -noseSize,
+                    noseSize, 0
+                )
+                draw.bezierCurveTo(
+                    noseSize, noseSize*0.4,
+                    -noseSize, noseSize*0.4,
+                    -noseSize, 0
+                )
+                draw.closePath()
+
+                draw.fillStyle = gopher.limb.toString()
+                draw.fill()
+                draw.stroke()
+            })
+
+            saved(draw, (draw) => { 
+                let tip = {
+                    x: Math.sin(gopher.head.x) * tipSize,
+                    y: Math.sin(gopher.head.y) * tipSize * 0.5 - tipSize*0.2,
+                };
+
+                draw.beginPath()
+                draw.scale(1.2, 0.9)
+                draw.arc(tip.x, tip.y, tipSize, 0, tau, true)
+                draw.fillStyle = gopher.dark.toString()
+                draw.fill()
+
+                
+                draw.beginPath()
+                draw.arc(
+                    tip.x + tipSize * 0.3 - gopher.head.x * highlightSize * 0.3,
+                    tip.y - tipSize * 0.3 - gopher.head.y * highlightSize * 0.3, highlightSize, 0, tau, true)
+                draw.fillStyle = gopher.light.toString()
+                draw.fill()
+            })
+        })
+    }
+
+    function headOffset(gopher, eye, bodyRadius) {
+        let x = eye*bodyRadius*0.4
+        let y = -bodyRadius*1.1
+
+        x += Math.sin(gopher.head.x - eye*0.4) * bodyRadius*0.3
+        y += Math.sin(gopher.head.y*tau/4) * bodyRadius*0.15
+
+        return {x: x, y: y}
+    }
+
+    function saved(draw, fn) {
+        draw.save()
+        fn(draw)
+        draw.restore()
+    }
+</script>
+</body>
+</html>
+    </body>
+</html>

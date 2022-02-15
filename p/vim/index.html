@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='由于这几天开始看《CS:APP》，我就开始寻求一款Mac上的轻量的C语言编辑器。找来找去，无非是VSCode、CLion和大名鼎鼎的Vim。
+为了减少磁盘占用同时让自己更接近于底层，我还是硬着头皮折腾起了Vim，这个上古神器之前就一直让我望而却步，我对它的掌握程度也差不多是会退出的程度，这一次就打算好好来折腾下。
+安装NeoVim Vim其实到目前为止，不同的分支版本还是很多的，比较流行的现代版本就要属NeoVim了，所以我在终端安装了它，用iTerm2运行着。
+brew install neovim 安装完成后用nvim命令就可以打开
+nvim 配置文件路径
+传统的vim的配置配置文件为~/.vimrc
+而nvim的配置文件为/.config/nvim/init.vim ，之后修改nvim配置文件就用这个，以下简称为init.vim
+安装SpaceVim 作为小白，快速搭建一个好看实用的Vim开发环境那最好的选择就是SpaceVim 了，下面是官方的介绍：
+ SpaceVim 是一个社区驱动的模块化的 Vim IDE，以模块的方式组织管理插件以及相关配置， 为不同的语言开发量身定制了相关的开发模块，该模块提供代码自动补全， 语法检查、格式化、调试、REPL 等特性。用户仅需载入相关语言的模块即可得到一个开箱即用的 Vim IDE。
+ 官网地址：
+主页 | SpaceVim
+官网的文档还是很全的，按官方文档就可以快速搭建出来了。以MacOS为例：
+安装spacevim
+curl -sLf https://spacevim.org/cn/install.sh | bash 完成后重新打开nvim就会自动下载相关插件。
+然后就是主界面：
+  主题的修改可以参考官方文档
+SpaceVim colorscheme 模块 | SpaceVim
+快捷键符号说明
+SPC 代表空格
+&amp;lt;Leader&amp;gt; 默认为\
+以下一些功能需要对mac进行一定的设置才能正常使用。
+打开系统偏好设置 → 键盘
+勾选将F1、F2等键用作标准功能键
+这同时也解决了Chrome的F12 不能打开控制台的问题
+  文件目录树
+按F3 可以打开或关闭
+语法函数树
+按F2可以打开或关闭
+mac下可能会出现错误，解决方案：
+brew install ctags-exuberant 然后init.'><title>我的vim入门配置折腾</title>
+
+<link rel='canonical' href='https://ccqstark.github.io/p/vim/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='我的vim入门配置折腾'>
+<meta property='og:description' content='由于这几天开始看《CS:APP》，我就开始寻求一款Mac上的轻量的C语言编辑器。找来找去，无非是VSCode、CLion和大名鼎鼎的Vim。
+为了减少磁盘占用同时让自己更接近于底层，我还是硬着头皮折腾起了Vim，这个上古神器之前就一直让我望而却步，我对它的掌握程度也差不多是会退出的程度，这一次就打算好好来折腾下。
+安装NeoVim Vim其实到目前为止，不同的分支版本还是很多的，比较流行的现代版本就要属NeoVim了，所以我在终端安装了它，用iTerm2运行着。
+brew install neovim 安装完成后用nvim命令就可以打开
+nvim 配置文件路径
+传统的vim的配置配置文件为~/.vimrc
+而nvim的配置文件为/.config/nvim/init.vim ，之后修改nvim配置文件就用这个，以下简称为init.vim
+安装SpaceVim 作为小白，快速搭建一个好看实用的Vim开发环境那最好的选择就是SpaceVim 了，下面是官方的介绍：
+ SpaceVim 是一个社区驱动的模块化的 Vim IDE，以模块的方式组织管理插件以及相关配置， 为不同的语言开发量身定制了相关的开发模块，该模块提供代码自动补全， 语法检查、格式化、调试、REPL 等特性。用户仅需载入相关语言的模块即可得到一个开箱即用的 Vim IDE。
+ 官网地址：
+主页 | SpaceVim
+官网的文档还是很全的，按官方文档就可以快速搭建出来了。以MacOS为例：
+安装spacevim
+curl -sLf https://spacevim.org/cn/install.sh | bash 完成后重新打开nvim就会自动下载相关插件。
+然后就是主界面：
+  主题的修改可以参考官方文档
+SpaceVim colorscheme 模块 | SpaceVim
+快捷键符号说明
+SPC 代表空格
+&amp;lt;Leader&amp;gt; 默认为\
+以下一些功能需要对mac进行一定的设置才能正常使用。
+打开系统偏好设置 → 键盘
+勾选将F1、F2等键用作标准功能键
+这同时也解决了Chrome的F12 不能打开控制台的问题
+  文件目录树
+按F3 可以打开或关闭
+语法函数树
+按F2可以打开或关闭
+mac下可能会出现错误，解决方案：
+brew install ctags-exuberant 然后init.'>
+<meta property='og:url' content='https://ccqstark.github.io/p/vim/'>
+<meta property='og:site_name' content='ccq&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Vim' /><meta property='article:published_time' content='2021-01-31T21:26:00&#43;08:00'/><meta property='article:modified_time' content='2021-01-31T21:26:00&#43;08:00'/><meta property='og:image' content='https://ccqstark.github.io/p/vim/vim.png' />
+<meta name="twitter:site" content="@ccqstark">
+    <meta name="twitter:creator" content="@ccqstark"><meta name="twitter:title" content="我的vim入门配置折腾">
+<meta name="twitter:description" content="由于这几天开始看《CS:APP》，我就开始寻求一款Mac上的轻量的C语言编辑器。找来找去，无非是VSCode、CLion和大名鼎鼎的Vim。
+为了减少磁盘占用同时让自己更接近于底层，我还是硬着头皮折腾起了Vim，这个上古神器之前就一直让我望而却步，我对它的掌握程度也差不多是会退出的程度，这一次就打算好好来折腾下。
+安装NeoVim Vim其实到目前为止，不同的分支版本还是很多的，比较流行的现代版本就要属NeoVim了，所以我在终端安装了它，用iTerm2运行着。
+brew install neovim 安装完成后用nvim命令就可以打开
+nvim 配置文件路径
+传统的vim的配置配置文件为~/.vimrc
+而nvim的配置文件为/.config/nvim/init.vim ，之后修改nvim配置文件就用这个，以下简称为init.vim
+安装SpaceVim 作为小白，快速搭建一个好看实用的Vim开发环境那最好的选择就是SpaceVim 了，下面是官方的介绍：
+ SpaceVim 是一个社区驱动的模块化的 Vim IDE，以模块的方式组织管理插件以及相关配置， 为不同的语言开发量身定制了相关的开发模块，该模块提供代码自动补全， 语法检查、格式化、调试、REPL 等特性。用户仅需载入相关语言的模块即可得到一个开箱即用的 Vim IDE。
+ 官网地址：
+主页 | SpaceVim
+官网的文档还是很全的，按官方文档就可以快速搭建出来了。以MacOS为例：
+安装spacevim
+curl -sLf https://spacevim.org/cn/install.sh | bash 完成后重新打开nvim就会自动下载相关插件。
+然后就是主界面：
+  主题的修改可以参考官方文档
+SpaceVim colorscheme 模块 | SpaceVim
+快捷键符号说明
+SPC 代表空格
+&amp;lt;Leader&amp;gt; 默认为\
+以下一些功能需要对mac进行一定的设置才能正常使用。
+打开系统偏好设置 → 键盘
+勾选将F1、F2等键用作标准功能键
+这同时也解决了Chrome的F12 不能打开控制台的问题
+  文件目录树
+按F3 可以打开或关闭
+语法函数树
+按F2可以打开或关闭
+mac下可能会出现错误，解决方案：
+brew install ctags-exuberant 然后init."><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://ccqstark.github.io/p/vim/vim.png' />
+    <link rel="shortcut icon" href="/icon.ico" />
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PXLPFFZ3XD"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-PXLPFFZ3XD', { 'anonymize_ip': false });
+}
+</script>
+<a href="https://github.com/ccqstark" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#64CEAA; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>Back</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/vim/">
+                <img src="/p/vim/vim_hu721b1231aff42422e86b1dd0b5ea6e91_94583_800x0_resize_box_3.png"
+                        srcset="/p/vim/vim_hu721b1231aff42422e86b1dd0b5ea6e91_94583_800x0_resize_box_3.png 800w, /p/vim/vim_hu721b1231aff42422e86b1dd0b5ea6e91_94583_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="450" 
+                        loading="lazy"
+                        alt="Featured image of post 我的vim入门配置折腾" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E5%85%B6%E5%AE%83%E6%8A%80%E6%9C%AF/" >
+                其它技术
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/vim/">我的vim入门配置折腾</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Jan 31, 2021</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    3 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <p>由于这几天开始看《CS:APP》，我就开始寻求一款Mac上的轻量的C语言编辑器。找来找去，无非是<code>VSCode</code>、<code>CLion</code>和大名鼎鼎的<code>Vim</code>。</p>
+<p>为了减少磁盘占用同时让自己更接近于底层，我还是硬着头皮折腾起了Vim，这个上古神器之前就一直让我望而却步，我对它的掌握程度也差不多是会退出的程度，这一次就打算好好来折腾下。</p>
+<h3 id="安装neovim">安装NeoVim</h3>
+<p>Vim其实到目前为止，不同的分支版本还是很多的，比较流行的现代版本就要属NeoVim了，所以我在终端安装了它，用<code>iTerm2</code>运行着。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">brew install neovim
+</code></pre></div><p>安装完成后用nvim命令就可以打开</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">nvim
+</code></pre></div><p><strong>配置文件路径</strong></p>
+<p>传统的vim的配置配置文件为<code>~/.vimrc</code></p>
+<p>而nvim的配置文件为<code>/.config/nvim/init.vim</code> ，之后修改nvim配置文件就用这个，以下简称为<code>init.vim</code></p>
+<h3 id="安装spacevim">安装SpaceVim</h3>
+<p>作为小白，快速搭建一个好看实用的Vim开发环境那最好的选择就是<code>SpaceVim</code> 了，下面是官方的介绍：</p>
+<blockquote>
+<p>SpaceVim 是一个社区驱动的模块化的 Vim IDE，以模块的方式组织管理插件以及相关配置， 为不同的语言开发量身定制了相关的开发模块，该模块提供代码自动补全， 语法检查、格式化、调试、REPL 等特性。用户仅需载入相关语言的模块即可得到一个开箱即用的 Vim IDE。</p>
+</blockquote>
+<p>官网地址：</p>
+<p><a class="link" href="https://spacevim.org/cn/"  target="_blank" rel="noopener"
+    >主页 | SpaceVim</a></p>
+<p>官网的文档还是很全的，按官方文档就可以快速搭建出来了。以MacOS为例：</p>
+<p><strong>安装spacevim</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">curl -sLf https://spacevim.org/cn/install.sh <span class="p">|</span> bash
+</code></pre></div><p>完成后重新打开nvim就会自动下载相关插件。</p>
+<p>然后就是主界面：</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 178; 
+			flex-basis: 427px"
+	>
+	<a href="/p/vim/Untitled.png" data-size="1042x585">
+		<img src="/p/vim/Untitled.png"
+			width="1042"
+			height="585"
+			srcset="/p/vim/Untitled_hua3043802da1b2443e590d828f6c6ef5a_91873_480x0_resize_box_3.png 480w, /p/vim/Untitled_hua3043802da1b2443e590d828f6c6ef5a_91873_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure>
+<strong>主题</strong>的修改可以参考官方文档</p>
+<p><a class="link" href="https://spacevim.org/cn/layers/colorscheme/"  target="_blank" rel="noopener"
+    >SpaceVim colorscheme 模块 | SpaceVim</a></p>
+<p><strong>快捷键符号说明</strong></p>
+<p><code>SPC</code> 代表空格</p>
+<p><code>&lt;Leader&gt;</code> 默认为<code>\</code></p>
+<p>以下一些功能需要对mac进行一定的设置才能正常使用。</p>
+<p>打开<code>系统偏好设置</code> → <code>键盘</code></p>
+<p>勾选<code>将F1、F2等键用作标准功能键</code></p>
+<p>这同时也解决了Chrome的<code>F12</code> 不能打开控制台的问题</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 188; 
+			flex-basis: 451px"
+	>
+	<a href="/p/vim/Untitled1.png" data-size="461x245">
+		<img src="/p/vim/Untitled1.png"
+			width="461"
+			height="245"
+			srcset="/p/vim/Untitled1_hu261421ce15b23020c919c569b90937fb_31843_480x0_resize_box_3.png 480w, /p/vim/Untitled1_hu261421ce15b23020c919c569b90937fb_31843_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure>
+<strong>文件目录树</strong></p>
+<p>按<code>F3</code> 可以打开或关闭</p>
+<p><strong>语法函数树</strong></p>
+<p>按<code>F2</code>可以打开或关闭</p>
+<p>mac下可能会出现错误，解决方案：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">brew install ctags-exuberant
+</code></pre></div><p>然后<code>init.vim</code>里添加下面这行即可</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">let</span> g:Tlist_Ctags_Cmd<span class="o">=</span><span class="s1">&#39;/usr/local/Cellar/ctags/5.8_1/bin/ctags&#39;</span>
+</code></pre></div><p>shell<strong>终端</strong></p>
+<p><code>SPC '</code> 即可打开系统shell，如果用了oh-my-zsh主题什么的也会保留的</p>
+<h3 id="配置cc环境">配置C/C++环境</h3>
+<p>spacevim对大部分语言都有相关支持，文档也齐全，比如我需要的C语言环境：</p>
+<p><a class="link" href="https://spacevim.org/cn/use-vim-as-a-c-cpp-ide/"  target="_blank" rel="noopener"
+    >使用 Vim 搭建 C/C++ 开发环境 | SpaceVim</a></p>
+<p>按照官方文档修改spacevim的配置文件<code>~/.SpaceVim.d/init.toml</code> 即可，以下简称<code>init.toml</code></p>
+<p>对于自带的模块基本只需要添加<code>[[layers]]</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># 语法高亮</span>
+<span class="o">[[</span>layers<span class="o">]]</span>
+    <span class="nv">name</span> <span class="o">=</span> <span class="s1">&#39;lang#c&#39;</span>
+    <span class="nv">enable_clang_syntax_highlight</span> <span class="o">=</span> <span class="nb">true</span>
+
+<span class="c1"># 代码格式化</span>
+<span class="o">[[</span>layers<span class="o">]]</span>
+  <span class="nv">name</span> <span class="o">=</span> <span class="s2">&#34;format&#34;</span>
+
+<span class="c1"># 语法检查</span>
+<span class="o">[[</span>layers<span class="o">]]</span>
+  <span class="nv">name</span> <span class="o">=</span> <span class="s2">&#34;checkers&#34;</span>
+</code></pre></div><p>spacevim内置的模块还是很多的，但是很多功能相对简陋，为了实现更好的效果，我们还需要安装其他的插件。</p>
+<h3 id="安装插件管理器vim-plug">安装插件管理器vim-plug</h3>
+<p>虽然SpaceVim已经自带插件管理工具，在<code>init.toml</code> 里添加</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="o">[[</span>custom_plugins<span class="o">]]</span>
+	<span class="nv">repo</span> <span class="o">=</span> <span class="s2">&#34;插件的github地址&#34;</span>
+</code></pre></div><p>重启后即可自动下载</p>
+<p>用spacevim管理的这些从github上下载的插件存储在<code>~/.cache/vimfiles/repos/github.com/</code></p>
+<p>这个自带的插件管理器大部分情况下还可以，但是有时不太好使，所以我选择多下载一个vim的主流插件管理器<code>vim-plug</code></p>
+<p>使用curl安装，下面一条命令就够</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">curl -fLo ~/.vim/autoload/plug.vim --create-dirs <span class="se">\
+</span><span class="se"></span>    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+</code></pre></div><p>如果遇到了<code>Connection refused</code>的错误，使用<code>SwitchHosts!</code> ，添加以下的host：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">199.232.68.133 raw.githubusercontent.com
+199.232.68.133 user-images.githubusercontent.com
+199.232.68.133 avatars2.githubusercontent.com
+199.232.68.133 avatars1.githubusercontent.com
+</code></pre></div><p>使用插件管理器安装新的插件的方法是，在<code>init.vim</code> 配置文件里添加：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">call plug#begin<span class="o">()</span>
+
+call plug#end<span class="o">()</span>
+</code></pre></div><p>然后把要安装的插件添加到这两行代码中间，以<code>Plug 'xxx/xxx'</code> 的格式，如：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">call plug#begin<span class="o">()</span>
+Plug <span class="s1">&#39;junegunn/vim-easy-align&#39;</span>
+call plug#end<span class="o">()</span>
+</code></pre></div><p>之后重启nvim，使用命令<code>:PlugInstall</code> 就可以安装了。</p>
+<p>若要卸载插件，就从配置文件中去除相应的那一行，然后使用命令<code>:PlugClean</code> 就可以卸载了。</p>
+<h3 id="安装cocnvim">安装Coc.nvim</h3>
+<p>SpaceVim自带的补全还行，但是为了达到效果更好的补全和语法检查，我选择安装插件<code>coc.nvim</code></p>
+<p><a class="link" href="https://github.com/neoclide/coc.nvim"  target="_blank" rel="noopener"
+    >neoclide/coc.nvim</a></p>
+<p>这可以说是神器了，除了基本的补全之外，还提供了众多扩展来支持不同的语言和不同的特性。</p>
+<p>用之前下的<code>vim-plug</code> 来安装</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">Plug <span class="s1">&#39;neoclide/coc.nvim&#39;</span>, <span class="o">{</span><span class="s1">&#39;branch&#39;</span>: <span class="s1">&#39;release&#39;</span><span class="o">}</span>
+</code></pre></div><p>安装完后可以先直接把官方的示例配置文件粘贴进<code>init.vim</code>，示例配置文件在github的readme里有。</p>
+<p>为了C语言更好的补全支持，我下载相关的coc扩展——<code>coc-clangd</code></p>
+<p><a class="link" href="https://github.com/neoclide/coc.nvim/wiki/Using-coc-extensions"  target="_blank" rel="noopener"
+    >neoclide/coc.nvim</a></p>
+<p>首先保证有<code>node</code>环境，然后运行以下命令安装coc-clangd</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">:CocInstall coc-clangd
+</code></pre></div><p>完成后打开一个c语言文件，若提示找不到clangd，则自己手动下载。</p>
+<p>进入github release页面下载<code>clangd-mac-11.0.0.zip</code></p>
+<p><a class="link" href="https://github.com/clangd/clangd/releases/tag/11.0.0"  target="_blank" rel="noopener"
+    >Release 11.0.0 · clangd/clangd</a></p>
+<p>解压后目录下有一个<code>bin</code>文件夹和一个<code>lib</code>文件夹</p>
+<p>将bin下的clangd文件移动至<code>/usr/local/bin/</code>目录下</p>
+<p>将lib目录下的clang文件夹移动至<code>~/Library/</code>目录下</p>
+<p>再次打开即可正常使用，注意把spacevim自带的补全给禁用</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="o">[[</span>layers<span class="o">]]</span>
+	<span class="nv">name</span> <span class="o">=</span> <span class="s1">&#39;autocomplete&#39;</span>
+	<span class="nb">enable</span> <span class="o">=</span> <span class="nb">false</span>
+</code></pre></div><p>效果如下：</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 131; 
+			flex-basis: 315px"
+	>
+	<a href="/p/vim/Untitled2.png" data-size="419x319">
+		<img src="/p/vim/Untitled2.png"
+			width="419"
+			height="319"
+			srcset="/p/vim/Untitled2_huf5b3e93ed8311015737b26dbced4d6f4_29041_480x0_resize_box_3.png 480w, /p/vim/Untitled2_huf5b3e93ed8311015737b26dbced4d6f4_29041_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure>
+可以看到代码提示效果是非常好的</p>
+<p>当然，里面还有很多很实用的扩展也可以根据需要下</p>
+<h3 id="括号引号自动补全">括号引号自动补全</h3>
+<p><code>coc.nvim</code>插件对于括号和引号还是没有自动补成一对的功能，可以在<code>init.vim</code>里添加</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">inoremap <span class="o">(</span> <span class="o">()</span>&lt;Esc&gt;i
+inoremap <span class="o">[</span> <span class="o">[]</span>&lt;Esc&gt;i
+inoremap <span class="o">{</span> <span class="o">{</span>&lt;CR&gt;<span class="o">}</span>&lt;Esc&gt;O
+autocmd Syntax html,vim inoremap &lt; &lt;lt&gt;&gt;&lt;Esc&gt;i<span class="p">|</span> inoremap &gt; &lt;c-r&gt;<span class="o">=</span>ClosePair<span class="o">(</span><span class="s1">&#39;&gt;&#39;</span><span class="o">)</span>&lt;CR&gt;
+inoremap <span class="o">)</span> &lt;c-r&gt;<span class="o">=</span>ClosePair<span class="o">(</span><span class="s1">&#39;)&#39;</span><span class="o">)</span>&lt;CR&gt;
+inoremap <span class="o">]</span> &lt;c-r&gt;<span class="o">=</span>ClosePair<span class="o">(</span><span class="s1">&#39;]&#39;</span><span class="o">)</span>&lt;CR&gt;
+inoremap <span class="o">}</span> &lt;c-r&gt;<span class="o">=</span>CloseBracket<span class="o">()</span>&lt;CR&gt;
+inoremap <span class="s2">&#34; &lt;c-r&gt;=QuoteDelim(&#39;&#34;</span><span class="s1">&#39;)&lt;CR&gt;
+</span><span class="s1">inoremap &#39;</span> &lt;c-r&gt;<span class="o">=</span>QuoteDelim<span class="o">(</span><span class="s2">&#34;&#39;&#34;</span><span class="o">)</span>&lt;CR&gt;
+
+<span class="k">function</span> ClosePair<span class="o">(</span>char<span class="o">)</span>
+ <span class="k">if</span> getline<span class="o">(</span><span class="s1">&#39;.&#39;</span><span class="o">)[</span>col<span class="o">(</span><span class="s1">&#39;.&#39;</span><span class="o">)</span> - 1<span class="o">]</span> <span class="o">==</span> a:char
+ <span class="k">return</span> <span class="s2">&#34;\&lt;Right&gt;&#34;</span>
+ <span class="k">else</span>
+ <span class="k">return</span> a:char
+ endif
+endf
+
+<span class="k">function</span> CloseBracket<span class="o">()</span>
+ <span class="k">if</span> match<span class="o">(</span>getline<span class="o">(</span>line<span class="o">(</span><span class="s1">&#39;.&#39;</span><span class="o">)</span> + 1<span class="o">)</span>, <span class="s1">&#39;\s*}&#39;</span><span class="o">)</span> &lt; <span class="m">0</span>
+ <span class="k">return</span> <span class="s2">&#34;\&lt;CR&gt;}&#34;</span>
+ <span class="k">else</span>
+ <span class="k">return</span> <span class="s2">&#34;\&lt;Esc&gt;j0f}a&#34;</span>
+ endif
+endf
+
+<span class="k">function</span> QuoteDelim<span class="o">(</span>char<span class="o">)</span>
+ <span class="nb">let</span> <span class="nv">line</span> <span class="o">=</span> getline<span class="o">(</span><span class="s1">&#39;.&#39;</span><span class="o">)</span>
+ <span class="nb">let</span> <span class="nv">col</span> <span class="o">=</span> col<span class="o">(</span><span class="s1">&#39;.&#39;</span><span class="o">)</span>
+ <span class="k">if</span> line<span class="o">[</span>col - 2<span class="o">]</span> <span class="o">==</span> <span class="s2">&#34;\\&#34;</span>
+ <span class="k">return</span> a:char
+ elseif line<span class="o">[</span>col - 1<span class="o">]</span> <span class="o">==</span> a:char
+ <span class="k">return</span> <span class="s2">&#34;\&lt;Right&gt;&#34;</span>
+ <span class="k">else</span>
+ <span class="k">return</span> a:char.a:char.<span class="s2">&#34;\&lt;Esc&gt;i&#34;</span>
+ endif
+endf
+</code></pre></div><h3 id="彩虹括号">彩虹括号</h3>
+<p>vim里也有类似vscode或IDEA那样的彩虹括号插件</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">Plug <span class="s1">&#39;luochen1990/rainbow&#39;</span>
+<span class="c1">#或</span>
+<span class="nv">repo</span> <span class="o">=</span> <span class="s1">&#39;luochen1990/rainbow&#39;</span>
+</code></pre></div><p><code>init.vim</code> 添加</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">let</span> g:rainbow_active <span class="o">=</span> <span class="m">1</span>
+<span class="nb">let</span> g:rainbow_conf <span class="o">=</span> <span class="o">{</span>
+<span class="se">\ </span>  <span class="s1">&#39;guifgs&#39;</span>: <span class="o">[</span><span class="s1">&#39;darkorange3&#39;</span>, <span class="s1">&#39;seagreen3&#39;</span>, <span class="s1">&#39;royalblue3&#39;</span>, <span class="s1">&#39;firebrick&#39;</span><span class="o">]</span>,
+<span class="se">\ </span>  <span class="s1">&#39;ctermfgs&#39;</span>: <span class="o">[</span><span class="s1">&#39;lightyellow&#39;</span>, <span class="s1">&#39;lightcyan&#39;</span>,<span class="s1">&#39;lightblue&#39;</span>, <span class="s1">&#39;lightmagenta&#39;</span><span class="o">]</span>,
+<span class="se">\ </span>  <span class="s1">&#39;operators&#39;</span>: <span class="s1">&#39;_,_&#39;</span>,
+<span class="se">\ </span>  <span class="s1">&#39;parentheses&#39;</span>: <span class="o">[</span><span class="s1">&#39;start=/(/ end=/)/ fold&#39;</span>, <span class="s1">&#39;start=/\[/ end=/\]/ fold&#39;</span>, <span class="s1">&#39;start=/{/ end=/}/ fold&#39;</span><span class="o">]</span>,
+<span class="se">\ </span>  <span class="s1">&#39;separately&#39;</span>: <span class="o">{</span>
+<span class="se">\ </span>      <span class="s1">&#39;*&#39;</span>: <span class="o">{}</span>,
+<span class="se">\ </span>      <span class="s1">&#39;tex&#39;</span>: <span class="o">{</span>
+<span class="se">\ </span>          <span class="s1">&#39;parentheses&#39;</span>: <span class="o">[</span><span class="s1">&#39;start=/(/ end=/)/&#39;</span>, <span class="s1">&#39;start=/\[/ end=/\]/&#39;</span><span class="o">]</span>,
+<span class="se">\ </span>      <span class="o">}</span>,
+<span class="se">\ </span>      <span class="s1">&#39;lisp&#39;</span>: <span class="o">{</span>
+<span class="se">\ </span>          <span class="s1">&#39;guifgs&#39;</span>: <span class="o">[</span><span class="s1">&#39;darkorange3&#39;</span>, <span class="s1">&#39;seagreen3&#39;</span>, <span class="s1">&#39;royalblue3&#39;</span>, <span class="s1">&#39;firebrick&#39;</span><span class="o">]</span>,
+<span class="se">\ </span>      <span class="o">}</span>,
+<span class="se">\ </span>      <span class="s1">&#39;vim&#39;</span>: <span class="o">{</span>
+<span class="se">\ </span>          <span class="s1">&#39;parentheses&#39;</span>: <span class="o">[</span><span class="s1">&#39;start=/(/ end=/)/&#39;</span>, <span class="s1">&#39;start=/\[/ end=/\]/&#39;</span>, <span class="s1">&#39;start=/{/ end=/}/ fold&#39;</span>, <span class="s1">&#39;start=/(/ end=/)/ containedin=vimFuncBody&#39;</span>, <span class="s1">&#39;start=/\[/ end=/\]/ containedin=vimFuncBody&#39;</span>, <span class="s1">&#39;start=/{/ end=/}/ fold containedin=vimFuncBody&#39;</span><span class="o">]</span>,
+<span class="se">\ </span>      <span class="o">}</span>,
+<span class="se">\ </span>      <span class="s1">&#39;html&#39;</span>: <span class="o">{</span>
+<span class="se">\ </span>          <span class="s1">&#39;parentheses&#39;</span>: <span class="o">[</span><span class="s1">&#39;start=/\v\&lt;((area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr)[ &gt;])@!\z([-_:a-zA-Z0-9]+)(\s+[-_:a-zA-Z0-9]+(\=(&#34;[^&#34;]*&#34;|&#39;</span>.<span class="s2">&#34;&#39;&#34;</span>.<span class="s1">&#39;[^&#39;</span>.<span class="s2">&#34;&#39;&#34;</span>.<span class="s1">&#39;]*&#39;</span>.<span class="s2">&#34;&#39;&#34;</span>.<span class="s1">&#39;|[^ &#39;</span>.<span class="s2">&#34;&#39;&#34;</span>.<span class="s1">&#39;&#34;&gt;&lt;=`]*))?)*\&gt;/ end=#&lt;/\z1&gt;# fold&#39;</span><span class="o">]</span>,
+<span class="se">\ </span>      <span class="o">}</span>,
+<span class="se">\ </span>      <span class="s1">&#39;css&#39;</span>: 0,
+<span class="se">\ </span>  <span class="o">}</span>
+<span class="se">\}</span>
+</code></pre></div><h3 id="安装ctrlp">安装CtrlP</h3>
+<p>CtrlP是vim下一款很好的文件模糊搜索跳转插件</p>
+<p><a class="link" href="https://github.com/kien/ctrlp.vim"  target="_blank" rel="noopener"
+    >kien/ctrlp.vim</a></p>
+<p>安装</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="nv">repo</span> <span class="o">=</span> <span class="s1">&#39;kien/ctrlp.vim&#39;</span>
+</code></pre></div><p>使用</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">:CtrlP <span class="o">[</span>要搜索的目录<span class="o">]</span>
+</code></pre></div><p>如果目录下的文件过多，比如系统根目录，就会花比较多的时间去索引。所以建议尽量缩小范围。</p>
+<p>之后便可以输入关键字进行搜索了</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 232; 
+			flex-basis: 557px"
+	>
+	<a href="/p/vim/Untitled3.png" data-size="581x250">
+		<img src="/p/vim/Untitled3.png"
+			width="581"
+			height="250"
+			srcset="/p/vim/Untitled3_hu9131cf11c6bd1e6efcf3f68e73a175b0_36062_480x0_resize_box_3.png 480w, /p/vim/Untitled3_hu9131cf11c6bd1e6efcf3f68e73a175b0_36062_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<h2 id="其他插件">其他插件</h2>
+<p>比如更好的代码格式化<code>vim-clang-format</code>和代码时间记录<code>wakatime</code></p>
+<p><a class="link" href="https://github.com/rhysd/vim-clang-format"  target="_blank" rel="noopener"
+    >rhysd/vim-clang-format</a></p>
+<p><a class="link" href="https://github.com/wakatime/vim-wakatime"  target="_blank" rel="noopener"
+    >wakatime/vim-wakatime</a></p>
+<p>基本上想要的插件都可以在github上找到，根据官方文档使用即可</p>
+<h3 id="常用快捷键">常用快捷键</h3>
+<p><code>SPC 1/2/3</code> 切换不同窗口，数字为窗口编号</p>
+<p><code>SPC l r</code> 运行代码</p>
+<p><code>SPC b f</code> 代码格式化</p>
+<p><code>g d</code> 函数跳转</p>
+<p><code>&lt;c-o&gt;</code> 回调到上次的位置（这个写法表示<code>ctrl+o</code>）</p>
+<p>更多功能可以<code>SPC</code>空格键唤出菜单查看</p>
+<h3 id="尾声">尾声</h3>
+<p>到此一个基本的vim编程环境已经搭好了，用来写点小东西还是够用的。</p>
+<p>这一套折腾下来最大的感受是曾经觉得vim好难学好难用，但是通过这几天捣鼓之后发现只要熟练了其实效率还是很高的。难怪至今还有很多vim的使用者和爱好者。同时自己安装各种插件，修改配置文件，通过自定义来获得一款完全属于自己的编辑器的过程也是充满乐趣的，我很享受这个过程。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/vim/">Vim</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.css"integrity="sha384-RZU/ijkSsFbcmivfdRBQDtwuwVqK7GMOw6IMvKyeWL2K5UAlyp6WonmB8m7Jd0Hn"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.js"integrity="sha384-pK1WpvzWVBQiP0/GjnvRxV4mOb0oxFuyRxJlk6vVw146n3egcN5C925NCP7a7BY8"crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/contrib/auto-render.min.js"integrity="sha384-vZTG03m&#43;2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl"crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });})
+</script>
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">Related contents</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/cors_credentials/">
+        
+        
+            <div class="article-image">
+                <img src="/p/cors_credentials/cover.6bf98b53eff381a5127af4b7a5f7501e_hu39f51a010fc67188807a44ea669744a2_15023_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="cors_credentials" 
+                        data-hash="md5-a/mLU&#43;/zgaUSevS3pfdQHg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">关于CORS的Access-Control-Allow-Credentials设置问题</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/alfred_iterm/">
+        
+        
+            <div class="article-image">
+                <img src="/p/alfred_iterm/ssh.3ce5409a5975ec3894f1a84f91e3282e_hu16ae618dcf0f79ca9c769a7fb0762a5e_66847_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="alfred_iterm" 
+                        data-hash="md5-POVAmll17DiU8ahPkeMoLg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Alfred &#43; iTerm2 快速ssh连接服务器</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/mac_terminal/">
+        
+        
+            <div class="article-image">
+                <img src="/p/mac_terminal/Mojave-desktop.249161a282f13f05b4ec6038f56c2863_hu0caf60027e85952cdd6ae94392d12e9b_35582_250x150_fill_q75_box_smart1.jpg" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="mac_terminal" 
+                        data-hash="md5-JJFhooLxPwW07GA49WwoYw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">macOS终端美化指北</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/%E4%BD%BF%E7%94%A8hugo-github/gitee%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/">
+        
+        
+            <div class="article-image">
+                <img src="/p/%E4%BD%BF%E7%94%A8hugo-github/gitee%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/hugo.c21ba899c77312de9895762f5d2f27b8_hu8b6407a07803ab5ecf8133363f04b00e_28892_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="" 
+                        data-hash="md5-whuomcdzEt6YlXYvXS8nuA==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">使用Hugo&#43;github/gitee搭建个人博客</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-ccqstark-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2022 ccq&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        
+            一辈子热爱技术 <br/>
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.5.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">Table of contents</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#安装neovim">安装NeoVim</a></li>
+        <li><a href="#安装spacevim">安装SpaceVim</a></li>
+        <li><a href="#配置cc环境">配置C/C++环境</a></li>
+        <li><a href="#安装插件管理器vim-plug">安装插件管理器vim-plug</a></li>
+        <li><a href="#安装cocnvim">安装Coc.nvim</a></li>
+        <li><a href="#括号引号自动补全">括号引号自动补全</a></li>
+        <li><a href="#彩虹括号">彩虹括号</a></li>
+        <li><a href="#安装ctrlp">安装CtrlP</a></li>
+      </ol>
+    </li>
+    <li><a href="#其他插件">其他插件</a>
+      <ol>
+        <li><a href="#常用快捷键">常用快捷键</a></li>
+        <li><a href="#尾声">尾声</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>gopher</title>
+	
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-PXLPFFZ3XD"></script>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
+
+	  gtag('config', 'G-PXLPFFZ3XD');
+	</script>
+</head>
+<body>
+<canvas id="view" width="200" height="180" style="position: fixed; right: 0; bottom: 0; z-index: 9999"></canvas>
+<script type="text/javascript">
+    "use strict";
+
+    if(window.animationLoop) {
+        window.cancelAnimationFrame(window.animationLoop)
+    }
+
+    class HSL {
+        constructor(h, s, l) {
+            this.h = h
+            this.s = s
+            this.l = l
+        }
+
+        toString() {
+            return "hsl(" +
+                (this.h * 360).toFixed(2) + "," +
+                (this.s * 100).toFixed(2) + "%," +
+                (this.l * 100).toFixed(2) + "%)";
+        }
+    }
+
+    const tau = Math.PI * 2
+
+    let view = document.getElementById("view")
+    let context = view.getContext("2d")
+    updateViewSize()
+
+    let gopher = {
+        body: new HSL(205.0/360, 1.0,  0.81),
+        bodyDark: new HSL(205.0/360, 0.55,  0.71),
+        dark: new HSL(217.0/360, 0.19, 0.18),
+        light: new HSL(217.0/360, 0.0, 1.00),
+        lightDark: new HSL(217.0/360, 0.0, 0.90),
+        limb: new HSL(46.0/360, 0.38, 0.80),
+
+        head: {x: 0, y:0},
+        gaze: {x: 0, y:0},
+    };
+
+    window.animationLoop = tick();
+
+    window.addEventListener("resize", updateViewSize)
+
+    function updateViewSize() {
+        
+        
+
+        view.width = view.clientWidth;
+        view.height = view.clientHeight;
+    }
+
+    window.addEventListener("mousemove", (ev) => {
+        let screenSize = {x: view.width, y: view.height}
+
+		gopher.gaze.x = - (ev.clientX * 1.5 / view.width-1);
+		gopher.gaze.y = - (ev.clientY * 1.5 / view.height-1);
+
+        gopher.head.x = gopher.gaze.x * 0.5;
+        gopher.head.y = gopher.gaze.y * 0.5;
+   
+    });
+
+    window.addEventListener("touchmove", (ev) => {
+        if(ev.targetTouches.length == 0) return;
+
+        let screenSize = {x: view.width, y: view.height}
+        let touch = ev.targetTouches[0]
+
+        gopher.gaze.x = touch.clientX * 2.0 / view.width - 1;
+        gopher.gaze.y = touch.clientY * 2.0 / view.height - 1;
+
+        gopher.head.x = gopher.gaze.x * 0.5;
+        gopher.head.y = gopher.gaze.y * 0.5;
+
+    });
+
+    function tick(t) {
+        context.clearRect(0,0,10000,10000);
+        context.save()
+
+        
+        
+        
+
+        let screenSize = {x: view.width, y: view.height}
+        render(gopher, context, screenSize)
+        context.restore()
+        return window.requestAnimationFrame(tick)
+    }
+
+    function stringify(v) {
+        return JSON.stringify(v, (key, val) => {
+            if(typeof val == "number"){
+                return val.toFixed(2)
+            }
+            return val
+        })
+    }
+
+    function render(gopher, draw, screenSize) {
+        let bodyRadius = Math.min(screenSize.x, screenSize.y) / 2
+        bodyRadius *= 0.8
+
+        let eyeRadius = bodyRadius * 0.4
+        let earRadius = eyeRadius * 0.53
+        let lineWidth = bodyRadius * 0.045
+        let highlightSize = eyeRadius * 0.06
+
+        draw.lineWidth = lineWidth
+        draw.strokeStyle = gopher.dark.toString()
+
+        
+        draw.translate(screenSize.x/2, screenSize.y)
+
+        for(let ear = -1; ear <= 1; ear+=2){
+            saved(draw, (draw) => { 
+                let earOffset = headOffset(gopher, -ear, bodyRadius)
+                earOffset.x *= -1
+                earOffset.x += ear*earRadius*0.3
+                earOffset.y = -bodyRadius*1.8 - Math.sin(gopher.head.y)*earRadius * 0.5
+
+                draw.translate(earOffset.x, earOffset.y)
+                draw.scale(ear, 1)
+                draw.rotate(tau / 10)
+                draw.translate(0, earRadius)
+
+                let earPath = new Path2D()
+
+                earPath.moveTo(-earRadius, earRadius)
+                earPath.lineTo(-earRadius, -earRadius)
+                earPath.bezierCurveTo(
+                    -earRadius, -earRadius-earRadius*1.3,
+                    earRadius, -earRadius-earRadius*1.3,
+                    earRadius, -earRadius)
+                earPath.lineTo(earRadius, earRadius)
+
+                draw.fillStyle = gopher.body.toString()
+                draw.fill(earPath)
+                draw.stroke(earPath)
+
+                let earInline = new Path2D()
+                earInline.moveTo(0, 0)
+                earInline.quadraticCurveTo(
+                    -earRadius*0.6, -earRadius,
+                    earRadius*0.2, -earRadius*1.4
+                );
+                earInline.moveTo(0, 0)
+                earInline.quadraticCurveTo(
+                    -earRadius*0.6, -earRadius,
+                    earRadius*0.3, -earRadius*1.0
+                );
+
+                draw.lineWidth = lineWidth * 0.7
+                draw.lineCap = "round"
+                draw.stroke(earInline)
+            })
+        }
+
+        saved(draw, (draw) => { 
+            let bodyPath = new Path2D()
+
+            bodyPath.moveTo(-bodyRadius, 0)
+            bodyPath.lineTo(-bodyRadius, -bodyRadius)
+            bodyPath.bezierCurveTo(
+                -bodyRadius, -bodyRadius-bodyRadius*1.2,
+                bodyRadius, -bodyRadius-bodyRadius*1.2,
+                bodyRadius, -bodyRadius)
+            bodyPath.lineTo(bodyRadius, 0)
+
+            draw.fillStyle = gopher.bodyDark.toString()
+            draw.fill(bodyPath)
+            saved(draw, (draw) => {
+                draw.clip(bodyPath)
+                draw.translate(bodyRadius * 0.1, 0)
+                draw.fillStyle = gopher.body.toString()
+                draw.fill(bodyPath)
+            })
+            draw.stroke(bodyPath)
+        })
+
+        for(let eye = -1; eye <= 1; eye+=2){
+            let gaze = gopher.gaze;
+
+            saved(draw, (draw) => { 
+                let eyeOffset = headOffset(gopher, eye, bodyRadius);
+                draw.translate(eyeOffset.x, eyeOffset.y);
+
+                let eyePath = new Path2D();
+                eyePath.arc(0, 0, eyeRadius, 0, tau, true);
+
+                draw.fillStyle = gopher.lightDark.toString()
+                draw.fill(eyePath)
+
+                saved(draw, (draw) => {
+                    draw.clip(eyePath)
+                    draw.translate(eyeRadius*0.2, -eyeRadius*0.15)
+                    draw.fillStyle = gopher.light.toString()
+                    draw.fill(eyePath)
+                })
+
+                draw.stroke(eyePath)
+
+                let pupil = { x: gaze.x, y: gaze.y}
+                let mag = Math.sqrt(pupil.x*pupil.x + pupil.y*pupil.y)
+                if(mag > 1){
+                    pupil.x /= mag + 0.0001;
+                    pupil.y /= mag + 0.0001;
+                }
+                pupil.x = Math.sin(pupil.x + eye * 0.4) * eyeRadius * 0.6
+                pupil.y = Math.sin(pupil.y) * eyeRadius * 0.6
+                let pupilSize = eyeRadius*0.25
+
+                let pupilPath = new Path2D();
+                pupilPath.arc(pupil.x, pupil.y, pupilSize, 0, tau, true)
+                draw.fillStyle = gopher.dark.toString()
+                draw.fill(pupilPath)
+
+                
+                let highlighPath = new Path2D()
+                highlighPath.arc(
+                    pupil.x + pupilSize * 0.3 - gaze.x * highlightSize * 0.3,
+                    pupil.y - pupilSize * 0.3 - gaze.y * highlightSize * 0.3, highlightSize, 0, tau, true)
+                draw.fillStyle = gopher.light.toString()
+                draw.fill(highlighPath)
+            })
+        }
+
+        saved(draw, (draw) => { 
+            let tipSize = eyeRadius*0.2;
+            let toothSize = tipSize;
+            let noseSize = tipSize * 2.2;
+
+            let noseOffset = headOffset(gopher, 0, bodyRadius)
+            noseOffset.y += eyeRadius * 0.8;
+            draw.translate(noseOffset.x, noseOffset.y);
+
+            saved(draw, (draw) => { 
+                draw.translate(0, tipSize*1.2 - gopher.head.y * tipSize * 0.3)
+                draw.beginPath()
+                draw.moveTo(-toothSize, 0)
+                draw.lineTo(-toothSize, toothSize*1.5)
+                draw.bezierCurveTo(
+                    -toothSize, toothSize*2,
+                    toothSize, toothSize*2,
+                    toothSize, toothSize*1.5,
+                )
+                draw.lineTo(toothSize, 0)
+                draw.fillStyle = gopher.light.toString()
+                draw.fill()
+                draw.lineWidth = lineWidth * 0.7;
+                draw.stroke()
+            })
+
+            saved(draw, (draw) => { 
+                draw.translate(0, tipSize*1.2)
+                draw.beginPath()
+
+                draw.moveTo(-noseSize, 0)
+                draw.bezierCurveTo(
+                    -noseSize, -noseSize,
+                    noseSize, -noseSize,
+                    noseSize, 0
+                )
+                draw.bezierCurveTo(
+                    noseSize, noseSize*0.4,
+                    -noseSize, noseSize*0.4,
+                    -noseSize, 0
+                )
+                draw.closePath()
+
+                draw.fillStyle = gopher.limb.toString()
+                draw.fill()
+                draw.stroke()
+            })
+
+            saved(draw, (draw) => { 
+                let tip = {
+                    x: Math.sin(gopher.head.x) * tipSize,
+                    y: Math.sin(gopher.head.y) * tipSize * 0.5 - tipSize*0.2,
+                };
+
+                draw.beginPath()
+                draw.scale(1.2, 0.9)
+                draw.arc(tip.x, tip.y, tipSize, 0, tau, true)
+                draw.fillStyle = gopher.dark.toString()
+                draw.fill()
+
+                
+                draw.beginPath()
+                draw.arc(
+                    tip.x + tipSize * 0.3 - gopher.head.x * highlightSize * 0.3,
+                    tip.y - tipSize * 0.3 - gopher.head.y * highlightSize * 0.3, highlightSize, 0, tau, true)
+                draw.fillStyle = gopher.light.toString()
+                draw.fill()
+            })
+        })
+    }
+
+    function headOffset(gopher, eye, bodyRadius) {
+        let x = eye*bodyRadius*0.4
+        let y = -bodyRadius*1.1
+
+        x += Math.sin(gopher.head.x - eye*0.4) * bodyRadius*0.3
+        y += Math.sin(gopher.head.y*tau/4) * bodyRadius*0.15
+
+        return {x: x, y: y}
+    }
+
+    function saved(draw, fn) {
+        draw.save()
+        fn(draw)
+        draw.restore()
+    }
+</script>
+</body>
+</html>
+    </body>
+</html>

@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='问题引入 学过线性代数都知道矩阵的乘法，比如说矩阵A×B，就是A的每一行上的元素分别和B的每一列上对应位置的元素相乘再总体相加，每次得到一个位置上的元素的值。
+假设A是p × q，B是q × r，那结果矩阵就是p × r，当然，能够相乘的条件是A的列数等于B的行数。
+而A×B总共需要做的乘法数是p × q × r，由矩阵乘法的过程可知。
+可以发现，当至少3个矩阵相乘时，比如ABC，(AB)C和(A)BC两种计算顺序所需做的乘法数是不同的。
+现在的问题是一个矩阵链，比如A × B × C × D × E × F × G，要以什么样的顺序相乘才能得使得所需做的乘法数最小呢？
+题目 输入格式: 每个输入文件为一个测试用例，每个测试用例的第一行给出一个正整数(1≤n≤100)，表示一共有n个矩阵A​1​​ ,A​2​​ ,…,A​n​​ ，第二行给出n&#43;1个整数P​0​​ ,P​1​​ …P​n​​ ，以空格分隔，其中1≤P​i​​ ≤100(0≤i≤n)，第i个矩阵A​i​​ 是阶为P​i−1​​ ∗P​i​​ 的矩阵。
+输出格式: 获得上述矩阵的乘积，所需的最少乘法次数。
+输入样例: 在这里给出一组输入。例如：
+ 5
+30 35 15 5 10 20
+ 输出样例: 在这里给出相应的输出。例如：
+ 11875
+ 思路 可以先求2个2个相邻相乘的值，然后用他们求3个3个相乘的，再4个&amp;hellip;依照此规律直到n个
+当前个数阶段也需要把每种划分方案进行尝试，并得出最小的那种。比如我在算4个4个相乘的，那划分位置就有3个，每个都要遍历算一次，最后选最小那个，为下一阶段使用。
+我们利用二维数组m[i][j]表示第i个到第j个矩阵连乘的最优解，有如下公式。
+就是每次划分为2部分，整体最优解=左部分最优解&#43;右部分的最优解&#43;两者相乘所需乘法数
+矩阵i的行数为p[i-1]，列数为p[i]
+ 
+我们用一个二维矩阵来存储各阶段结果，数据就一步步往右上角填上去，最终答案就在最右上角。'><title>DP动态规划——矩阵链相乘问题</title>
+
+<link rel='canonical' href='https://ccqstark.github.io/p/dp_matrix/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='DP动态规划——矩阵链相乘问题'>
+<meta property='og:description' content='问题引入 学过线性代数都知道矩阵的乘法，比如说矩阵A×B，就是A的每一行上的元素分别和B的每一列上对应位置的元素相乘再总体相加，每次得到一个位置上的元素的值。
+假设A是p × q，B是q × r，那结果矩阵就是p × r，当然，能够相乘的条件是A的列数等于B的行数。
+而A×B总共需要做的乘法数是p × q × r，由矩阵乘法的过程可知。
+可以发现，当至少3个矩阵相乘时，比如ABC，(AB)C和(A)BC两种计算顺序所需做的乘法数是不同的。
+现在的问题是一个矩阵链，比如A × B × C × D × E × F × G，要以什么样的顺序相乘才能得使得所需做的乘法数最小呢？
+题目 输入格式: 每个输入文件为一个测试用例，每个测试用例的第一行给出一个正整数(1≤n≤100)，表示一共有n个矩阵A​1​​ ,A​2​​ ,…,A​n​​ ，第二行给出n&#43;1个整数P​0​​ ,P​1​​ …P​n​​ ，以空格分隔，其中1≤P​i​​ ≤100(0≤i≤n)，第i个矩阵A​i​​ 是阶为P​i−1​​ ∗P​i​​ 的矩阵。
+输出格式: 获得上述矩阵的乘积，所需的最少乘法次数。
+输入样例: 在这里给出一组输入。例如：
+ 5
+30 35 15 5 10 20
+ 输出样例: 在这里给出相应的输出。例如：
+ 11875
+ 思路 可以先求2个2个相邻相乘的值，然后用他们求3个3个相乘的，再4个&amp;hellip;依照此规律直到n个
+当前个数阶段也需要把每种划分方案进行尝试，并得出最小的那种。比如我在算4个4个相乘的，那划分位置就有3个，每个都要遍历算一次，最后选最小那个，为下一阶段使用。
+我们利用二维数组m[i][j]表示第i个到第j个矩阵连乘的最优解，有如下公式。
+就是每次划分为2部分，整体最优解=左部分最优解&#43;右部分的最优解&#43;两者相乘所需乘法数
+矩阵i的行数为p[i-1]，列数为p[i]
+ 
+我们用一个二维矩阵来存储各阶段结果，数据就一步步往右上角填上去，最终答案就在最右上角。'>
+<meta property='og:url' content='https://ccqstark.github.io/p/dp_matrix/'>
+<meta property='og:site_name' content='ccq&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='动态规划' /><meta property='article:published_time' content='2020-10-12T21:07:00&#43;08:00'/><meta property='article:modified_time' content='2020-10-12T21:07:00&#43;08:00'/><meta property='og:image' content='https://ccqstark.github.io/p/dp_matrix/cover.png' />
+<meta name="twitter:site" content="@ccqstark">
+    <meta name="twitter:creator" content="@ccqstark"><meta name="twitter:title" content="DP动态规划——矩阵链相乘问题">
+<meta name="twitter:description" content="问题引入 学过线性代数都知道矩阵的乘法，比如说矩阵A×B，就是A的每一行上的元素分别和B的每一列上对应位置的元素相乘再总体相加，每次得到一个位置上的元素的值。
+假设A是p × q，B是q × r，那结果矩阵就是p × r，当然，能够相乘的条件是A的列数等于B的行数。
+而A×B总共需要做的乘法数是p × q × r，由矩阵乘法的过程可知。
+可以发现，当至少3个矩阵相乘时，比如ABC，(AB)C和(A)BC两种计算顺序所需做的乘法数是不同的。
+现在的问题是一个矩阵链，比如A × B × C × D × E × F × G，要以什么样的顺序相乘才能得使得所需做的乘法数最小呢？
+题目 输入格式: 每个输入文件为一个测试用例，每个测试用例的第一行给出一个正整数(1≤n≤100)，表示一共有n个矩阵A​1​​ ,A​2​​ ,…,A​n​​ ，第二行给出n&#43;1个整数P​0​​ ,P​1​​ …P​n​​ ，以空格分隔，其中1≤P​i​​ ≤100(0≤i≤n)，第i个矩阵A​i​​ 是阶为P​i−1​​ ∗P​i​​ 的矩阵。
+输出格式: 获得上述矩阵的乘积，所需的最少乘法次数。
+输入样例: 在这里给出一组输入。例如：
+ 5
+30 35 15 5 10 20
+ 输出样例: 在这里给出相应的输出。例如：
+ 11875
+ 思路 可以先求2个2个相邻相乘的值，然后用他们求3个3个相乘的，再4个&amp;hellip;依照此规律直到n个
+当前个数阶段也需要把每种划分方案进行尝试，并得出最小的那种。比如我在算4个4个相乘的，那划分位置就有3个，每个都要遍历算一次，最后选最小那个，为下一阶段使用。
+我们利用二维数组m[i][j]表示第i个到第j个矩阵连乘的最优解，有如下公式。
+就是每次划分为2部分，整体最优解=左部分最优解&#43;右部分的最优解&#43;两者相乘所需乘法数
+矩阵i的行数为p[i-1]，列数为p[i]
+ 
+我们用一个二维矩阵来存储各阶段结果，数据就一步步往右上角填上去，最终答案就在最右上角。"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://ccqstark.github.io/p/dp_matrix/cover.png' />
+    <link rel="shortcut icon" href="/icon.ico" />
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PXLPFFZ3XD"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-PXLPFFZ3XD', { 'anonymize_ip': false });
+}
+</script>
+<a href="https://github.com/ccqstark" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#64CEAA; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>Back</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/dp_matrix/">
+                <img src="/p/dp_matrix/cover_hua1161b2ae5e85a208ecc4f734dd7884a_242133_800x0_resize_box_3.png"
+                        srcset="/p/dp_matrix/cover_hua1161b2ae5e85a208ecc4f734dd7884a_242133_800x0_resize_box_3.png 800w, /p/dp_matrix/cover_hua1161b2ae5e85a208ecc4f734dd7884a_242133_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="450" 
+                        loading="lazy"
+                        alt="Featured image of post DP动态规划——矩阵链相乘问题" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E7%AE%97%E6%B3%95/" >
+                算法
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/dp_matrix/">DP动态规划——矩阵链相乘问题</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Oct 12, 2020</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    2 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h3 id="问题引入">问题引入</h3>
+<p>学过线性代数都知道矩阵的乘法，比如说矩阵A×B，就是A的每一行上的元素分别和B的每一列上对应位置的元素相乘再总体相加，每次得到一个位置上的元素的值。</p>
+<p>假设A是<code>p × q</code>，B是<code>q × r</code>，那结果矩阵就是<code>p × r</code>，当然，能够相乘的条件是A的列数等于B的行数。</p>
+<p>而A×B总共需要做的乘法数是<code>p × q × r</code>，由矩阵乘法的过程可知。</p>
+<p>可以发现，当至少3个矩阵相乘时，比如<code>ABC</code>，<code>(AB)C</code>和<code>(A)BC</code>两种计算顺序所需做的乘法数是不同的。</p>
+<p>现在的问题是一个矩阵链，比如<code>A × B × C × D × E × F × G</code>，要以什么样的顺序相乘才能得使得所需做的乘法数最小呢？</p>
+<h3 id="题目">题目</h3>
+<p><strong>输入格式:</strong>
+每个输入文件为一个测试用例，每个测试用例的第一行给出一个正整数(1≤n≤100)，表示一共有n个矩阵A​1​​ ,A​2​​ ,…,A​n​​ ，第二行给出n+1个整数P​0​​ ,P​1​​ …P​n​​ ，以空格分隔，其中1≤P​i​​ ≤100(0≤i≤n)，第i个矩阵A​i​​ 是阶为P​i−1​​ ∗P​i​​ 的矩阵。</p>
+<p><strong>输出格式:</strong>
+获得上述矩阵的乘积，所需的最少乘法次数。</p>
+<p><strong>输入样例:</strong>
+在这里给出一组输入。例如：</p>
+<blockquote>
+<p>5<br>
+30 35 15 5 10 20</p>
+</blockquote>
+<p><strong>输出样例:</strong>
+在这里给出相应的输出。例如：</p>
+<blockquote>
+<p>11875</p>
+</blockquote>
+<h3 id="思路">思路</h3>
+<p>可以先求2个2个相邻相乘的值，然后用他们求3个3个相乘的，再4个&hellip;依照此规律直到n个</p>
+<p>当前个数阶段也需要把每种划分方案进行尝试，并得出最小的那种。比如我在算4个4个相乘的，那划分位置就有3个，每个都要遍历算一次，最后选最小那个，为下一阶段使用。</p>
+<p>我们利用二维数组m[i][j]表示第i个到第j个矩阵连乘的最优解，有如下公式。</p>
+<p>就是每次划分为2部分，<strong>整体最优解=左部分最优解+右部分的最优解+两者相乘所需乘法数</strong></p>
+<p>矩阵i的行数为<code>p[i-1]</code>，列数为<code>p[i]</code></p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 702; 
+			flex-basis: 1687px"
+	>
+	<a href="/p/dp_matrix/1.png" data-size="710x101">
+		<img src="/p/dp_matrix/1.png"
+			width="710"
+			height="101"
+			srcset="/p/dp_matrix/1_hu41df461fda97076b907b58ce800c014c_7655_480x0_resize_box_3.png 480w, /p/dp_matrix/1_hu41df461fda97076b907b58ce800c014c_7655_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<p>我们用一个二维矩阵来存储各阶段结果，数据就一步步往右上角填上去，最终答案就在最右上角。</p>
+<p><figure 
+	>
+	<a href="https://img-blog.csdnimg.cn/20200811190242676.png" >
+		<img src="https://img-blog.csdnimg.cn/20200811190242676.png"
+			
+			
+			
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<h3 id="代码">代码</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="c1">// 矩阵链相乘问题
+</span><span class="c1"></span><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
+</span><span class="cp"></span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">const</span> <span class="kt">int</span> <span class="n">MAX</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">p</span><span class="p">[</span><span class="n">MAX</span><span class="p">];</span>      <span class="c1">// 存放行列数，就是题目输入的序列
+</span><span class="c1"></span><span class="kt">int</span> <span class="n">m</span><span class="p">[</span><span class="n">MAX</span><span class="p">][</span><span class="n">MAX</span><span class="p">];</span> <span class="c1">// 存放局部和最终结果的矩阵
+</span><span class="c1"></span><span class="kt">int</span> <span class="n">n</span><span class="p">;</span>           <span class="c1">// 需要相乘的矩阵个数
+</span><span class="c1"></span>
+<span class="kt">void</span> <span class="nf">matrix</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">memset</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">m</span><span class="p">));</span> <span class="c1">// 初始化矩阵为0
+</span><span class="c1"></span>
+    <span class="c1">// 同时连续相乘的个数
+</span><span class="c1"></span>    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">r</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span> <span class="n">r</span> <span class="o">&lt;=</span> <span class="n">n</span><span class="p">;</span> <span class="n">r</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="c1">// 从第几个开始(到第几组了)
+</span><span class="c1"></span>        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">n</span> <span class="o">-</span> <span class="n">r</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="p">{</span>
+            <span class="c1">// 相乘链的最后一个
+</span><span class="c1"></span>            <span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="n">r</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+
+            <span class="c1">// 为了通过比较从而得出最小的那个，要有一个比较的初值，这里是划分第一个和其余的为2组
+</span><span class="c1"></span>            <span class="n">m</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="n">j</span><span class="p">];</span>
+
+            <span class="c1">// 一步步移动划分点
+</span><span class="c1"></span>            <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">k</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="n">j</span><span class="p">;</span> <span class="n">k</span><span class="o">++</span><span class="p">)</span>
+            <span class="p">{</span>
+                <span class="c1">// 以k位置为划分点，划分i到j的相乘链
+</span><span class="c1"></span>                <span class="kt">int</span> <span class="n">t</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">+</span> <span class="n">m</span><span class="p">[</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">p</span><span class="p">[</span><span class="n">j</span><span class="p">];</span>
+                <span class="c1">// 比较找出最小的那个
+</span><span class="c1"></span>                <span class="k">if</span> <span class="p">(</span><span class="n">t</span> <span class="o">&lt;</span> <span class="n">m</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">])</span>
+                <span class="p">{</span>
+                    <span class="n">m</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">n</span><span class="p">;</span>
+    <span class="c1">// 输入的数字总数比矩阵个数多1
+</span><span class="c1"></span>    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="n">cin</span> <span class="o">&gt;&gt;</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="n">matrix</span><span class="p">();</span>
+
+    <span class="c1">// 最后答案会在右上角出现
+</span><span class="c1"></span>    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">n</span><span class="p">];</span>
+<span class="p">}</span>
+</code></pre></div><p><a class="link" href="https://blog.csdn.net/qq_45405490/article/details/107911349"  target="_blank" rel="noopener"
+    >参考博文</a></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">动态规划</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.css"integrity="sha384-RZU/ijkSsFbcmivfdRBQDtwuwVqK7GMOw6IMvKyeWL2K5UAlyp6WonmB8m7Jd0Hn"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.js"integrity="sha384-pK1WpvzWVBQiP0/GjnvRxV4mOb0oxFuyRxJlk6vVw146n3egcN5C925NCP7a7BY8"crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/contrib/auto-render.min.js"integrity="sha384-vZTG03m&#43;2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl"crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });})
+</script>
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">Related contents</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/dp_edit_distance/">
+        
+        
+            <div class="article-image">
+                <img src="/p/dp_edit_distance/cover.8bdd2b6e6bfc74824fb18c0520495d8a_hua1161b2ae5e85a208ecc4f734dd7884a_242133_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="dp_edit_distance" 
+                        data-hash="md5-i90rbmv8dIJPsYwFIEldig==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">DP动态规划——编辑距离问题</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/dp_digmines/">
+        
+        
+            <div class="article-image">
+                <img src="/p/dp_digmines/cover.8bdd2b6e6bfc74824fb18c0520495d8a_hua1161b2ae5e85a208ecc4f734dd7884a_242133_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="dp_digmines" 
+                        data-hash="md5-i90rbmv8dIJPsYwFIEldig==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">DP动态规划——挖地雷</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/dp_increasing/">
+        
+        
+            <div class="article-image">
+                <img src="/p/dp_increasing/cover.8bdd2b6e6bfc74824fb18c0520495d8a_hua1161b2ae5e85a208ecc4f734dd7884a_242133_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="dp_increasing" 
+                        data-hash="md5-i90rbmv8dIJPsYwFIEldig==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">DP动态规划——单调递增最长子序列</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/three_sum/">
+        
+        
+            <div class="article-image">
+                <img src="/p/three_sum/cover.33dd6c414f4a115d6aaa313112588b51_huf957eb7cc0803733802fcc4099cfd7cb_35766_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="three_sum" 
+                        data-hash="md5-M91sQU9KEV1qqjExEliLUQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">[leetcode]15.三数之和</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/remove_elements/">
+        
+        
+            <div class="article-image">
+                <img src="/p/remove_elements/leetcode.3ec5d1f19535d0603a700f822d4755dc_hua465350402cd0ec3eacd50007e571132_103033_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="remove_elements" 
+                        data-hash="md5-PsXR8ZU10GA6cA&#43;CLUdV3A==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">[leetcode]203.移除链表元素</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-ccqstark-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2022 ccq&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        
+            一辈子热爱技术 <br/>
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.5.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">Table of contents</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#问题引入">问题引入</a></li>
+        <li><a href="#题目">题目</a></li>
+        <li><a href="#思路">思路</a></li>
+        <li><a href="#代码">代码</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>gopher</title>
+	
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-PXLPFFZ3XD"></script>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
+
+	  gtag('config', 'G-PXLPFFZ3XD');
+	</script>
+</head>
+<body>
+<canvas id="view" width="200" height="180" style="position: fixed; right: 0; bottom: 0; z-index: 9999"></canvas>
+<script type="text/javascript">
+    "use strict";
+
+    if(window.animationLoop) {
+        window.cancelAnimationFrame(window.animationLoop)
+    }
+
+    class HSL {
+        constructor(h, s, l) {
+            this.h = h
+            this.s = s
+            this.l = l
+        }
+
+        toString() {
+            return "hsl(" +
+                (this.h * 360).toFixed(2) + "," +
+                (this.s * 100).toFixed(2) + "%," +
+                (this.l * 100).toFixed(2) + "%)";
+        }
+    }
+
+    const tau = Math.PI * 2
+
+    let view = document.getElementById("view")
+    let context = view.getContext("2d")
+    updateViewSize()
+
+    let gopher = {
+        body: new HSL(205.0/360, 1.0,  0.81),
+        bodyDark: new HSL(205.0/360, 0.55,  0.71),
+        dark: new HSL(217.0/360, 0.19, 0.18),
+        light: new HSL(217.0/360, 0.0, 1.00),
+        lightDark: new HSL(217.0/360, 0.0, 0.90),
+        limb: new HSL(46.0/360, 0.38, 0.80),
+
+        head: {x: 0, y:0},
+        gaze: {x: 0, y:0},
+    };
+
+    window.animationLoop = tick();
+
+    window.addEventListener("resize", updateViewSize)
+
+    function updateViewSize() {
+        
+        
+
+        view.width = view.clientWidth;
+        view.height = view.clientHeight;
+    }
+
+    window.addEventListener("mousemove", (ev) => {
+        let screenSize = {x: view.width, y: view.height}
+
+		gopher.gaze.x = - (ev.clientX * 1.5 / view.width-1);
+		gopher.gaze.y = - (ev.clientY * 1.5 / view.height-1);
+
+        gopher.head.x = gopher.gaze.x * 0.5;
+        gopher.head.y = gopher.gaze.y * 0.5;
+   
+    });
+
+    window.addEventListener("touchmove", (ev) => {
+        if(ev.targetTouches.length == 0) return;
+
+        let screenSize = {x: view.width, y: view.height}
+        let touch = ev.targetTouches[0]
+
+        gopher.gaze.x = touch.clientX * 2.0 / view.width - 1;
+        gopher.gaze.y = touch.clientY * 2.0 / view.height - 1;
+
+        gopher.head.x = gopher.gaze.x * 0.5;
+        gopher.head.y = gopher.gaze.y * 0.5;
+
+    });
+
+    function tick(t) {
+        context.clearRect(0,0,10000,10000);
+        context.save()
+
+        
+        
+        
+
+        let screenSize = {x: view.width, y: view.height}
+        render(gopher, context, screenSize)
+        context.restore()
+        return window.requestAnimationFrame(tick)
+    }
+
+    function stringify(v) {
+        return JSON.stringify(v, (key, val) => {
+            if(typeof val == "number"){
+                return val.toFixed(2)
+            }
+            return val
+        })
+    }
+
+    function render(gopher, draw, screenSize) {
+        let bodyRadius = Math.min(screenSize.x, screenSize.y) / 2
+        bodyRadius *= 0.8
+
+        let eyeRadius = bodyRadius * 0.4
+        let earRadius = eyeRadius * 0.53
+        let lineWidth = bodyRadius * 0.045
+        let highlightSize = eyeRadius * 0.06
+
+        draw.lineWidth = lineWidth
+        draw.strokeStyle = gopher.dark.toString()
+
+        
+        draw.translate(screenSize.x/2, screenSize.y)
+
+        for(let ear = -1; ear <= 1; ear+=2){
+            saved(draw, (draw) => { 
+                let earOffset = headOffset(gopher, -ear, bodyRadius)
+                earOffset.x *= -1
+                earOffset.x += ear*earRadius*0.3
+                earOffset.y = -bodyRadius*1.8 - Math.sin(gopher.head.y)*earRadius * 0.5
+
+                draw.translate(earOffset.x, earOffset.y)
+                draw.scale(ear, 1)
+                draw.rotate(tau / 10)
+                draw.translate(0, earRadius)
+
+                let earPath = new Path2D()
+
+                earPath.moveTo(-earRadius, earRadius)
+                earPath.lineTo(-earRadius, -earRadius)
+                earPath.bezierCurveTo(
+                    -earRadius, -earRadius-earRadius*1.3,
+                    earRadius, -earRadius-earRadius*1.3,
+                    earRadius, -earRadius)
+                earPath.lineTo(earRadius, earRadius)
+
+                draw.fillStyle = gopher.body.toString()
+                draw.fill(earPath)
+                draw.stroke(earPath)
+
+                let earInline = new Path2D()
+                earInline.moveTo(0, 0)
+                earInline.quadraticCurveTo(
+                    -earRadius*0.6, -earRadius,
+                    earRadius*0.2, -earRadius*1.4
+                );
+                earInline.moveTo(0, 0)
+                earInline.quadraticCurveTo(
+                    -earRadius*0.6, -earRadius,
+                    earRadius*0.3, -earRadius*1.0
+                );
+
+                draw.lineWidth = lineWidth * 0.7
+                draw.lineCap = "round"
+                draw.stroke(earInline)
+            })
+        }
+
+        saved(draw, (draw) => { 
+            let bodyPath = new Path2D()
+
+            bodyPath.moveTo(-bodyRadius, 0)
+            bodyPath.lineTo(-bodyRadius, -bodyRadius)
+            bodyPath.bezierCurveTo(
+                -bodyRadius, -bodyRadius-bodyRadius*1.2,
+                bodyRadius, -bodyRadius-bodyRadius*1.2,
+                bodyRadius, -bodyRadius)
+            bodyPath.lineTo(bodyRadius, 0)
+
+            draw.fillStyle = gopher.bodyDark.toString()
+            draw.fill(bodyPath)
+            saved(draw, (draw) => {
+                draw.clip(bodyPath)
+                draw.translate(bodyRadius * 0.1, 0)
+                draw.fillStyle = gopher.body.toString()
+                draw.fill(bodyPath)
+            })
+            draw.stroke(bodyPath)
+        })
+
+        for(let eye = -1; eye <= 1; eye+=2){
+            let gaze = gopher.gaze;
+
+            saved(draw, (draw) => { 
+                let eyeOffset = headOffset(gopher, eye, bodyRadius);
+                draw.translate(eyeOffset.x, eyeOffset.y);
+
+                let eyePath = new Path2D();
+                eyePath.arc(0, 0, eyeRadius, 0, tau, true);
+
+                draw.fillStyle = gopher.lightDark.toString()
+                draw.fill(eyePath)
+
+                saved(draw, (draw) => {
+                    draw.clip(eyePath)
+                    draw.translate(eyeRadius*0.2, -eyeRadius*0.15)
+                    draw.fillStyle = gopher.light.toString()
+                    draw.fill(eyePath)
+                })
+
+                draw.stroke(eyePath)
+
+                let pupil = { x: gaze.x, y: gaze.y}
+                let mag = Math.sqrt(pupil.x*pupil.x + pupil.y*pupil.y)
+                if(mag > 1){
+                    pupil.x /= mag + 0.0001;
+                    pupil.y /= mag + 0.0001;
+                }
+                pupil.x = Math.sin(pupil.x + eye * 0.4) * eyeRadius * 0.6
+                pupil.y = Math.sin(pupil.y) * eyeRadius * 0.6
+                let pupilSize = eyeRadius*0.25
+
+                let pupilPath = new Path2D();
+                pupilPath.arc(pupil.x, pupil.y, pupilSize, 0, tau, true)
+                draw.fillStyle = gopher.dark.toString()
+                draw.fill(pupilPath)
+
+                
+                let highlighPath = new Path2D()
+                highlighPath.arc(
+                    pupil.x + pupilSize * 0.3 - gaze.x * highlightSize * 0.3,
+                    pupil.y - pupilSize * 0.3 - gaze.y * highlightSize * 0.3, highlightSize, 0, tau, true)
+                draw.fillStyle = gopher.light.toString()
+                draw.fill(highlighPath)
+            })
+        }
+
+        saved(draw, (draw) => { 
+            let tipSize = eyeRadius*0.2;
+            let toothSize = tipSize;
+            let noseSize = tipSize * 2.2;
+
+            let noseOffset = headOffset(gopher, 0, bodyRadius)
+            noseOffset.y += eyeRadius * 0.8;
+            draw.translate(noseOffset.x, noseOffset.y);
+
+            saved(draw, (draw) => { 
+                draw.translate(0, tipSize*1.2 - gopher.head.y * tipSize * 0.3)
+                draw.beginPath()
+                draw.moveTo(-toothSize, 0)
+                draw.lineTo(-toothSize, toothSize*1.5)
+                draw.bezierCurveTo(
+                    -toothSize, toothSize*2,
+                    toothSize, toothSize*2,
+                    toothSize, toothSize*1.5,
+                )
+                draw.lineTo(toothSize, 0)
+                draw.fillStyle = gopher.light.toString()
+                draw.fill()
+                draw.lineWidth = lineWidth * 0.7;
+                draw.stroke()
+            })
+
+            saved(draw, (draw) => { 
+                draw.translate(0, tipSize*1.2)
+                draw.beginPath()
+
+                draw.moveTo(-noseSize, 0)
+                draw.bezierCurveTo(
+                    -noseSize, -noseSize,
+                    noseSize, -noseSize,
+                    noseSize, 0
+                )
+                draw.bezierCurveTo(
+                    noseSize, noseSize*0.4,
+                    -noseSize, noseSize*0.4,
+                    -noseSize, 0
+                )
+                draw.closePath()
+
+                draw.fillStyle = gopher.limb.toString()
+                draw.fill()
+                draw.stroke()
+            })
+
+            saved(draw, (draw) => { 
+                let tip = {
+                    x: Math.sin(gopher.head.x) * tipSize,
+                    y: Math.sin(gopher.head.y) * tipSize * 0.5 - tipSize*0.2,
+                };
+
+                draw.beginPath()
+                draw.scale(1.2, 0.9)
+                draw.arc(tip.x, tip.y, tipSize, 0, tau, true)
+                draw.fillStyle = gopher.dark.toString()
+                draw.fill()
+
+                
+                draw.beginPath()
+                draw.arc(
+                    tip.x + tipSize * 0.3 - gopher.head.x * highlightSize * 0.3,
+                    tip.y - tipSize * 0.3 - gopher.head.y * highlightSize * 0.3, highlightSize, 0, tau, true)
+                draw.fillStyle = gopher.light.toString()
+                draw.fill()
+            })
+        })
+    }
+
+    function headOffset(gopher, eye, bodyRadius) {
+        let x = eye*bodyRadius*0.4
+        let y = -bodyRadius*1.1
+
+        x += Math.sin(gopher.head.x - eye*0.4) * bodyRadius*0.3
+        y += Math.sin(gopher.head.y*tau/4) * bodyRadius*0.15
+
+        return {x: x, y: y}
+    }
+
+    function saved(draw, fn) {
+        draw.save()
+        fn(draw)
+        draw.restore()
+    }
+</script>
+</body>
+</html>
+    </body>
+</html>

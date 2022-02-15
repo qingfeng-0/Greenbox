@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='开通服务 登录阿里云，开通OSS服务，默认按量计费，为了业务稳定可以购买包月包年的资源包。
+准备工作 创建Bucket，如果是为了作为网站的静态资源存储供用户访问的话把权限设为公共读，填写信息后创建成功，可以在Bucket下新建目录什么的。
+单独创建一个RAM子用户用来调用API，选择编程访问，创建成功后一定要把AccessKeyID和AccessKeySecret等重要信息记下来，后面配置文件要用到。
+然后要给这个子用户添加权限AliyunOSSFullAccess
+Maven依赖 &amp;lt;!-- OSS --&amp;gt; &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;com.aliyun.oss&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;aliyun-sdk-oss&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;3.4.2&amp;lt;/version&amp;gt; &amp;lt;exclusions&amp;gt; &amp;lt;exclusion&amp;gt; &amp;lt;groupId&amp;gt;org.apache.httpcomponents&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;httpclient&amp;lt;/artifactId&amp;gt; &amp;lt;/exclusion&amp;gt; &amp;lt;/exclusions&amp;gt; &amp;lt;/dependency&amp;gt; &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;org.apache.httpcomponents&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;httpclient&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;4.4.1&amp;lt;/version&amp;gt; &amp;lt;/dependency&amp;gt; 配置文件 endpoint就是在存储桶的概览里地域节点，填外网访问那个就行
+url填资源访问的URL的前面部分（填到.com/）
+accessKeyId和accessKeySecret就是创建子用户时那个
+bucketName就是存储桶的名字
+# 阿里云ossoss:endpoint:*url:*accessKeyId:*accessKeySecret:*bucketName:*配置类 项目的config目录下新建OSS的配置类
+package com.ccqstark.springbootquick.config; import lombok.Data; import org.springframework.boot.context.properties.ConfigurationProperties; import org.springframework.context.annotation.Configuration; import org.springframework.stereotype.Component; import java.io.Serializable; /** * @Description: 阿里云 OSS 配置信息 * @Author: ccq * @Date: 2020/10/16 */ @Component //注册bean @Data @Configuration @ConfigurationProperties(prefix = &amp;#34;oss&amp;#34;) public class OSSConfig implements Serializable { private String endpoint; private String url; private String accessKeyId; private String accessKeySecret; private String bucketName; } 上传文件工具类 项目的util目录下新建这上传工具类'><title>[SpringBoot]使用阿里云OSS上传文件</title>
+
+<link rel='canonical' href='https://ccqstark.github.io/p/springboot_oss/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='[SpringBoot]使用阿里云OSS上传文件'>
+<meta property='og:description' content='开通服务 登录阿里云，开通OSS服务，默认按量计费，为了业务稳定可以购买包月包年的资源包。
+准备工作 创建Bucket，如果是为了作为网站的静态资源存储供用户访问的话把权限设为公共读，填写信息后创建成功，可以在Bucket下新建目录什么的。
+单独创建一个RAM子用户用来调用API，选择编程访问，创建成功后一定要把AccessKeyID和AccessKeySecret等重要信息记下来，后面配置文件要用到。
+然后要给这个子用户添加权限AliyunOSSFullAccess
+Maven依赖 &amp;lt;!-- OSS --&amp;gt; &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;com.aliyun.oss&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;aliyun-sdk-oss&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;3.4.2&amp;lt;/version&amp;gt; &amp;lt;exclusions&amp;gt; &amp;lt;exclusion&amp;gt; &amp;lt;groupId&amp;gt;org.apache.httpcomponents&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;httpclient&amp;lt;/artifactId&amp;gt; &amp;lt;/exclusion&amp;gt; &amp;lt;/exclusions&amp;gt; &amp;lt;/dependency&amp;gt; &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;org.apache.httpcomponents&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;httpclient&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;4.4.1&amp;lt;/version&amp;gt; &amp;lt;/dependency&amp;gt; 配置文件 endpoint就是在存储桶的概览里地域节点，填外网访问那个就行
+url填资源访问的URL的前面部分（填到.com/）
+accessKeyId和accessKeySecret就是创建子用户时那个
+bucketName就是存储桶的名字
+# 阿里云ossoss:endpoint:*url:*accessKeyId:*accessKeySecret:*bucketName:*配置类 项目的config目录下新建OSS的配置类
+package com.ccqstark.springbootquick.config; import lombok.Data; import org.springframework.boot.context.properties.ConfigurationProperties; import org.springframework.context.annotation.Configuration; import org.springframework.stereotype.Component; import java.io.Serializable; /** * @Description: 阿里云 OSS 配置信息 * @Author: ccq * @Date: 2020/10/16 */ @Component //注册bean @Data @Configuration @ConfigurationProperties(prefix = &amp;#34;oss&amp;#34;) public class OSSConfig implements Serializable { private String endpoint; private String url; private String accessKeyId; private String accessKeySecret; private String bucketName; } 上传文件工具类 项目的util目录下新建这上传工具类'>
+<meta property='og:url' content='https://ccqstark.github.io/p/springboot_oss/'>
+<meta property='og:site_name' content='ccq&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='SpringBoot' /><meta property='article:published_time' content='2020-10-17T10:54:00&#43;08:00'/><meta property='article:modified_time' content='2020-10-17T10:54:00&#43;08:00'/><meta property='og:image' content='https://ccqstark.github.io/p/springboot_oss/cover.png' />
+<meta name="twitter:site" content="@ccqstark">
+    <meta name="twitter:creator" content="@ccqstark"><meta name="twitter:title" content="[SpringBoot]使用阿里云OSS上传文件">
+<meta name="twitter:description" content="开通服务 登录阿里云，开通OSS服务，默认按量计费，为了业务稳定可以购买包月包年的资源包。
+准备工作 创建Bucket，如果是为了作为网站的静态资源存储供用户访问的话把权限设为公共读，填写信息后创建成功，可以在Bucket下新建目录什么的。
+单独创建一个RAM子用户用来调用API，选择编程访问，创建成功后一定要把AccessKeyID和AccessKeySecret等重要信息记下来，后面配置文件要用到。
+然后要给这个子用户添加权限AliyunOSSFullAccess
+Maven依赖 &amp;lt;!-- OSS --&amp;gt; &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;com.aliyun.oss&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;aliyun-sdk-oss&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;3.4.2&amp;lt;/version&amp;gt; &amp;lt;exclusions&amp;gt; &amp;lt;exclusion&amp;gt; &amp;lt;groupId&amp;gt;org.apache.httpcomponents&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;httpclient&amp;lt;/artifactId&amp;gt; &amp;lt;/exclusion&amp;gt; &amp;lt;/exclusions&amp;gt; &amp;lt;/dependency&amp;gt; &amp;lt;dependency&amp;gt; &amp;lt;groupId&amp;gt;org.apache.httpcomponents&amp;lt;/groupId&amp;gt; &amp;lt;artifactId&amp;gt;httpclient&amp;lt;/artifactId&amp;gt; &amp;lt;version&amp;gt;4.4.1&amp;lt;/version&amp;gt; &amp;lt;/dependency&amp;gt; 配置文件 endpoint就是在存储桶的概览里地域节点，填外网访问那个就行
+url填资源访问的URL的前面部分（填到.com/）
+accessKeyId和accessKeySecret就是创建子用户时那个
+bucketName就是存储桶的名字
+# 阿里云ossoss:endpoint:*url:*accessKeyId:*accessKeySecret:*bucketName:*配置类 项目的config目录下新建OSS的配置类
+package com.ccqstark.springbootquick.config; import lombok.Data; import org.springframework.boot.context.properties.ConfigurationProperties; import org.springframework.context.annotation.Configuration; import org.springframework.stereotype.Component; import java.io.Serializable; /** * @Description: 阿里云 OSS 配置信息 * @Author: ccq * @Date: 2020/10/16 */ @Component //注册bean @Data @Configuration @ConfigurationProperties(prefix = &amp;#34;oss&amp;#34;) public class OSSConfig implements Serializable { private String endpoint; private String url; private String accessKeyId; private String accessKeySecret; private String bucketName; } 上传文件工具类 项目的util目录下新建这上传工具类"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://ccqstark.github.io/p/springboot_oss/cover.png' />
+    <link rel="shortcut icon" href="/icon.ico" />
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PXLPFFZ3XD"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-PXLPFFZ3XD', { 'anonymize_ip': false });
+}
+</script>
+<a href="https://github.com/ccqstark" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#64CEAA; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>Back</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/springboot_oss/">
+                <img src="/p/springboot_oss/cover_hud62bf8010474cbdcf139a7fd30aacc5c_25975_800x0_resize_box_3.png"
+                        srcset="/p/springboot_oss/cover_hud62bf8010474cbdcf139a7fd30aacc5c_25975_800x0_resize_box_3.png 800w, /p/springboot_oss/cover_hud62bf8010474cbdcf139a7fd30aacc5c_25975_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="267" 
+                        loading="lazy"
+                        alt="Featured image of post [SpringBoot]使用阿里云OSS上传文件" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E6%A1%86%E6%9E%B6%E4%B8%8E%E4%B8%AD%E9%97%B4%E4%BB%B6/" >
+                框架与中间件
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/springboot_oss/">[SpringBoot]使用阿里云OSS上传文件</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Oct 17, 2020</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    3 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h3 id="开通服务">开通服务</h3>
+<p>登录阿里云，开通OSS服务，默认按量计费，为了业务稳定可以购买包月包年的资源包。</p>
+<h3 id="准备工作">准备工作</h3>
+<p>创建Bucket，如果是为了作为网站的静态资源存储供用户访问的话把权限设为<code>公共读</code>，填写信息后创建成功，可以在Bucket下新建目录什么的。</p>
+<p>单独创建一个RAM子用户用来调用API，选择编程访问，创建成功后一定要把<code>AccessKeyID</code>和<code>AccessKeySecret</code>等重要信息记下来，后面配置文件要用到。</p>
+<p>然后要给这个子用户添加权限<code>AliyunOSSFullAccess</code></p>
+<h3 id="maven依赖">Maven依赖</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="c">&lt;!-- OSS --&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>com.aliyun.oss<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>aliyun-sdk-oss<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>3.4.2<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;exclusions&gt;</span>
+        <span class="nt">&lt;exclusion&gt;</span>
+            <span class="nt">&lt;groupId&gt;</span>org.apache.httpcomponents<span class="nt">&lt;/groupId&gt;</span>
+            <span class="nt">&lt;artifactId&gt;</span>httpclient<span class="nt">&lt;/artifactId&gt;</span>
+        <span class="nt">&lt;/exclusion&gt;</span>
+    <span class="nt">&lt;/exclusions&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+
+<span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apache.httpcomponents<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>httpclient<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>4.4.1<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div><h3 id="配置文件">配置文件</h3>
+<p><code>endpoint</code>就是在存储桶的概览里地域节点，填外网访问那个就行</p>
+<p><code>url</code>填资源访问的URL的前面部分（填到.com/）</p>
+<p><code>accessKeyId</code>和<code>accessKeySecret</code>就是创建子用户时那个</p>
+<p><code>bucketName</code>就是存储桶的名字</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="c"># 阿里云oss</span><span class="w">
+</span><span class="w"></span><span class="nt">oss</span><span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="nt">endpoint</span><span class="p">:</span><span class="w"> </span>*<span class="w">
+</span><span class="w">  </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span>*<span class="w">
+</span><span class="w">  </span><span class="nt">accessKeyId</span><span class="p">:</span><span class="w"> </span>*<span class="w">
+</span><span class="w">  </span><span class="nt">accessKeySecret</span><span class="p">:</span><span class="w"> </span>*<span class="w">
+</span><span class="w">  </span><span class="nt">bucketName</span><span class="p">:</span><span class="w"> </span>*<span class="w">
+</span></code></pre></div><h3 id="配置类">配置类</h3>
+<p>项目的config目录下新建OSS的配置类</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kn">package</span> <span class="nn">com.ccqstark.springbootquick.config</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">lombok.Data</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.boot.context.properties.ConfigurationProperties</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.context.annotation.Configuration</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.stereotype.Component</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">java.io.Serializable</span><span class="o">;</span>
+
+<span class="cm">/**
+</span><span class="cm"> * @Description: 阿里云 OSS 配置信息
+</span><span class="cm"> * @Author: ccq
+</span><span class="cm"> * @Date: 2020/10/16
+</span><span class="cm"> */</span>
+<span class="nd">@Component</span> <span class="c1">//注册bean
+</span><span class="c1"></span><span class="nd">@Data</span>
+<span class="nd">@Configuration</span>
+<span class="nd">@ConfigurationProperties</span><span class="o">(</span><span class="n">prefix</span> <span class="o">=</span> <span class="s">&#34;oss&#34;</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">OSSConfig</span> <span class="kd">implements</span> <span class="n">Serializable</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">endpoint</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">url</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">accessKeyId</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">accessKeySecret</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">bucketName</span><span class="o">;</span>
+
+<span class="o">}</span>
+</code></pre></div><h3 id="上传文件工具类">上传文件工具类</h3>
+<p>项目的util目录下新建这上传工具类</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kn">package</span> <span class="nn">com.ccqstark.springbootquick.util</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">com.aliyun.oss.ClientConfiguration</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.aliyun.oss.OSSClient</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.aliyun.oss.common.auth.DefaultCredentialProvider</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.ccqstark.springbootquick.config.OSSConfig</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.multipart.MultipartFile</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">java.io.IOException</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.UUID</span><span class="o">;</span>
+
+<span class="cm">/**
+</span><span class="cm"> * @Description: 阿里云 oss 上传工具类(高依赖版)
+</span><span class="cm"> * @Author: ccq
+</span><span class="cm"> * @Date: 2020/10/17
+</span><span class="cm"> */</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">OSSBootUtil</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="nf">OSSBootUtil</span><span class="o">(){}</span>
+
+    <span class="cm">/**
+</span><span class="cm">     * oss 工具客户端
+</span><span class="cm">     */</span>
+    <span class="kd">private</span> <span class="kd">volatile</span> <span class="kd">static</span> <span class="n">OSSClient</span> <span class="n">ossClient</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+
+    <span class="cm">/**
+</span><span class="cm">     * 上传文件至阿里云 OSS
+</span><span class="cm">     * 文件上传成功,返回文件完整访问路径
+</span><span class="cm">     * 文件上传失败,返回 null
+</span><span class="cm">     *
+</span><span class="cm">     * @param ossConfig oss 配置信息
+</span><span class="cm">     * @param file 待上传文件
+</span><span class="cm">     * @param fileDir 文件保存目录
+</span><span class="cm">     * @return oss 中的相对文件路径
+</span><span class="cm">     */</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="n">String</span> <span class="nf">upload</span><span class="o">(</span><span class="n">OSSConfig</span> <span class="n">ossConfig</span><span class="o">,</span> <span class="n">MultipartFile</span> <span class="n">file</span><span class="o">,</span> <span class="n">String</span> <span class="n">fileDir</span><span class="o">){</span>
+        <span class="c1">// 初始化客户端
+</span><span class="c1"></span>        <span class="n">initOSS</span><span class="o">(</span><span class="n">ossConfig</span><span class="o">);</span>
+        <span class="c1">// 文件URL
+</span><span class="c1"></span>        <span class="n">StringBuilder</span> <span class="n">fileUrl</span> <span class="o">=</span> <span class="k">new</span> <span class="n">StringBuilder</span><span class="o">();</span>
+
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">String</span> <span class="n">suffix</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="na">getOriginalFilename</span><span class="o">().</span><span class="na">substring</span><span class="o">(</span><span class="n">file</span><span class="o">.</span><span class="na">getOriginalFilename</span><span class="o">().</span><span class="na">lastIndexOf</span><span class="o">(</span><span class="sc">&#39;.&#39;</span><span class="o">));</span>
+            <span class="n">String</span> <span class="n">fileName</span> <span class="o">=</span> <span class="n">System</span><span class="o">.</span><span class="na">currentTimeMillis</span><span class="o">()</span> <span class="o">+</span> <span class="s">&#34;-&#34;</span> <span class="o">+</span> <span class="n">UUID</span><span class="o">.</span><span class="na">randomUUID</span><span class="o">().</span><span class="na">toString</span><span class="o">().</span><span class="na">substring</span><span class="o">(</span><span class="n">0</span><span class="o">,</span><span class="n">18</span><span class="o">)</span> <span class="o">+</span> <span class="n">suffix</span><span class="o">;</span>
+            <span class="k">if</span> <span class="o">(!</span><span class="n">fileDir</span><span class="o">.</span><span class="na">endsWith</span><span class="o">(</span><span class="s">&#34;/&#34;</span><span class="o">))</span> <span class="o">{</span>
+                <span class="n">fileDir</span> <span class="o">=</span> <span class="n">fileDir</span><span class="o">.</span><span class="na">concat</span><span class="o">(</span><span class="s">&#34;/&#34;</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="n">fileUrl</span> <span class="o">=</span> <span class="n">fileUrl</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="n">fileDir</span> <span class="o">+</span> <span class="n">fileName</span><span class="o">);</span>
+
+            <span class="c1">// 上传文件到指定的存储空间，并将其保存为指定的文件名称
+</span><span class="c1"></span>            <span class="n">ossClient</span><span class="o">.</span><span class="na">putObject</span><span class="o">(</span><span class="n">ossConfig</span><span class="o">.</span><span class="na">getBucketName</span><span class="o">(),</span> <span class="n">fileUrl</span><span class="o">.</span><span class="na">toString</span><span class="o">(),</span> <span class="n">file</span><span class="o">.</span><span class="na">getInputStream</span><span class="o">());</span>
+
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">IOException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+            <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="n">fileUrl</span> <span class="o">=</span> <span class="n">fileUrl</span><span class="o">.</span><span class="na">insert</span><span class="o">(</span><span class="n">0</span><span class="o">,</span><span class="n">ossConfig</span><span class="o">.</span><span class="na">getUrl</span><span class="o">());</span>
+        <span class="k">return</span> <span class="n">fileUrl</span><span class="o">.</span><span class="na">toString</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**
+</span><span class="cm">     * 初始化 oss 客户端
+</span><span class="cm">     * @param ossConfig
+</span><span class="cm">     * @return
+</span><span class="cm">     */</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="n">OSSClient</span> <span class="nf">initOSS</span><span class="o">(</span><span class="n">OSSConfig</span> <span class="n">ossConfig</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">ossClient</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">)</span> <span class="o">{</span>
+            <span class="kd">synchronized</span> <span class="o">(</span><span class="n">OSSBootUtil</span><span class="o">.</span><span class="na">class</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">ossClient</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="n">ossClient</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OSSClient</span><span class="o">(</span><span class="n">ossConfig</span><span class="o">.</span><span class="na">getEndpoint</span><span class="o">(),</span>
+                            <span class="k">new</span> <span class="n">DefaultCredentialProvider</span><span class="o">(</span><span class="n">ossConfig</span><span class="o">.</span><span class="na">getAccessKeyId</span><span class="o">(),</span> <span class="n">ossConfig</span><span class="o">.</span><span class="na">getAccessKeySecret</span><span class="o">()),</span>
+                            <span class="k">new</span> <span class="n">ClientConfiguration</span><span class="o">());</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">ossClient</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><h3 id="服务层">服务层</h3>
+<p>在项目的service目录下新建服务层接口</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kn">package</span> <span class="nn">com.ccqstark.springbootquick.service</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">com.ccqstark.springbootquick.model.ApiResult</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.multipart.MultipartFile</span><span class="o">;</span>
+
+<span class="cm">/**
+</span><span class="cm"> * @Description: 公共业务
+</span><span class="cm"> * @Author: ccq
+</span><span class="cm"> * @Date: 2020/10/17
+</span><span class="cm"> */</span>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">CommonService</span> <span class="o">{</span>
+
+    <span class="cm">/**
+</span><span class="cm">     * 上传文件至阿里云 oss
+</span><span class="cm">     *
+</span><span class="cm">     * @param file
+</span><span class="cm">     * @param uploadKey
+</span><span class="cm">     * @return
+</span><span class="cm">     * @throws Exception
+</span><span class="cm">     */</span>
+    <span class="n">ApiResult</span> <span class="nf">uploadOSS</span><span class="o">(</span><span class="n">MultipartFile</span> <span class="n">file</span><span class="o">,</span> <span class="n">String</span> <span class="n">uploadKey</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span><span class="o">;</span>
+
+<span class="o">}</span>
+</code></pre></div><p>新建实现类</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kn">package</span> <span class="nn">com.ccqstark.springbootquick.service</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">com.ccqstark.springbootquick.config.OSSConfig</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.ccqstark.springbootquick.model.ApiResult</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.ccqstark.springbootquick.util.OSSBootUtil</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.beans.factory.annotation.Autowired</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.stereotype.Service</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.multipart.MultipartFile</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">java.util.HashMap</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.Map</span><span class="o">;</span>
+
+<span class="cm">/**
+</span><span class="cm"> * @Description: 公共业务具体实现类
+</span><span class="cm"> * @Author: ccq
+</span><span class="cm"> * @Date: 2020/10/17
+</span><span class="cm"> */</span>
+<span class="nd">@Service</span><span class="o">(</span><span class="s">&#34;commonService&#34;</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">CommonServiceImpl</span> <span class="kd">implements</span> <span class="n">CommonService</span> <span class="o">{</span>
+
+    <span class="nd">@Autowired</span>
+    <span class="kd">private</span> <span class="n">OSSConfig</span> <span class="n">ossConfig</span><span class="o">;</span>
+
+    <span class="cm">/**
+</span><span class="cm">     * 上传文件至阿里云 oss
+</span><span class="cm">     *
+</span><span class="cm">     * @param file
+</span><span class="cm">     * @param uploadKey
+</span><span class="cm">     * @return
+</span><span class="cm">     * @throws Exception
+</span><span class="cm">     */</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">ApiResult</span> <span class="nf">uploadOSS</span><span class="o">(</span><span class="n">MultipartFile</span> <span class="n">file</span><span class="o">,</span> <span class="n">String</span> <span class="n">uploadKey</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+
+        <span class="c1">// 高依赖版本 oss 上传工具
+</span><span class="c1"></span>        <span class="n">String</span> <span class="n">ossFileUrlBoot</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="n">ossFileUrlBoot</span> <span class="o">=</span> <span class="n">OSSBootUtil</span><span class="o">.</span><span class="na">upload</span><span class="o">(</span><span class="n">ossConfig</span><span class="o">,</span> <span class="n">file</span><span class="o">,</span> <span class="s">&#34;image/&#34;</span><span class="o">);</span> <span class="c1">// 注意这里填写的是存储桶中你要存放文件的目录
+</span><span class="c1"></span>
+        <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="n">resultMap</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;&gt;(</span><span class="n">16</span><span class="o">);</span>
+        <span class="n">resultMap</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">&#34;ossFileUrlBoot&#34;</span><span class="o">,</span> <span class="n">ossFileUrlBoot</span><span class="o">);</span>
+
+        <span class="k">return</span> <span class="k">new</span> <span class="n">ApiResult</span><span class="o">(</span><span class="n">200</span><span class="o">,</span> <span class="n">resultMap</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div><h3 id="controller上传测试">Controller上传测试</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kn">package</span> <span class="nn">com.ccqstark.springbootquick.controller</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">com.ccqstark.springbootquick.model.ApiResult</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.ccqstark.springbootquick.service.CommonService</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">lombok.extern.slf4j.Slf4j</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.beans.factory.annotation.Autowired</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.http.HttpHeaders</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.http.HttpStatus</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.http.MediaType</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.http.ResponseEntity</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.bind.annotation.RequestMapping</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.bind.annotation.RequestMethod</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.bind.annotation.RequestParam</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.bind.annotation.RestController</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.multipart.MultipartFile</span><span class="o">;</span>
+
+<span class="cm">/**
+</span><span class="cm"> * @Description: 上传文件
+</span><span class="cm"> * @Author: ccq
+</span><span class="cm"> * @Date: 2020/10/17
+</span><span class="cm"> */</span>
+<span class="nd">@Slf4j</span>
+<span class="nd">@RestController</span>
+<span class="nd">@RequestMapping</span><span class="o">(</span><span class="s">&#34;/upload&#34;</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">UploadController</span> <span class="o">{</span>
+
+    <span class="nd">@Autowired</span>
+    <span class="kd">private</span> <span class="n">CommonService</span> <span class="n">commonService</span><span class="o">;</span>
+
+
+    <span class="cm">/**
+</span><span class="cm">     * 上传文件至阿里云 oss
+</span><span class="cm">     *
+</span><span class="cm">     * @param file
+</span><span class="cm">     * @param uploadKey
+</span><span class="cm">     * @return
+</span><span class="cm">     * @throws Exception
+</span><span class="cm">     */</span>
+    <span class="nd">@RequestMapping</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">&#34;/oss&#34;</span><span class="o">,</span> <span class="n">method</span> <span class="o">=</span> <span class="o">{</span><span class="n">RequestMethod</span><span class="o">.</span><span class="na">POST</span><span class="o">},</span> <span class="n">produces</span> <span class="o">=</span> <span class="o">{</span><span class="n">MediaType</span><span class="o">.</span><span class="na">APPLICATION_JSON_VALUE</span><span class="o">})</span>
+    <span class="kd">public</span> <span class="n">ResponseEntity</span><span class="o">&lt;?&gt;</span> <span class="n">uploadOSS</span><span class="o">(</span><span class="nd">@RequestParam</span><span class="o">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">&#34;file&#34;</span><span class="o">)</span> <span class="n">MultipartFile</span> <span class="n">file</span><span class="o">,</span> <span class="n">String</span> <span class="n">uploadKey</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+        <span class="n">ApiResult</span> <span class="n">apiResult</span> <span class="o">=</span> <span class="n">commonService</span><span class="o">.</span><span class="na">uploadOSS</span><span class="o">(</span><span class="n">file</span><span class="o">,</span> <span class="n">uploadKey</span><span class="o">);</span>
+
+        <span class="n">HttpHeaders</span> <span class="n">headers</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HttpHeaders</span><span class="o">();</span>
+        <span class="n">headers</span><span class="o">.</span><span class="na">setContentType</span><span class="o">(</span><span class="n">MediaType</span><span class="o">.</span><span class="na">APPLICATION_JSON</span><span class="o">);</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="n">ResponseEntity</span><span class="o">&lt;&gt;(</span><span class="n">apiResult</span><span class="o">,</span> <span class="n">headers</span><span class="o">,</span> <span class="n">HttpStatus</span><span class="o">.</span><span class="na">CREATED</span><span class="o">);</span>
+    <span class="o">}</span>
+
+
+<span class="o">}</span>
+</code></pre></div><p>Postman工具，用POST请求，在form-data中用file字段对应图片或其他类型的文件，然后请求接口</p>
+<p>返回的URL在浏览器中可以用公网访问说明成功了！</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/springboot/">SpringBoot</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.css"integrity="sha384-RZU/ijkSsFbcmivfdRBQDtwuwVqK7GMOw6IMvKyeWL2K5UAlyp6WonmB8m7Jd0Hn"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.js"integrity="sha384-pK1WpvzWVBQiP0/GjnvRxV4mOb0oxFuyRxJlk6vVw146n3egcN5C925NCP7a7BY8"crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/contrib/auto-render.min.js"integrity="sha384-vZTG03m&#43;2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl"crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });})
+</script>
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">Related contents</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/log_catch_error/">
+        
+        
+            <div class="article-image">
+                <img src="/p/log_catch_error/cover.cab0e6f37d264c579b250f03ed20b20b_hud62bf8010474cbdcf139a7fd30aacc5c_25975_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="log_catch_error" 
+                        data-hash="md5-yrDm830mTFebJQ8D7SCyCw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">[SpringBoot]日志与异常捕获</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/springboot_es/">
+        
+        
+            <div class="article-image">
+                <img src="/p/springboot_es/springboot-es.68bd173d94a8eaf642b2ac727cbde179_hu5dbd9828aef42d61c56fd952a73b2be9_64126_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="springboot_es" 
+                        data-hash="md5-aL0XPZSo6vZCsqxyfL3heQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">[SpringBoot]整合ElasticSearch</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/springboot_shiro_jwt/">
+        
+        
+            <div class="article-image">
+                <img src="/p/springboot_shiro_jwt/cover.cab0e6f37d264c579b250f03ed20b20b_hud62bf8010474cbdcf139a7fd30aacc5c_25975_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="springboot_shiro_jwt" 
+                        data-hash="md5-yrDm830mTFebJQ8D7SCyCw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">[SpringBoot]整合shiro&#43;JWT做鉴权</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/springboot_druid/">
+        
+        
+            <div class="article-image">
+                <img src="/p/springboot_druid/cover.cab0e6f37d264c579b250f03ed20b20b_hud62bf8010474cbdcf139a7fd30aacc5c_25975_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="springboot_druid" 
+                        data-hash="md5-yrDm830mTFebJQ8D7SCyCw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">[SpringBoot]整合Druid数据源</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/springboot_mybatis/">
+        
+        
+            <div class="article-image">
+                <img src="/p/springboot_mybatis/cover.cab0e6f37d264c579b250f03ed20b20b_hud62bf8010474cbdcf139a7fd30aacc5c_25975_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="springboot_mybatis" 
+                        data-hash="md5-yrDm830mTFebJQ8D7SCyCw==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">[SpringBoot]整合Mybatis</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-ccqstark-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2022 ccq&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        
+            一辈子热爱技术 <br/>
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.5.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">Table of contents</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li>
+      <ol>
+        <li><a href="#开通服务">开通服务</a></li>
+        <li><a href="#准备工作">准备工作</a></li>
+        <li><a href="#maven依赖">Maven依赖</a></li>
+        <li><a href="#配置文件">配置文件</a></li>
+        <li><a href="#配置类">配置类</a></li>
+        <li><a href="#上传文件工具类">上传文件工具类</a></li>
+        <li><a href="#服务层">服务层</a></li>
+        <li><a href="#controller上传测试">Controller上传测试</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>gopher</title>
+	
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-PXLPFFZ3XD"></script>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
+
+	  gtag('config', 'G-PXLPFFZ3XD');
+	</script>
+</head>
+<body>
+<canvas id="view" width="200" height="180" style="position: fixed; right: 0; bottom: 0; z-index: 9999"></canvas>
+<script type="text/javascript">
+    "use strict";
+
+    if(window.animationLoop) {
+        window.cancelAnimationFrame(window.animationLoop)
+    }
+
+    class HSL {
+        constructor(h, s, l) {
+            this.h = h
+            this.s = s
+            this.l = l
+        }
+
+        toString() {
+            return "hsl(" +
+                (this.h * 360).toFixed(2) + "," +
+                (this.s * 100).toFixed(2) + "%," +
+                (this.l * 100).toFixed(2) + "%)";
+        }
+    }
+
+    const tau = Math.PI * 2
+
+    let view = document.getElementById("view")
+    let context = view.getContext("2d")
+    updateViewSize()
+
+    let gopher = {
+        body: new HSL(205.0/360, 1.0,  0.81),
+        bodyDark: new HSL(205.0/360, 0.55,  0.71),
+        dark: new HSL(217.0/360, 0.19, 0.18),
+        light: new HSL(217.0/360, 0.0, 1.00),
+        lightDark: new HSL(217.0/360, 0.0, 0.90),
+        limb: new HSL(46.0/360, 0.38, 0.80),
+
+        head: {x: 0, y:0},
+        gaze: {x: 0, y:0},
+    };
+
+    window.animationLoop = tick();
+
+    window.addEventListener("resize", updateViewSize)
+
+    function updateViewSize() {
+        
+        
+
+        view.width = view.clientWidth;
+        view.height = view.clientHeight;
+    }
+
+    window.addEventListener("mousemove", (ev) => {
+        let screenSize = {x: view.width, y: view.height}
+
+		gopher.gaze.x = - (ev.clientX * 1.5 / view.width-1);
+		gopher.gaze.y = - (ev.clientY * 1.5 / view.height-1);
+
+        gopher.head.x = gopher.gaze.x * 0.5;
+        gopher.head.y = gopher.gaze.y * 0.5;
+   
+    });
+
+    window.addEventListener("touchmove", (ev) => {
+        if(ev.targetTouches.length == 0) return;
+
+        let screenSize = {x: view.width, y: view.height}
+        let touch = ev.targetTouches[0]
+
+        gopher.gaze.x = touch.clientX * 2.0 / view.width - 1;
+        gopher.gaze.y = touch.clientY * 2.0 / view.height - 1;
+
+        gopher.head.x = gopher.gaze.x * 0.5;
+        gopher.head.y = gopher.gaze.y * 0.5;
+
+    });
+
+    function tick(t) {
+        context.clearRect(0,0,10000,10000);
+        context.save()
+
+        
+        
+        
+
+        let screenSize = {x: view.width, y: view.height}
+        render(gopher, context, screenSize)
+        context.restore()
+        return window.requestAnimationFrame(tick)
+    }
+
+    function stringify(v) {
+        return JSON.stringify(v, (key, val) => {
+            if(typeof val == "number"){
+                return val.toFixed(2)
+            }
+            return val
+        })
+    }
+
+    function render(gopher, draw, screenSize) {
+        let bodyRadius = Math.min(screenSize.x, screenSize.y) / 2
+        bodyRadius *= 0.8
+
+        let eyeRadius = bodyRadius * 0.4
+        let earRadius = eyeRadius * 0.53
+        let lineWidth = bodyRadius * 0.045
+        let highlightSize = eyeRadius * 0.06
+
+        draw.lineWidth = lineWidth
+        draw.strokeStyle = gopher.dark.toString()
+
+        
+        draw.translate(screenSize.x/2, screenSize.y)
+
+        for(let ear = -1; ear <= 1; ear+=2){
+            saved(draw, (draw) => { 
+                let earOffset = headOffset(gopher, -ear, bodyRadius)
+                earOffset.x *= -1
+                earOffset.x += ear*earRadius*0.3
+                earOffset.y = -bodyRadius*1.8 - Math.sin(gopher.head.y)*earRadius * 0.5
+
+                draw.translate(earOffset.x, earOffset.y)
+                draw.scale(ear, 1)
+                draw.rotate(tau / 10)
+                draw.translate(0, earRadius)
+
+                let earPath = new Path2D()
+
+                earPath.moveTo(-earRadius, earRadius)
+                earPath.lineTo(-earRadius, -earRadius)
+                earPath.bezierCurveTo(
+                    -earRadius, -earRadius-earRadius*1.3,
+                    earRadius, -earRadius-earRadius*1.3,
+                    earRadius, -earRadius)
+                earPath.lineTo(earRadius, earRadius)
+
+                draw.fillStyle = gopher.body.toString()
+                draw.fill(earPath)
+                draw.stroke(earPath)
+
+                let earInline = new Path2D()
+                earInline.moveTo(0, 0)
+                earInline.quadraticCurveTo(
+                    -earRadius*0.6, -earRadius,
+                    earRadius*0.2, -earRadius*1.4
+                );
+                earInline.moveTo(0, 0)
+                earInline.quadraticCurveTo(
+                    -earRadius*0.6, -earRadius,
+                    earRadius*0.3, -earRadius*1.0
+                );
+
+                draw.lineWidth = lineWidth * 0.7
+                draw.lineCap = "round"
+                draw.stroke(earInline)
+            })
+        }
+
+        saved(draw, (draw) => { 
+            let bodyPath = new Path2D()
+
+            bodyPath.moveTo(-bodyRadius, 0)
+            bodyPath.lineTo(-bodyRadius, -bodyRadius)
+            bodyPath.bezierCurveTo(
+                -bodyRadius, -bodyRadius-bodyRadius*1.2,
+                bodyRadius, -bodyRadius-bodyRadius*1.2,
+                bodyRadius, -bodyRadius)
+            bodyPath.lineTo(bodyRadius, 0)
+
+            draw.fillStyle = gopher.bodyDark.toString()
+            draw.fill(bodyPath)
+            saved(draw, (draw) => {
+                draw.clip(bodyPath)
+                draw.translate(bodyRadius * 0.1, 0)
+                draw.fillStyle = gopher.body.toString()
+                draw.fill(bodyPath)
+            })
+            draw.stroke(bodyPath)
+        })
+
+        for(let eye = -1; eye <= 1; eye+=2){
+            let gaze = gopher.gaze;
+
+            saved(draw, (draw) => { 
+                let eyeOffset = headOffset(gopher, eye, bodyRadius);
+                draw.translate(eyeOffset.x, eyeOffset.y);
+
+                let eyePath = new Path2D();
+                eyePath.arc(0, 0, eyeRadius, 0, tau, true);
+
+                draw.fillStyle = gopher.lightDark.toString()
+                draw.fill(eyePath)
+
+                saved(draw, (draw) => {
+                    draw.clip(eyePath)
+                    draw.translate(eyeRadius*0.2, -eyeRadius*0.15)
+                    draw.fillStyle = gopher.light.toString()
+                    draw.fill(eyePath)
+                })
+
+                draw.stroke(eyePath)
+
+                let pupil = { x: gaze.x, y: gaze.y}
+                let mag = Math.sqrt(pupil.x*pupil.x + pupil.y*pupil.y)
+                if(mag > 1){
+                    pupil.x /= mag + 0.0001;
+                    pupil.y /= mag + 0.0001;
+                }
+                pupil.x = Math.sin(pupil.x + eye * 0.4) * eyeRadius * 0.6
+                pupil.y = Math.sin(pupil.y) * eyeRadius * 0.6
+                let pupilSize = eyeRadius*0.25
+
+                let pupilPath = new Path2D();
+                pupilPath.arc(pupil.x, pupil.y, pupilSize, 0, tau, true)
+                draw.fillStyle = gopher.dark.toString()
+                draw.fill(pupilPath)
+
+                
+                let highlighPath = new Path2D()
+                highlighPath.arc(
+                    pupil.x + pupilSize * 0.3 - gaze.x * highlightSize * 0.3,
+                    pupil.y - pupilSize * 0.3 - gaze.y * highlightSize * 0.3, highlightSize, 0, tau, true)
+                draw.fillStyle = gopher.light.toString()
+                draw.fill(highlighPath)
+            })
+        }
+
+        saved(draw, (draw) => { 
+            let tipSize = eyeRadius*0.2;
+            let toothSize = tipSize;
+            let noseSize = tipSize * 2.2;
+
+            let noseOffset = headOffset(gopher, 0, bodyRadius)
+            noseOffset.y += eyeRadius * 0.8;
+            draw.translate(noseOffset.x, noseOffset.y);
+
+            saved(draw, (draw) => { 
+                draw.translate(0, tipSize*1.2 - gopher.head.y * tipSize * 0.3)
+                draw.beginPath()
+                draw.moveTo(-toothSize, 0)
+                draw.lineTo(-toothSize, toothSize*1.5)
+                draw.bezierCurveTo(
+                    -toothSize, toothSize*2,
+                    toothSize, toothSize*2,
+                    toothSize, toothSize*1.5,
+                )
+                draw.lineTo(toothSize, 0)
+                draw.fillStyle = gopher.light.toString()
+                draw.fill()
+                draw.lineWidth = lineWidth * 0.7;
+                draw.stroke()
+            })
+
+            saved(draw, (draw) => { 
+                draw.translate(0, tipSize*1.2)
+                draw.beginPath()
+
+                draw.moveTo(-noseSize, 0)
+                draw.bezierCurveTo(
+                    -noseSize, -noseSize,
+                    noseSize, -noseSize,
+                    noseSize, 0
+                )
+                draw.bezierCurveTo(
+                    noseSize, noseSize*0.4,
+                    -noseSize, noseSize*0.4,
+                    -noseSize, 0
+                )
+                draw.closePath()
+
+                draw.fillStyle = gopher.limb.toString()
+                draw.fill()
+                draw.stroke()
+            })
+
+            saved(draw, (draw) => { 
+                let tip = {
+                    x: Math.sin(gopher.head.x) * tipSize,
+                    y: Math.sin(gopher.head.y) * tipSize * 0.5 - tipSize*0.2,
+                };
+
+                draw.beginPath()
+                draw.scale(1.2, 0.9)
+                draw.arc(tip.x, tip.y, tipSize, 0, tau, true)
+                draw.fillStyle = gopher.dark.toString()
+                draw.fill()
+
+                
+                draw.beginPath()
+                draw.arc(
+                    tip.x + tipSize * 0.3 - gopher.head.x * highlightSize * 0.3,
+                    tip.y - tipSize * 0.3 - gopher.head.y * highlightSize * 0.3, highlightSize, 0, tau, true)
+                draw.fillStyle = gopher.light.toString()
+                draw.fill()
+            })
+        })
+    }
+
+    function headOffset(gopher, eye, bodyRadius) {
+        let x = eye*bodyRadius*0.4
+        let y = -bodyRadius*1.1
+
+        x += Math.sin(gopher.head.x - eye*0.4) * bodyRadius*0.3
+        y += Math.sin(gopher.head.y*tau/4) * bodyRadius*0.15
+
+        return {x: x, y: y}
+    }
+
+    function saved(draw, fn) {
+        draw.save()
+        fn(draw)
+        draw.restore()
+    }
+</script>
+</body>
+</html>
+    </body>
+</html>

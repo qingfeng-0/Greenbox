@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>数据库 on ccq&#39;s blog</title>
+    <link>https://ccqstark.github.io/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/</link>
+    <description>Recent content in 数据库 on ccq&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 26 Aug 2021 03:57:56 +0800</lastBuildDate><atom:link href="https://ccqstark.github.io/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Redis布隆过滤器与点赞功能设计</title>
+      <link>https://ccqstark.github.io/p/bloom_filter/</link>
+      <pubDate>Thu, 26 Aug 2021 03:57:56 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/bloom_filter/</guid>
+      <description>什么是布隆过滤器 简介 布隆过滤器（Bloom Filter）是 1970 年由布隆提出的。它实际上是一个很长的二进制向量和一系列随机映射函数。布隆过滤器可以用于检索一个元素是否在一个集合中。它的优点是空间效率和查询时间都比一般的算法要好的多，缺点是有一定的误识别率和删除困难。
+具体实现原理  
+如上图所示，布隆过滤器的原理就是通过几个哈希函数把要存储的数据映射到一个二进制的数组里，映射到的对应位标为1，如上图就为（2，5，9）。后续有元素加入时，若该位本就为1，则不对该位再做处理。
+当要判断一个元素是否在过滤器中，也是先进行Hash计算出对应的位，判断二进制数组中所有对应的位是否都为1，是的话表示元素在其中；反之不在。
+存在的问题 布隆过滤器存在误判率，也是可能会把一个不存在的元素判定为存在的。因为在加入大量元素后，二进制数组中可能大部分位都被置为1了，所以一个新的数据Hash出来对应的位就很可能也都置为1了。
+解决办法就是增加二进制数组的长度，使得二进制数组不那么快饱和，就可以容纳更多的元素，降低误判概率；或者增加Hash次数，使得数据更加分散。
+所以但布隆过滤器判断一个元素存在时，可能不一定真的存在；但假如它判断一个元素不存在，那这个元素一定不存在，这种情况不存在误判。
+还有一个问题是删除困难，因为在元素较多的情况下它们对应的位总有交叉，如果你把其中一个元素对应的位都置0了，那很可能也会影响到其他的元素，很难仅仅删除一个元素。
+应用场景  网页爬虫对 URL 去重，避免爬取相同的 URL 地址； 反垃圾邮件，从数十亿个垃圾邮件列表中判断某邮箱是否垃圾邮箱； Google Chrome 使用布隆过滤器识别恶意 URL； Medium 使用布隆过滤器避免推荐给用户已经读过的文章； Google BigTable，Apache HBbase 和 Apache Cassandra 使用布隆过滤器减少对不存在的行和列的查找。  除了上述的应用场景之外，布隆过滤器还有一个应用场景就是解决缓存穿透的问题。所谓的缓存穿透就是服务调用方每次都是查询不在缓存中的数据，这样每次服务调用都会到数据库中进行查询，如果这类请求比较多的话，就会导致数据库压力增大，这样缓存就失去了意义。
+所以当有黑客生成大量随机的不存在的值请求服务器导致查询数据库，造成大量缓存穿透的情况时。我们可以用布隆过滤器进行拦截，被布隆过滤器判断为不存在的值就不需要查询数据库了，直接返回，大大减低了数据库压力。(少量判断为存在的值因为有误判率所以可以进行下一步查询)
+在redis中安装布隆过滤器 redis本身是不自带布隆过滤器功能的，要么基于bitmap自己实现，要么安装插件
+（布隆过滤器在guava包中也有实现）
+安装redis插件 非docker安装的redis可以采用安装插件的方式来
+# 去这个github仓库看看最新版本 wget https://github.com/RedisLabsModules/rebloom/archive/v2.2.4.tar.gz # 解压 tar zxvf v2.2.4.tar.gz # 编译 cd RedisBloom-2.2.4 make 以上执行完之后在目录下多了一个rebloom.so文件，将其移动到一个合适的位置
+然后在redis的配置文件里增加以下一行（最好添加在MODULES区域，规范点，redis配置文件所在路径可以在redis-cli中用info 命令查看）
+# 后面为rebloom.so文件所在的目录 loadmodule /xxx/xxx/xxx/rebloom.so 重启redis后进入redis-cli尝试以下命令
+bf.add test 1 bf.</description>
+    </item>
+    
+    <item>
+      <title>Redis分布式缓存实现</title>
+      <link>https://ccqstark.github.io/p/redis_mybatis_cache/</link>
+      <pubDate>Wed, 25 Aug 2021 16:07:15 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/redis_mybatis_cache/</guid>
+      <description>缓存的分类 本地缓存(local cache)：存在应用服务器内存中的数据称为本地缓存
+分布式缓存(dustribute cache)：存储在当前应用服务器之外的数据称为分布式缓存
+这里顺带提及集群和分布式的区别
+集群(cluster)：将同一种服务的多个节点放在一起共同对系统提供服务，称为集群
+分布式(distribute system)：有多个不同服务集群功能对系统提供服务，这个系统称之为分布式系统
+所以两者虽然都是多个服务器节点，区别就在多个节点中，集群侧重的是同一种服务，而分布式侧重的是不同的服务，而且分布式还是建立在集群的基础之上的。
+缓存发挥的作用  
+由图中可以看出，缓存是作为存储层和客户端之间的中间层，当客户端的请求过来时，首先请求缓存中的内容，如果查到（hit）则直接返回，不再去查找存储层；如果没有（miss），则去存储层中查找并将结果写入缓存（write cache）再返回，以便之后相同的请求可以去缓存中获取。
+之所以加入缓存层是因为存储层一般是需要读写磁盘的，而缓存层在内存中，两者的读写速度完全不是一个量级，内存快的多。而大部分应用的请求都有一个特点——读多写少，所以将总是需要查到的数据放在缓存层中可以大大提高应用的响应速度，减少存储层的压力。
+一般Web应用中，存储层就是我们用的关系型数据库，MySQL、Oracle、SQLServer等，而缓存层分类上面已经提到，常用的有Redis，Memcached等。
+MyBatis开启二级缓存 MyBatis一级缓存中，其最大的共享范围就是一个SqlSession内部，如果多个SqlSession之间需要共享缓存，则需要使用到二级缓存。
+开启方法：
+在业务的mapper.xml文件中添加
+&amp;lt;cache/&amp;gt; 二级缓存开启后，同一个namespace下的所有操作语句，都影响着同一个Cache，即二级缓存被多个SqlSession共享，是一个全局的变量。
+当开启缓存后，数据的查询执行的流程就是 二级缓存 -&amp;gt; 一级缓存 -&amp;gt; 数据库。
+ 
+这样开启的是本地二级缓存，这样有个缺点就是应用重新启动后，JVM重新分配内存，这样的话之前的缓存就都没了，所以我们得用分布式缓存来解决。
+使用Redis作为Mybatis的二级缓存 MyBatis的缓存实现类默认是PerpetualCache，它继承类Cache接口，除此之外还有其他实现类。
+原理就是维护一个HashMap，将查询的SQL以及Mapper的namespace作为Key，然后查询的结果作为Value，通过键值对的方式来实现缓存查询过的sql语句的结果，所以要用redis替换也还是十分合适的。
+Cache接口 public interface Cache { String getId(); void putObject(Object var1, Object var2); Object getObject(Object var1); Object removeObject(Object var1); void clear(); int getSize(); ReadWriteLock getReadWriteLock(); } 解析
+getId ：这个方法其实是获取了执行的sql对应的namespace，可以用来组成缓存的key
+putObject ：此方法就是用来将数据放入缓存的
+getObject ：用以根据key获取缓存的值
+removeObject ：删除某一缓存项目，MyBatis暂未实现与启用此方法，所以暂时无用
+clear ：每次执行update/delete/insert语句都会调用此方法进行清除原有的缓存</description>
+    </item>
+    
+    <item>
+      <title>MySQL主从复制搭建与原理</title>
+      <link>https://ccqstark.github.io/p/mysql_master_slave_replic/</link>
+      <pubDate>Thu, 22 Jul 2021 01:00:48 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/mysql_master_slave_replic/</guid>
+      <description>主从复制搭建 拉取镜像 用docker，mysql5.7
+docker pull mysql:5.7 启动 主节点
+docker run -p 3306:3306 --name mysql_master -e MYSQL_ROOT_PASSWORD=123456 -d mysql:5.7 从节点
+docker run -p 3306:3306 --name mysql——slave -e MYSQL_ROOT_PASSWORD=123456 -d mysql:5.7 Master配置 通过docker exec -it [容器名] bash 进入容器内部
+安装vim
+apt-get update apt-get install vim 编辑配置文件my.cnf
+cd /etc/mysql vim my.cnf 添加以下内容
+[mysqld] ## 同一局域网内注意要唯一 server-id=100 ## 开启二进制日志功能，可以随便取（关键） log-bin=mysql-bin 完成后重启服务，重启服务后需要重启容器
+service mysql restart docker start mysql_master 再次进入容器，创建用于同步数据的用户
+mysql -hlocalhost -uroot -p CREATE USER &amp;#39;slave&amp;#39;@&amp;#39;%&amp;#39; IDENTIFIED BY &amp;#39;123456&amp;#39;; GRANT REPLICATION SLAVE, REPLICATION CLIENT ON *.</description>
+    </item>
+    
+  </channel>
+</rss>

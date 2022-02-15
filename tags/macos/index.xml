@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>macOS on ccq&#39;s blog</title>
+    <link>https://ccqstark.github.io/tags/macos/</link>
+    <description>Recent content in macOS on ccq&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 10 Jan 2021 16:35:00 +0800</lastBuildDate><atom:link href="https://ccqstark.github.io/tags/macos/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Alfred &#43; iTerm2 快速ssh连接服务器</title>
+      <link>https://ccqstark.github.io/p/alfred_iterm/</link>
+      <pubDate>Sun, 10 Jan 2021 16:35:00 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/alfred_iterm/</guid>
+      <description>为了提高在mac下连接ssh的效率，我们可以用alfred和iTerm配合，达到只要在输入框中输入ssh [主机名] 就可以快速连上了，效果如下图：
+ 
+使用ssh config 在~/.ssh/config文件里添加服务器信息，没有的话就新建一个
+vim ~/.ssh/config然后在文件中输入主机的信息，有多个主机就追加在后面就行
+Host [主机名] HostName [ip] User root Port [端口]使用密钥登陆 如果本地的~/.ssh 目录下没有id_rsa 私钥文件，可以是使用下面这个目录生成，一路回车即可，如果已经有了就可以跳过这步
+ssh-keygen然后将私钥复制到远程服务器
+ssh-copy-id -i -p[端口号] root@ip按提示输入一次密码，就会自动将刚才生成的公钥id_rsa.pub追加到远程主机的~/.ssh/authorized_keys后面了，这样以后的 ssh 连接都不用输入密码了
+安装alfred-ssh插件 https://github.com/deanishe/alfred-ssh
+到上面github链接下载最新版：Secure-SHell的alfredworkflow，双击自动添加到alfred的workflow
+添加后打开alfred的偏好设置可以看到效果如下：
+  测试用alfred输入ssh+主机名就可以连上服务器了，但是默认是用mac自带但终端，想用好看的iTrem2还需要进一步操作
+安装alfred集成iTerm2配置 如下图，打开iTrem2的偏好设置，如下图设置默认方式为ssh
+  进入下面github链接，按说明操作
+https://github.com/vitorgalvao/custom-alfred-iterm-scripts
+  按上面要求运行命令并粘贴到对应地方就完成了！
+参考文章： 开发效率神器之alfred集成ssh+iTerm2实现一步登录服务器</description>
+    </item>
+    
+    <item>
+      <title>macOS终端美化指北</title>
+      <link>https://ccqstark.github.io/p/mac_terminal/</link>
+      <pubDate>Wed, 06 Jan 2021 02:07:00 +0800</pubDate>
+      
+      <guid>https://ccqstark.github.io/p/mac_terminal/</guid>
+      <description>终于从Windows转到心心念念的macOS上进行开发，虽然是黑苹果但是软件层面上没有太大的区别，程序员还是得用mac啊这终端上真的比windows好用无数倍，那终端到手后还是要折腾美化的，那就开始吧。 先看下我，还可以吧？  1 
+准备工作 先保证自己下载homebrew和wget，安装软件或下载包很多情况下要用到它们，特别homebrew是mac下最好用的包管理器一定要有。下载方法网上也很多的，建议先下homebrew再用它下wget。
+iTerm2 首先是下载第三方终端iTerm2，mac自带的终端用的比较少，大家用的最多还是这个。 官网下载
+zsh zsh是shell的一种，mac默认的shell是bash，一般来说我们也是用zsh比较多，因为命令更多更好用。
+下载zsh brew install zsh 切换shell为zsh # 查看当前使用的shell echo $SHELL # 切换为zsh chsh -s /bin/zsh 运行完上面命令后重启一下即可
+oh-my-zsh oh-my-zsh用于美化终端，可以让你拥有很多好看的主题。
+安装 wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | sh sh install.sh运行上面的命令来下载安装脚本并运行脚本，成功后会有如下画面
+ 2 
+更换主题 oh-my-zsh有很多默认的主题，可以在~/.zshrc中修改ZSH_THEME来切换不同主题。 这里我推荐powerlever10k，它集合了很多不同主题风格的样式，支持自定义，如果默认主题中没有你满意的那推荐就用它。下面就讲powerlevel10k的安装方法。
+下载 git clone --depth=1 https://gitee.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k安装所需字体 # 安装 nerd-font 字体 brew tap homebrew/cask-fonts # 其他所需字体 cd ~ git clone https://github.com/powerline/fonts.git --depth=1 # 到目录下执行安装脚本 cd fonts .</description>
+    </item>
+    
+  </channel>
+</rss>

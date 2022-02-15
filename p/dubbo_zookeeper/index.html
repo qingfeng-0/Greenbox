@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='简介 Dubbo原本是阿里的开源框架，有很多著名厂商都在用。但在14年停更，之后Spring Cloud大红大紫，Dubbo终于在17年再度更新，并在18年合并当当网的基于它开发出的DubboX推出了2.6版本。之后在18年除夕夜，阿里正式将Dubbo捐献给了著名开源组织Apache，成为Apache众多开源项目之一。
+Apache Dubbo
+ZooKeeper 也是 Apache 软件基金会的一个软件项目，它为大型分布式计算提供开源的分布式配置服务、同步服务和命名注册。
+ZooKeeper 的架构通过冗余服务实现高可用性。
+Zookeeper 的设计目标是将那些复杂且容易出错的分布式一致性服务封装起来，构成一个高效可靠的原语集，并以一系列简单易用的接口提供给用户使用。
+一个典型的分布式数据一致性的解决方案，分布式应用程序可以基于它实现诸如数据发布/订阅、负载均衡、命名服务、分布式协调/通知、集群管理、Master 选举、分布式锁和分布式队列等功能。
+Apache ZooKeeper
+安装 使用Dubbo引入相关依赖即可，下面具体实践会涉及。
+ZooKeeper可以去官网下载安装，这里我还是用docker在Linux服务器上安装。
+# 拉取镜像 docker pull zookeeper # 启动 docker run -d \ -p 2181:2181 \ -v /home/zookeeper/data/:/data/ \ --name=zookeeper \ --privileged zookeeper # 如果想运行自带的客户端可以： docker exec -it zookeeper bash cd bin ./zkCli.sh # 之后就可以使用相关命令了 安装ZooInspector来可视化查看zookeeper
+
+# 下载后进入build目录运行jar包，输入zookeeper的地址即可连接 java -jar zookeeper-dev-ZooInspector.jar  
+使用dubbo-admin可视化监控服务 dubbo-admin是一个Springboot项目，可以监控我们注册到注册中心到服务。
+到github上下载
+apache/dubbo-admin
+解压后在application.properties中修改zookeeper地址
+dubbo.registry.address=zookeeper://[ip]:2181 之后用mvn命令打包再运行jar包即可，也可以直接在idea里打包
+运行后浏览器 打开localhost:7001 ，输入账号密码默认都为root，来到主页'><title>Dubbo &#43; ZooKeeper 基础入门</title>
+
+<link rel='canonical' href='https://ccqstark.github.io/p/dubbo_zookeeper/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Dubbo &#43; ZooKeeper 基础入门'>
+<meta property='og:description' content='简介 Dubbo原本是阿里的开源框架，有很多著名厂商都在用。但在14年停更，之后Spring Cloud大红大紫，Dubbo终于在17年再度更新，并在18年合并当当网的基于它开发出的DubboX推出了2.6版本。之后在18年除夕夜，阿里正式将Dubbo捐献给了著名开源组织Apache，成为Apache众多开源项目之一。
+Apache Dubbo
+ZooKeeper 也是 Apache 软件基金会的一个软件项目，它为大型分布式计算提供开源的分布式配置服务、同步服务和命名注册。
+ZooKeeper 的架构通过冗余服务实现高可用性。
+Zookeeper 的设计目标是将那些复杂且容易出错的分布式一致性服务封装起来，构成一个高效可靠的原语集，并以一系列简单易用的接口提供给用户使用。
+一个典型的分布式数据一致性的解决方案，分布式应用程序可以基于它实现诸如数据发布/订阅、负载均衡、命名服务、分布式协调/通知、集群管理、Master 选举、分布式锁和分布式队列等功能。
+Apache ZooKeeper
+安装 使用Dubbo引入相关依赖即可，下面具体实践会涉及。
+ZooKeeper可以去官网下载安装，这里我还是用docker在Linux服务器上安装。
+# 拉取镜像 docker pull zookeeper # 启动 docker run -d \ -p 2181:2181 \ -v /home/zookeeper/data/:/data/ \ --name=zookeeper \ --privileged zookeeper # 如果想运行自带的客户端可以： docker exec -it zookeeper bash cd bin ./zkCli.sh # 之后就可以使用相关命令了 安装ZooInspector来可视化查看zookeeper
+
+# 下载后进入build目录运行jar包，输入zookeeper的地址即可连接 java -jar zookeeper-dev-ZooInspector.jar  
+使用dubbo-admin可视化监控服务 dubbo-admin是一个Springboot项目，可以监控我们注册到注册中心到服务。
+到github上下载
+apache/dubbo-admin
+解压后在application.properties中修改zookeeper地址
+dubbo.registry.address=zookeeper://[ip]:2181 之后用mvn命令打包再运行jar包即可，也可以直接在idea里打包
+运行后浏览器 打开localhost:7001 ，输入账号密码默认都为root，来到主页'>
+<meta property='og:url' content='https://ccqstark.github.io/p/dubbo_zookeeper/'>
+<meta property='og:site_name' content='ccq&#39;s blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Dubbo' /><meta property='article:tag' content='ZooKeeper' /><meta property='article:published_time' content='2021-02-24T23:01:00&#43;08:00'/><meta property='article:modified_time' content='2021-02-24T23:01:00&#43;08:00'/><meta property='og:image' content='https://ccqstark.github.io/p/dubbo_zookeeper/dubbo-zookeeper.png' />
+<meta name="twitter:site" content="@ccqstark">
+    <meta name="twitter:creator" content="@ccqstark"><meta name="twitter:title" content="Dubbo &#43; ZooKeeper 基础入门">
+<meta name="twitter:description" content="简介 Dubbo原本是阿里的开源框架，有很多著名厂商都在用。但在14年停更，之后Spring Cloud大红大紫，Dubbo终于在17年再度更新，并在18年合并当当网的基于它开发出的DubboX推出了2.6版本。之后在18年除夕夜，阿里正式将Dubbo捐献给了著名开源组织Apache，成为Apache众多开源项目之一。
+Apache Dubbo
+ZooKeeper 也是 Apache 软件基金会的一个软件项目，它为大型分布式计算提供开源的分布式配置服务、同步服务和命名注册。
+ZooKeeper 的架构通过冗余服务实现高可用性。
+Zookeeper 的设计目标是将那些复杂且容易出错的分布式一致性服务封装起来，构成一个高效可靠的原语集，并以一系列简单易用的接口提供给用户使用。
+一个典型的分布式数据一致性的解决方案，分布式应用程序可以基于它实现诸如数据发布/订阅、负载均衡、命名服务、分布式协调/通知、集群管理、Master 选举、分布式锁和分布式队列等功能。
+Apache ZooKeeper
+安装 使用Dubbo引入相关依赖即可，下面具体实践会涉及。
+ZooKeeper可以去官网下载安装，这里我还是用docker在Linux服务器上安装。
+# 拉取镜像 docker pull zookeeper # 启动 docker run -d \ -p 2181:2181 \ -v /home/zookeeper/data/:/data/ \ --name=zookeeper \ --privileged zookeeper # 如果想运行自带的客户端可以： docker exec -it zookeeper bash cd bin ./zkCli.sh # 之后就可以使用相关命令了 安装ZooInspector来可视化查看zookeeper
+
+# 下载后进入build目录运行jar包，输入zookeeper的地址即可连接 java -jar zookeeper-dev-ZooInspector.jar  
+使用dubbo-admin可视化监控服务 dubbo-admin是一个Springboot项目，可以监控我们注册到注册中心到服务。
+到github上下载
+apache/dubbo-admin
+解压后在application.properties中修改zookeeper地址
+dubbo.registry.address=zookeeper://[ip]:2181 之后用mvn命令打包再运行jar包即可，也可以直接在idea里打包
+运行后浏览器 打开localhost:7001 ，输入账号密码默认都为root，来到主页"><meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content='https://ccqstark.github.io/p/dubbo_zookeeper/dubbo-zookeeper.png' />
+    <link rel="shortcut icon" href="/icon.ico" />
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PXLPFFZ3XD"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-PXLPFFZ3XD', { 'anonymize_ip': false });
+}
+</script>
+<a href="https://github.com/ccqstark" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#64CEAA; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+    </head>
+    <body class="
+    article-page has-toc
+">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex 
+    
+        extended
+    
+">
+    
+        <div id="article-toolbar">
+            <a href="/" class="back-home">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+                <span>Back</span>
+            </a>
+        </div>
+    
+<main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/dubbo_zookeeper/">
+                <img src="/p/dubbo_zookeeper/dubbo-zookeeper_huceb4a22a384e0271fe532efed4b00fee_48645_800x0_resize_box_3.png"
+                        srcset="/p/dubbo_zookeeper/dubbo-zookeeper_huceb4a22a384e0271fe532efed4b00fee_48645_800x0_resize_box_3.png 800w, /p/dubbo_zookeeper/dubbo-zookeeper_huceb4a22a384e0271fe532efed4b00fee_48645_1600x0_resize_box_3.png 1600w"
+                        width="800" 
+                        height="288" 
+                        loading="lazy"
+                        alt="Featured image of post Dubbo &#43; ZooKeeper 基础入门" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/" >
+                分布式
+            </a>
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="/p/dubbo_zookeeper/">Dubbo &#43; ZooKeeper 基础入门</a>
+    </h2>
+
+    
+
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Feb 24, 2021</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    2 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+</div>
+</header>
+
+    <section class="article-content">
+    <h2 id="简介">简介</h2>
+<p><code>Dubbo</code>原本是阿里的开源框架，有很多著名厂商都在用。但在14年停更，之后Spring Cloud大红大紫，Dubbo终于在17年再度更新，并在18年合并当当网的基于它开发出的DubboX推出了2.6版本。之后在18年除夕夜，阿里正式将Dubbo捐献给了著名开源组织Apache，成为Apache众多开源项目之一。</p>
+<p><a class="link" href="https://dubbo.apache.org/zh/"  target="_blank" rel="noopener"
+    >Apache Dubbo</a></p>
+<p><code>ZooKeeper</code> 也是 Apache 软件基金会的一个软件项目，它为大型分布式计算提供开源的分布式配置服务、同步服务和命名注册。</p>
+<p>ZooKeeper 的架构通过冗余服务实现高可用性。</p>
+<p>Zookeeper 的设计目标是将那些复杂且容易出错的分布式一致性服务封装起来，构成一个高效可靠的原语集，并以一系列简单易用的接口提供给用户使用。</p>
+<p>一个典型的分布式数据一致性的解决方案，分布式应用程序可以基于它实现诸如数据发布/订阅、负载均衡、命名服务、分布式协调/通知、集群管理、Master 选举、分布式锁和分布式队列等功能。</p>
+<p><a class="link" href="https://zookeeper.apache.org/"  target="_blank" rel="noopener"
+    >Apache ZooKeeper</a></p>
+<h2 id="安装">安装</h2>
+<p>使用Dubbo引入相关依赖即可，下面具体实践会涉及。</p>
+<p>ZooKeeper可以去官网下载安装，这里我还是用<code>docker</code>在Linux服务器上安装。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># 拉取镜像</span>
+docker pull zookeeper
+
+<span class="c1"># 启动</span>
+docker run -d <span class="se">\
+</span><span class="se"></span>-p 2181:2181 <span class="se">\
+</span><span class="se"></span>-v /home/zookeeper/data/:/data/ <span class="se">\
+</span><span class="se"></span>--name<span class="o">=</span>zookeeper  <span class="se">\
+</span><span class="se"></span>--privileged zookeeper
+
+<span class="c1"># 如果想运行自带的客户端可以：</span>
+docker <span class="nb">exec</span> -it zookeeper bash
+<span class="nb">cd</span> bin
+./zkCli.sh
+<span class="c1"># 之后就可以使用相关命令了</span>
+</code></pre></div><p>安装ZooInspector来可视化查看zookeeper</p>
+<p><a class="link" href="https://issues.apache.org/jira/secure/attachment/12436620/ZooInspector.zip%ef%bc%9b"  target="_blank" rel="noopener"
+    ></a></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># 下载后进入build目录运行jar包，输入zookeeper的地址即可连接</span>
+java -jar zookeeper-dev-ZooInspector.jar
+</code></pre></div><p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 137; 
+			flex-basis: 330px"
+	>
+	<a href="/p/dubbo_zookeeper/Untitled.png" data-size="1056x768">
+		<img src="/p/dubbo_zookeeper/Untitled.png"
+			width="1056"
+			height="768"
+			srcset="/p/dubbo_zookeeper/Untitled_hu4c9a62aa768df2fd487a8326f02f26eb_96669_480x0_resize_box_3.png 480w, /p/dubbo_zookeeper/Untitled_hu4c9a62aa768df2fd487a8326f02f26eb_96669_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<h2 id="使用dubbo-admin可视化监控服务">使用dubbo-admin可视化监控服务</h2>
+<p><code>dubbo-admin</code>是一个Springboot项目，可以监控我们注册到注册中心到服务。</p>
+<p>到github上下载</p>
+<p><a class="link" href="https://github.com/apache/dubbo-admin"  target="_blank" rel="noopener"
+    >apache/dubbo-admin</a></p>
+<p>解压后在application.properties中修改zookeeper地址</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="n">dubbo</span><span class="o">.</span><span class="na">registry</span><span class="o">.</span><span class="na">address</span><span class="o">=</span><span class="n">zookeeper</span><span class="o">:</span><span class="c1">//[ip]:2181
+</span></code></pre></div><p>之后用mvn命令打包再运行jar包即可，也可以直接在idea里打包</p>
+<p>运行后浏览器 打开<code>localhost:7001</code> ，输入账号密码默认都为root，来到主页</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 204; 
+			flex-basis: 490px"
+	>
+	<a href="/p/dubbo_zookeeper/Untitled1.png" data-size="1955x956">
+		<img src="/p/dubbo_zookeeper/Untitled1.png"
+			width="1955"
+			height="956"
+			srcset="/p/dubbo_zookeeper/Untitled1_hu8428c982ec4589bf24a1692d32c3f022_93969_480x0_resize_box_3.png 480w, /p/dubbo_zookeeper/Untitled1_hu8428c982ec4589bf24a1692d32c3f022_93969_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure>
+中间的搜索框可以搜索服务、应用、ip，菜单栏上也有各种监控服务的方式。</p>
+<h2 id="springboot-demo">SpringBoot Demo</h2>
+<p>用idea建立一个空项目，然后添加两个Modules，都为Springboot项目。</p>
+<p>一个作为服务提供者provider，一个作为服务消费者consumer</p>
+<p>两者都添加以下maven依赖</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="c">&lt;!-- https://mvnrepository.com/artifact/org.apache.dubbo/dubbo-spring-boot-starter --&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apache.dubbo<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>dubbo-spring-boot-starter<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>2.7.8<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+
+<span class="c">&lt;!-- https://mvnrepository.com/artifact/com.github.sgroschupf/zkclient --&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>com.github.sgroschupf<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>zkclient<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>0.1<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;exclusions&gt;</span>
+        <span class="nt">&lt;exclusion&gt;</span>
+            <span class="nt">&lt;artifactId&gt;</span>zookeeper<span class="nt">&lt;/artifactId&gt;</span>
+            <span class="nt">&lt;groupId&gt;</span>org.apache.zookeeper<span class="nt">&lt;/groupId&gt;</span>
+        <span class="nt">&lt;/exclusion&gt;</span>
+    <span class="nt">&lt;/exclusions&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+
+<span class="c">&lt;!-- https://mvnrepository.com/artifact/org.apache.curator/curator-framework --&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apache.curator<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>curator-framework<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>2.12.0<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;exclusions&gt;</span>
+        <span class="nt">&lt;exclusion&gt;</span>
+            <span class="nt">&lt;artifactId&gt;</span>zookeeper<span class="nt">&lt;/artifactId&gt;</span>
+            <span class="nt">&lt;groupId&gt;</span>org.apache.zookeeper<span class="nt">&lt;/groupId&gt;</span>
+        <span class="nt">&lt;/exclusion&gt;</span>
+    <span class="nt">&lt;/exclusions&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+
+<span class="c">&lt;!-- https://mvnrepository.com/artifact/org.apache.curator/curator-recipes --&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apache.curator<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>curator-recipes<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>2.12.0<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+
+<span class="c">&lt;!-- https://mvnrepository.com/artifact/org.apache.zookeeper/zookeeper --&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apache.zookeeper<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>zookeeper<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>3.6.2<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;exclusions&gt;</span>
+        <span class="nt">&lt;exclusion&gt;</span>
+            <span class="nt">&lt;artifactId&gt;</span>log4j<span class="nt">&lt;/artifactId&gt;</span>
+            <span class="nt">&lt;groupId&gt;</span>log4j<span class="nt">&lt;/groupId&gt;</span>
+        <span class="nt">&lt;/exclusion&gt;</span>
+        <span class="nt">&lt;exclusion&gt;</span>
+            <span class="nt">&lt;groupId&gt;</span>org.slf4j<span class="nt">&lt;/groupId&gt;</span>
+            <span class="nt">&lt;artifactId&gt;</span>slf4j-log4j12<span class="nt">&lt;/artifactId&gt;</span>
+        <span class="nt">&lt;/exclusion&gt;</span>
+    <span class="nt">&lt;/exclusions&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</code></pre></div><p>其中<code>Curator</code>是zookeeper分布式协调服务的java客户端库，它包装了一系列操作zk的高级API和实用库，是的操作zk变得更加容易和可靠。</p>
+<h3 id="在provider项目中创建并注册服务">在provider项目中创建并注册服务</h3>
+<p>包目录都是就直接com.xxx，不要多一级，然后在provider项目的com.xxx路径下创建一个service目录，写一个简单的服务接口</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kn">package</span> <span class="nn">com.ccqstark.service</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">TicketService</span> <span class="o">{</span>
+    <span class="n">String</span> <span class="nf">getTicket</span><span class="o">();</span>
+<span class="o">}</span>
+</code></pre></div><p>然后是其实现</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kn">import</span> <span class="nn">com.ccqstark.service.TicketService</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.apache.dubbo.config.annotation.DubboService</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.stereotype.Component</span><span class="o">;</span>
+
+<span class="nd">@DubboService</span> <span class="c1">// 服务注册注解
+</span><span class="c1"></span><span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">TicketServiceImpl</span> <span class="kd">implements</span> <span class="n">TicketService</span> <span class="o">{</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getTicket</span><span class="o">(){</span>
+        <span class="k">return</span> <span class="s">&#34;dubbo+zookeeper!&#34;</span><span class="o">;</span>
+    <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div><p>其中注解<code>@DubboService</code> 用来把该服务注册到zookeeper中</p>
+<p>修改provider项目的application.properties</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="err">#</span> <span class="n">服务应用名称</span>
+<span class="n">dubbo</span><span class="o">.</span><span class="na">application</span><span class="o">.</span><span class="na">name</span><span class="o">=</span><span class="n">provider</span><span class="o">-</span><span class="n">server</span>
+<span class="err">#</span> <span class="n">注册中心地址</span>
+<span class="n">dubbo</span><span class="o">.</span><span class="na">registry</span><span class="o">.</span><span class="na">address</span><span class="o">=</span><span class="n">zookeeper</span><span class="o">:</span><span class="c1">//[ip]:2181
+</span><span class="c1"></span><span class="err">#</span> <span class="n">被注册的服务</span>
+<span class="n">dubbo</span><span class="o">.</span><span class="na">scan</span><span class="o">.</span><span class="na">base</span><span class="o">-</span><span class="n">packages</span><span class="o">=</span><span class="n">com</span><span class="o">.</span><span class="na">ccqstark</span><span class="o">.</span><span class="na">service</span>
+</code></pre></div><p>然后启动项目，就可以在之前安装的dubbo中发现该服务了</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 177; 
+			flex-basis: 425px"
+	>
+	<a href="/p/dubbo_zookeeper/Untitled2.png" data-size="628x354">
+		<img src="/p/dubbo_zookeeper/Untitled2.png"
+			width="628"
+			height="354"
+			srcset="/p/dubbo_zookeeper/Untitled2_hu2ef583d0d6cb487fedab8b1c4af81a21_30689_480x0_resize_box_3.png 480w, /p/dubbo_zookeeper/Untitled2_hu2ef583d0d6cb487fedab8b1c4af81a21_30689_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure></p>
+<h3 id="在consumer项目中调用服务">在consumer项目中调用服务</h3>
+<p>配置文件中增加配置</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="err">#</span> <span class="n">消费者暴露的服务应用名称</span>
+<span class="n">dubbo</span><span class="o">.</span><span class="na">application</span><span class="o">.</span><span class="na">name</span><span class="o">=</span><span class="n">consumer</span><span class="o">-</span><span class="n">server</span>
+<span class="err">#</span> <span class="n">注册中心地址</span>
+<span class="n">dubbo</span><span class="o">.</span><span class="na">registry</span><span class="o">.</span><span class="na">address</span><span class="o">=</span><span class="n">zookeeper</span><span class="o">:</span><span class="c1">//[ip]:2181
+</span></code></pre></div><p>同样创建com.xxx.service包，把provider里的TicketService的接口文件复制过来</p>
+<p>创建一个调用此服务的例子</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="kn">import</span> <span class="nn">org.apache.dubbo.config.annotation.DubboReference</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.stereotype.Service</span><span class="o">;</span>
+
+<span class="nd">@Service</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">UserService</span> <span class="o">{</span>
+
+    <span class="nd">@DubboReference</span> <span class="c1">// 获取注册中心中的服务
+</span><span class="c1"></span>    <span class="n">TicketService</span> <span class="n">ticketService</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">buyTicket</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">String</span> <span class="n">ticket</span> <span class="o">=</span> <span class="n">ticketService</span><span class="o">.</span><span class="na">getTicket</span><span class="o">();</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&#34;调用provider的服务：&#34;</span> <span class="o">+</span> <span class="n">ticket</span><span class="o">);</span>
+    <span class="o">}</span>
+    
+<span class="o">}</span>
+</code></pre></div><p>注解<code>@DubboReference</code> 用于获取注册中心的服务</p>
+<p>写个单元测试</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="nd">@SpringBootTest</span>
+<span class="kd">class</span> <span class="nc">ConsumerServerApplicationTests</span> <span class="o">{</span>
+
+    <span class="nd">@Autowired</span>
+    <span class="n">UserService</span> <span class="n">userService</span><span class="o">;</span>
+
+    <span class="nd">@Test</span>
+    <span class="kt">void</span> <span class="nf">contextLoads</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">userService</span><span class="o">.</span><span class="na">buyTicket</span><span class="o">();</span>
+    <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div><p>运行之后就可以发现consumer项目调用provider的服务成功！</p>
+<p><figure 
+	
+		class="gallery-image" 
+		style="
+			flex-grow: 325; 
+			flex-basis: 781px"
+	>
+	<a href="/p/dubbo_zookeeper/Untitled3.png" data-size="798x245">
+		<img src="/p/dubbo_zookeeper/Untitled3.png"
+			width="798"
+			height="245"
+			srcset="/p/dubbo_zookeeper/Untitled3_huf1aa39a1f5831f563e82bbaed8909fd5_29247_480x0_resize_box_3.png 480w, /p/dubbo_zookeeper/Untitled3_huf1aa39a1f5831f563e82bbaed8909fd5_29247_1024x0_resize_box_3.png 1024w"
+			loading="lazy"
+			>
+	</a>
+	
+</figure>
+最基本的服务注册发现与rpc调用大概是demo这样。</p>
+<p>参考自：
+<a class="link" href="https://www.bilibili.com/video/BV1PE411i7CV?p=60"  target="_blank" rel="noopener"
+    >bilibili</a></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/dubbo/">Dubbo</a>
+        
+            <a href="/tags/zookeeper/">ZooKeeper</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.css"integrity="sha384-RZU/ijkSsFbcmivfdRBQDtwuwVqK7GMOw6IMvKyeWL2K5UAlyp6WonmB8m7Jd0Hn"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/katex.min.js"integrity="sha384-pK1WpvzWVBQiP0/GjnvRxV4mOb0oxFuyRxJlk6vVw146n3egcN5C925NCP7a7BY8"crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.13.13/dist/contrib/auto-render.min.js"integrity="sha384-vZTG03m&#43;2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl"crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.querySelector(`.article-content`), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ]
+        });})
+</script>
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+        <h2 class="section-title">Related contents</h2>
+        <div class="related-contents">
+            <div class="flex article-list--tile">
+                
+                    
+<article class="has-image">
+    <a href="/p/distributed_rpc/">
+        
+        
+            <div class="article-image">
+                <img src="/p/distributed_rpc/dis-rpc.5c680c099ac0a673be88f8f1bcbcbab5_hueac48662f0ecf63cc9ad2fc947cb2254_27950_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="distributed_rpc" 
+                        data-hash="md5-XGgMCZrApnO&#43;iPjxvLy6tQ==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">浅谈分布式系统与RPC</h2>
+        </div>
+    </a>
+</article>
+                
+                    
+<article class="has-image">
+    <a href="/p/cap/">
+        
+        
+            <div class="article-image">
+                <img src="/p/cap/cover.f8a83a873f99f96e1a5e221144ec1526_huf47dfa8462eb5615bceb79738fdfbc2b_351372_250x150_fill_box_smart1_3.png" 
+                        width="250" 
+                        height="150" 
+                        loading="lazy" 
+                        data-key="cap" 
+                        data-hash="md5-&#43;Kg6hz&#43;Z&#43;W4aXiIRROwVJg==">
+                
+            </div>
+        
+
+        <div class="article-details">
+            <h2 class="article-title">什么是CAP理论？</h2>
+        </div>
+    </a>
+</article>
+                
+            </div>
+        </div>
+    
+</aside>
+
+     
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "https-ccqstark-github-io" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+<script>
+    window.addEventListener('onColorSchemeChange', (e) => {
+        if (DISQUS) {
+            DISQUS.reset({
+                reload: true
+            });
+        }
+    })
+</script>
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2020 - 
+        
+        2022 ccq&#39;s blog
+    </section>
+    
+    <section class="powerby">
+        
+            一辈子热爱技术 <br/>
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.5.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer="true"
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.css"integrity="sha256-c0uckgykQ9v5k&#43;IqViZOZKc47Jn7KQil4/MP3ySA3F8="crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.css"integrity="sha256-SBLU4vv6CA6lHsZ1XyTdhyjJxCjPif/TRkjnsyGAGnE="crossorigin="anonymous"
+            >
+
+            </main>
+    
+        <aside class="sidebar right-sidebar sticky">
+            <section class="widget archives">
+                <div class="widget-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+                </div>
+                <h2 class="widget-title section-title">Table of contents</h2>
+                
+                <div class="widget--toc">
+                    <nav id="TableOfContents">
+  <ol>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#安装">安装</a></li>
+    <li><a href="#使用dubbo-admin可视化监控服务">使用dubbo-admin可视化监控服务</a></li>
+    <li><a href="#springboot-demo">SpringBoot Demo</a>
+      <ol>
+        <li><a href="#在provider项目中创建并注册服务">在provider项目中创建并注册服务</a></li>
+        <li><a href="#在consumer项目中调用服务">在consumer项目中调用服务</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+                </div>
+            </section>
+        </aside>
+    
+
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g="crossorigin="anonymous"
+                defer="false"
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>gopher</title>
+	
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-PXLPFFZ3XD"></script>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
+
+	  gtag('config', 'G-PXLPFFZ3XD');
+	</script>
+</head>
+<body>
+<canvas id="view" width="200" height="180" style="position: fixed; right: 0; bottom: 0; z-index: 9999"></canvas>
+<script type="text/javascript">
+    "use strict";
+
+    if(window.animationLoop) {
+        window.cancelAnimationFrame(window.animationLoop)
+    }
+
+    class HSL {
+        constructor(h, s, l) {
+            this.h = h
+            this.s = s
+            this.l = l
+        }
+
+        toString() {
+            return "hsl(" +
+                (this.h * 360).toFixed(2) + "," +
+                (this.s * 100).toFixed(2) + "%," +
+                (this.l * 100).toFixed(2) + "%)";
+        }
+    }
+
+    const tau = Math.PI * 2
+
+    let view = document.getElementById("view")
+    let context = view.getContext("2d")
+    updateViewSize()
+
+    let gopher = {
+        body: new HSL(205.0/360, 1.0,  0.81),
+        bodyDark: new HSL(205.0/360, 0.55,  0.71),
+        dark: new HSL(217.0/360, 0.19, 0.18),
+        light: new HSL(217.0/360, 0.0, 1.00),
+        lightDark: new HSL(217.0/360, 0.0, 0.90),
+        limb: new HSL(46.0/360, 0.38, 0.80),
+
+        head: {x: 0, y:0},
+        gaze: {x: 0, y:0},
+    };
+
+    window.animationLoop = tick();
+
+    window.addEventListener("resize", updateViewSize)
+
+    function updateViewSize() {
+        
+        
+
+        view.width = view.clientWidth;
+        view.height = view.clientHeight;
+    }
+
+    window.addEventListener("mousemove", (ev) => {
+        let screenSize = {x: view.width, y: view.height}
+
+		gopher.gaze.x = - (ev.clientX * 1.5 / view.width-1);
+		gopher.gaze.y = - (ev.clientY * 1.5 / view.height-1);
+
+        gopher.head.x = gopher.gaze.x * 0.5;
+        gopher.head.y = gopher.gaze.y * 0.5;
+   
+    });
+
+    window.addEventListener("touchmove", (ev) => {
+        if(ev.targetTouches.length == 0) return;
+
+        let screenSize = {x: view.width, y: view.height}
+        let touch = ev.targetTouches[0]
+
+        gopher.gaze.x = touch.clientX * 2.0 / view.width - 1;
+        gopher.gaze.y = touch.clientY * 2.0 / view.height - 1;
+
+        gopher.head.x = gopher.gaze.x * 0.5;
+        gopher.head.y = gopher.gaze.y * 0.5;
+
+    });
+
+    function tick(t) {
+        context.clearRect(0,0,10000,10000);
+        context.save()
+
+        
+        
+        
+
+        let screenSize = {x: view.width, y: view.height}
+        render(gopher, context, screenSize)
+        context.restore()
+        return window.requestAnimationFrame(tick)
+    }
+
+    function stringify(v) {
+        return JSON.stringify(v, (key, val) => {
+            if(typeof val == "number"){
+                return val.toFixed(2)
+            }
+            return val
+        })
+    }
+
+    function render(gopher, draw, screenSize) {
+        let bodyRadius = Math.min(screenSize.x, screenSize.y) / 2
+        bodyRadius *= 0.8
+
+        let eyeRadius = bodyRadius * 0.4
+        let earRadius = eyeRadius * 0.53
+        let lineWidth = bodyRadius * 0.045
+        let highlightSize = eyeRadius * 0.06
+
+        draw.lineWidth = lineWidth
+        draw.strokeStyle = gopher.dark.toString()
+
+        
+        draw.translate(screenSize.x/2, screenSize.y)
+
+        for(let ear = -1; ear <= 1; ear+=2){
+            saved(draw, (draw) => { 
+                let earOffset = headOffset(gopher, -ear, bodyRadius)
+                earOffset.x *= -1
+                earOffset.x += ear*earRadius*0.3
+                earOffset.y = -bodyRadius*1.8 - Math.sin(gopher.head.y)*earRadius * 0.5
+
+                draw.translate(earOffset.x, earOffset.y)
+                draw.scale(ear, 1)
+                draw.rotate(tau / 10)
+                draw.translate(0, earRadius)
+
+                let earPath = new Path2D()
+
+                earPath.moveTo(-earRadius, earRadius)
+                earPath.lineTo(-earRadius, -earRadius)
+                earPath.bezierCurveTo(
+                    -earRadius, -earRadius-earRadius*1.3,
+                    earRadius, -earRadius-earRadius*1.3,
+                    earRadius, -earRadius)
+                earPath.lineTo(earRadius, earRadius)
+
+                draw.fillStyle = gopher.body.toString()
+                draw.fill(earPath)
+                draw.stroke(earPath)
+
+                let earInline = new Path2D()
+                earInline.moveTo(0, 0)
+                earInline.quadraticCurveTo(
+                    -earRadius*0.6, -earRadius,
+                    earRadius*0.2, -earRadius*1.4
+                );
+                earInline.moveTo(0, 0)
+                earInline.quadraticCurveTo(
+                    -earRadius*0.6, -earRadius,
+                    earRadius*0.3, -earRadius*1.0
+                );
+
+                draw.lineWidth = lineWidth * 0.7
+                draw.lineCap = "round"
+                draw.stroke(earInline)
+            })
+        }
+
+        saved(draw, (draw) => { 
+            let bodyPath = new Path2D()
+
+            bodyPath.moveTo(-bodyRadius, 0)
+            bodyPath.lineTo(-bodyRadius, -bodyRadius)
+            bodyPath.bezierCurveTo(
+                -bodyRadius, -bodyRadius-bodyRadius*1.2,
+                bodyRadius, -bodyRadius-bodyRadius*1.2,
+                bodyRadius, -bodyRadius)
+            bodyPath.lineTo(bodyRadius, 0)
+
+            draw.fillStyle = gopher.bodyDark.toString()
+            draw.fill(bodyPath)
+            saved(draw, (draw) => {
+                draw.clip(bodyPath)
+                draw.translate(bodyRadius * 0.1, 0)
+                draw.fillStyle = gopher.body.toString()
+                draw.fill(bodyPath)
+            })
+            draw.stroke(bodyPath)
+        })
+
+        for(let eye = -1; eye <= 1; eye+=2){
+            let gaze = gopher.gaze;
+
+            saved(draw, (draw) => { 
+                let eyeOffset = headOffset(gopher, eye, bodyRadius);
+                draw.translate(eyeOffset.x, eyeOffset.y);
+
+                let eyePath = new Path2D();
+                eyePath.arc(0, 0, eyeRadius, 0, tau, true);
+
+                draw.fillStyle = gopher.lightDark.toString()
+                draw.fill(eyePath)
+
+                saved(draw, (draw) => {
+                    draw.clip(eyePath)
+                    draw.translate(eyeRadius*0.2, -eyeRadius*0.15)
+                    draw.fillStyle = gopher.light.toString()
+                    draw.fill(eyePath)
+                })
+
+                draw.stroke(eyePath)
+
+                let pupil = { x: gaze.x, y: gaze.y}
+                let mag = Math.sqrt(pupil.x*pupil.x + pupil.y*pupil.y)
+                if(mag > 1){
+                    pupil.x /= mag + 0.0001;
+                    pupil.y /= mag + 0.0001;
+                }
+                pupil.x = Math.sin(pupil.x + eye * 0.4) * eyeRadius * 0.6
+                pupil.y = Math.sin(pupil.y) * eyeRadius * 0.6
+                let pupilSize = eyeRadius*0.25
+
+                let pupilPath = new Path2D();
+                pupilPath.arc(pupil.x, pupil.y, pupilSize, 0, tau, true)
+                draw.fillStyle = gopher.dark.toString()
+                draw.fill(pupilPath)
+
+                
+                let highlighPath = new Path2D()
+                highlighPath.arc(
+                    pupil.x + pupilSize * 0.3 - gaze.x * highlightSize * 0.3,
+                    pupil.y - pupilSize * 0.3 - gaze.y * highlightSize * 0.3, highlightSize, 0, tau, true)
+                draw.fillStyle = gopher.light.toString()
+                draw.fill(highlighPath)
+            })
+        }
+
+        saved(draw, (draw) => { 
+            let tipSize = eyeRadius*0.2;
+            let toothSize = tipSize;
+            let noseSize = tipSize * 2.2;
+
+            let noseOffset = headOffset(gopher, 0, bodyRadius)
+            noseOffset.y += eyeRadius * 0.8;
+            draw.translate(noseOffset.x, noseOffset.y);
+
+            saved(draw, (draw) => { 
+                draw.translate(0, tipSize*1.2 - gopher.head.y * tipSize * 0.3)
+                draw.beginPath()
+                draw.moveTo(-toothSize, 0)
+                draw.lineTo(-toothSize, toothSize*1.5)
+                draw.bezierCurveTo(
+                    -toothSize, toothSize*2,
+                    toothSize, toothSize*2,
+                    toothSize, toothSize*1.5,
+                )
+                draw.lineTo(toothSize, 0)
+                draw.fillStyle = gopher.light.toString()
+                draw.fill()
+                draw.lineWidth = lineWidth * 0.7;
+                draw.stroke()
+            })
+
+            saved(draw, (draw) => { 
+                draw.translate(0, tipSize*1.2)
+                draw.beginPath()
+
+                draw.moveTo(-noseSize, 0)
+                draw.bezierCurveTo(
+                    -noseSize, -noseSize,
+                    noseSize, -noseSize,
+                    noseSize, 0
+                )
+                draw.bezierCurveTo(
+                    noseSize, noseSize*0.4,
+                    -noseSize, noseSize*0.4,
+                    -noseSize, 0
+                )
+                draw.closePath()
+
+                draw.fillStyle = gopher.limb.toString()
+                draw.fill()
+                draw.stroke()
+            })
+
+            saved(draw, (draw) => { 
+                let tip = {
+                    x: Math.sin(gopher.head.x) * tipSize,
+                    y: Math.sin(gopher.head.y) * tipSize * 0.5 - tipSize*0.2,
+                };
+
+                draw.beginPath()
+                draw.scale(1.2, 0.9)
+                draw.arc(tip.x, tip.y, tipSize, 0, tau, true)
+                draw.fillStyle = gopher.dark.toString()
+                draw.fill()
+
+                
+                draw.beginPath()
+                draw.arc(
+                    tip.x + tipSize * 0.3 - gopher.head.x * highlightSize * 0.3,
+                    tip.y - tipSize * 0.3 - gopher.head.y * highlightSize * 0.3, highlightSize, 0, tau, true)
+                draw.fillStyle = gopher.light.toString()
+                draw.fill()
+            })
+        })
+    }
+
+    function headOffset(gopher, eye, bodyRadius) {
+        let x = eye*bodyRadius*0.4
+        let y = -bodyRadius*1.1
+
+        x += Math.sin(gopher.head.x - eye*0.4) * bodyRadius*0.3
+        y += Math.sin(gopher.head.y*tau/4) * bodyRadius*0.15
+
+        return {x: x, y: y}
+    }
+
+    function saved(draw, fn) {
+        draw.save()
+        fn(draw)
+        draw.restore()
+    }
+</script>
+</body>
+</html>
+    </body>
+</html>
